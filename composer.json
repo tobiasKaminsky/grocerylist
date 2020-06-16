@@ -1,0 +1,15 @@
+{
+    "name": "Grocery List",
+    "description": "Grocery list for Nextcloud",
+    "type": "project",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "Tobias Kaminsky"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    }
+}
