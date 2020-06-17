@@ -157,6 +157,8 @@ class GroceryListController extends Controller {
 		$category->setName($name);
 		$category->setOrder(0);
 
-		return new DataResponse($this->categoryMapper->insert($category));
+		$this->categoryMapper->insert($category);
+
+		return new DataResponse($this->categoryMapper->findAll($id));
 	}
 }

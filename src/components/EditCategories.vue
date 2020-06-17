@@ -56,7 +56,7 @@ export default {
 							name: this.category
 						}
 				)
-				this.categories.push(this.category);
+				this.categories = response.data;
 				this.category = "";
 			} catch (e) {
 				console.error(e)
