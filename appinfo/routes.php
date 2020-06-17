@@ -22,5 +22,6 @@ return [
 
 		['name' => 'GroceryList#listCategories', 'url' => '/categories/{id}', 'verb' => 'GET'],
 		['name' => 'GroceryList#addCategory', 'url' => '/category/{id}/add', 'verb' => 'POST'],
+		['name' => 'GroceryList#updateCategory', 'url' => '/category/update', 'verb' => 'POST'],
 	]
 ];

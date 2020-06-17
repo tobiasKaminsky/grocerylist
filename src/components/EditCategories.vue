@@ -70,10 +70,11 @@ export default {
 				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/update`),
 						{
 							id: this.newCategoryId,
-							name: this.category,
+							newName: this.category,
 						}
 				)
 
+				this.categories = response.data;
 				this.category = "";
 			} catch (e) {
 				console.error(e)
