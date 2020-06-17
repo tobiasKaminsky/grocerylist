@@ -161,4 +161,19 @@ class GroceryListController extends Controller {
 
 		return new DataResponse($this->categoryMapper->findAll($id));
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id
+	 * @param string $newName
+	 * @return DataResponse
+	 */
+	public function updateCategory(int $id, string $newName) {
+		$category = $this->categoryMapper->find($id);
+		$category->setName($newName);
+
+		$this->categoryMapper->update($category);
+
+		return new DataResponse($this->categoryMapper->findAll($category->getList()));
+	}
 }
