@@ -2,17 +2,16 @@
 
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
-class GroceryListMapper extends QBMapper {
+class ShareeGroceryListMapper extends QBMapper {
 	private $userId;
 
-	public function __construct(IDBConnection $db, $UserId) {
-		parent::__construct($db, 'grocerylist', GroceryList::class);
+	public function __construct(IDBConnection $db, $userId) {
+		parent::__construct($db, 'grocerylist_sharee', Sharee::class);
 
-		$this->userId = $UserId;
+		$this->userId = $userId;
 	}
 
 	public function find(int $id) {
@@ -20,10 +19,9 @@ class GroceryListMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
 
-		return $this->findEntity($qb);
+		return $this->findEntities($qb);
 	}
 
 	public function findAll() {
