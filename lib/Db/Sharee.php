@@ -12,7 +12,7 @@ class Sharee extends Entity implements JsonSerializable {
 
 	public function __construct() {
 		$this->addType('list', 'int');
-		$this->addType('userId', 'name');
+		$this->addType('userId', 'string');
 	}
 
 	public function jsonSerialize(): array {

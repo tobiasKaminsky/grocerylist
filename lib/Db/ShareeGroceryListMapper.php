@@ -19,7 +19,8 @@ class ShareeGroceryListMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
+			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
 
 		return $this->findEntities($qb);
 	}
