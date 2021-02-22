@@ -1,33 +1,29 @@
 <template>
 	<div>
-		<h1>Categories for {{ listId }}</h1>
-		<input ref="name"
-					 v-model="category"
-					 type="text"
-					 :disabled="updating"
-					 v-on:keyup.enter="onSaveCategory()"
-					 style="width: 30%">
-		<ActionButton icon="icon-add"
-									@click="onSaveCategory()"></ActionButton>
-		<span v-for="category in categories">
+		<div>
+			<h1>Categories for {{ listId }}</h1>
+			<input ref="name"
+						 v-model="category"
+						 type="text"
+						 :disabled="updating"
+						 v-on:keyup.enter="onSaveCategory()"
+						 style="width: 30%">
+			<ActionButton icon="icon-add"
+										@click="onSaveCategory()"></ActionButton>
+			<span v-for="category in categories">
 			<ul>
 			<li @click="editCategory(category)">{{ category.name }}</li>
 			</ul>
 		</span>
-
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<h1>Share</h1>
-		<span v-for="sharee in sharees">
+		</div>
+		<div>
+			<h1>Share</h1>
+			<span v-for="sharee in sharees">
 			<ul>
 			<li>{{ sharee.userId }}</li>
 			</ul>
 		</span>
-
+		</div>
 	</div>
 </template>
 
@@ -51,12 +47,12 @@ export default {
 			sharees: null,
 		}
 	},
-	async mounted () {
+	async mounted() {
 		await this.loadCategories(this.listId)
 		await this.loadSharees(this.listId)
 	},
 	watch: {
-		$route (to, from) {
+		$route(to, from) {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
 				this.listId = to.params.listId
 				this.loadCategories(this.listId)
@@ -65,18 +61,18 @@ export default {
 		}
 	},
 	methods: {
-		editCategory (category) {
+		editCategory(category) {
 			this.newCategoryId = category.id;
 			this.category = category.name;
 		},
-		async onSaveCategory () {
+		async onSaveCategory() {
 			if (this.newCategoryId === -1) {
 				await this.addCategory();
 			} else {
 				await this.updateCategory();
 			}
 		},
-		async addCategory () {
+		async addCategory() {
 			this.updating = true
 			try {
 				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/${this.listId}/add`),
@@ -92,7 +88,7 @@ export default {
 			}
 			this.updating = false
 		},
-		async updateCategory (listId) {
+		async updateCategory(listId) {
 			this.updating = true
 			try {
 				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/update`),
@@ -110,7 +106,7 @@ export default {
 			}
 			this.updating = false
 		},
-		async loadCategories (id) {
+		async loadCategories(id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/all_categories/' + id))
 				this.categories = response.data
@@ -120,7 +116,7 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadSharees (id) {
+		async loadSharees(id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/sharees/' + id))
 				this.sharees = response.data

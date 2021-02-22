@@ -25,7 +25,7 @@ class GroceryListMapper extends QBMapper {
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
 
-		$result = $this->findEntity($qb);
+		$result = $this->findEntities($qb);
 
 		if ($result !== null) {
 			return $result;
