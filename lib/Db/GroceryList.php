@@ -9,9 +9,11 @@ class GroceryList extends Entity implements JsonSerializable {
 
 	protected $title;
 	protected $userId;
+	protected $showOnlyUnchecked;
 
 	public function __construct() {
 		$this->addType('title', 'string');
+		$this->addType('showOnlyUnchecked', 'boolean');
 	}
 
 	public function jsonSerialize() {
@@ -19,6 +21,7 @@ class GroceryList extends Entity implements JsonSerializable {
 			'id' => $this->id,
 			'title' => $this->title,
 			'userId' => $this->userId,
+			'showOnlyUnchecked' => $this->showOnlyUnchecked,
 			];
 	}
 }

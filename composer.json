@@ -1,5 +1,5 @@
 {
-    "name": "Grocery List",
+    "name": "tobiaskaminsky/grocery_list-0.1",
     "description": "Grocery list for Nextcloud",
     "type": "project",
     "license": "AGPL",
@@ -10,6 +10,5 @@
     ],
     "require": {},
     "require-dev": {
-        "phpunit/phpunit": "^5.4"
     }
 }

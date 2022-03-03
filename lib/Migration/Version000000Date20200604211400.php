@@ -33,6 +33,10 @@ class Version000000Date20200604211400 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 200
 			]);
+			$table->addColumn('show_only_unchecked', 'integer', [
+				'notnull' => true,
+				'default' => 0,
+			]);
 			$table->setPrimaryKey(['id']);
 		}
 
@@ -80,6 +84,17 @@ class Version000000Date20200604211400 extends SimpleMigrationStep {
 				'default' => 0,
 			]);
 			$table->setPrimaryKey(['id']);
+		}
+
+		if (!$schema->hasTable('grocerylist_sharee')) {
+			$table = $schema->createTable('grocerylist_sharee');
+			$table->addColumn('list', 'integer', [
+				'notnull' => true,
+			]);
+			$table->addColumn('user_id', 'string', [
+				'notnull' => true,
+				'length' => 200
+			]);
 		}
 
 		return $schema;

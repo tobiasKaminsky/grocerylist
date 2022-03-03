@@ -10,6 +10,7 @@ use OCA\GroceryList\Db\GroceryList;
 use OCA\GroceryList\Db\GroceryListMapper;
 use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
+use OCA\GroceryList\Db\ShareeGroceryListMapper;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
@@ -21,6 +22,7 @@ class GroceryListController extends Controller {
 	private $groceryListMapper;
 	private $itemMapper;
 	private $categoryMapper;
+	private $shareeMapper;
 	private $userId;
 	private $logger;
 
@@ -29,12 +31,14 @@ class GroceryListController extends Controller {
 								GroceryListMapper $groceryListMapper,
 								ItemMapper $itemMapper,
 								CategoryMapper $categoryMapper,
+								ShareeGroceryListMapper $shareeMapper,
 								ILogger $logger,
 								$UserId) {
 		parent::__construct($AppName, $request);
 		$this->groceryListMapper = $groceryListMapper;
 		$this->itemMapper = $itemMapper;
 		$this->categoryMapper = $categoryMapper;
+		$this->shareeMapper = $shareeMapper;
 		$this->logger = $logger;
 		$this->userId = $UserId;
 	}
@@ -82,6 +86,30 @@ class GroceryListController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @param int $id
+	 * @param string $name
+	 * @param string $quantity
+	 * @param int $category
+	 * @return DataResponse
+	 */
+	public function updateList(int $id, string $title, int $showOnlyUnchecked) {
+		$list = $this->groceryListMapper->find($id);
+		$list->setTitle($title);
+		$list->setShowOnlyUnchecked($showOnlyUnchecked);
+
+		return new DataResponse($this->groceryListMapper->update($list));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+	public function showList(int $id) {
+		return new DataResponse($this->groceryListMapper->find($id));
+	}
+
+	/**
+	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 * @param int $id
 	 */
@@ -94,6 +122,23 @@ class GroceryListController extends Controller {
 	 * @param int $id
 	 */
 	public function listCategories(int $id) {
+		$returnList = [];
+		$categories = $this->categoryMapper->findAll($id);
+
+		foreach ($categories as $category) {
+			if ($this->itemMapper->categoryUsed($category->id)) {
+				$returnList[] = $category;
+			}
+		}
+
+		return new DataResponse($returnList);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id
+	 */
+	public function listAllCategories(int $id) {
 		return new DataResponse($this->categoryMapper->findAll($id));
 	}
 
@@ -175,5 +220,13 @@ class GroceryListController extends Controller {
 		$this->categoryMapper->update($category);
 
 		return new DataResponse($this->categoryMapper->findAll($category->getList()));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id
+	 */
+	public function sharees(int $id): DataResponse {
+		return new DataResponse($this->shareeMapper->find($id));
 	}
 }
