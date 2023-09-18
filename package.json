@@ -26,7 +26,7 @@
   "dependencies": {
     "@melmacaluso/vue-modal": "^2.1.0",
     "@nextcloud/axios": "^1.11.0",
-    "@nextcloud/vue": "^1.5.0",
+    "@nextcloud/vue": "^7.12.5",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1"
   },
