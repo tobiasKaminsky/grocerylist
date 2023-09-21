@@ -25,9 +25,10 @@
   },
   "dependencies": {
     "@melmacaluso/vue-modal": "^2.1.0",
-    "@nextcloud/axios": "^1.11.0",
-    "@nextcloud/vue": "^1.5.0",
-    "vue": "^2.6.11",
+    "@nextcloud/axios": "^2.4.0",
+    "@nextcloud/vue": "8.0.0-beta.5",
+    "sass": "^1.68.0",
+    "vue": "^2.7.14",
     "vue-router": "^3.5.1"
   },
   "browserslist": [

@@ -51,6 +51,13 @@ class GroceryListController extends Controller {
 		return new TemplateResponse('grocerylist', 'main');
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function showGroceryList($id) {
+		return $this->index();
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -102,6 +109,7 @@ class GroceryListController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
 	 * @return DataResponse
 	 */
 	public function showList(int $id) {

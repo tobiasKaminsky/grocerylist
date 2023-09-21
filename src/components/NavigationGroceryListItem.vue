@@ -1,6 +1,6 @@
 <template>
-	<AppNavigationItem
-			:title="title"
+	<NcAppNavigationItem
+			:name="title"
 			:icon="icon"
 			:editable="true"
 			:editLabel="rename"
@@ -9,33 +9,29 @@
 			@click="openGroceryList(groceryList)"
 			@update:title="onRename">
 		<template #actions>
-			<ActionButton
+			<NcActionButton
 					icon="icon-rename"
 					@click="openSettings(groceryList)">
 				{{ t('grocerylist', 'Settings') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 					icon="icon-delete"
 					@click="deleteGroceryList(groceryList)">
 				{{ t('grocerylist', 'Delete list') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 <script>
-import {
-	ActionButton,
-	ActionSeparator,
-	AppNavigationItem,
-} from '@nextcloud/vue'
+import {NcActionButton, NcActionSeparator, NcAppNavigationItem} from '@nextcloud/vue'
 import axios from "@nextcloud/axios";
 
 export default {
 	name: 'NavigationGroceryListItem',
 	components: {
-		ActionButton,
-		ActionSeparator,
-		AppNavigationItem,
+		NcActionButton,
+		NcActionSeparator,
+		NcAppNavigationItem,
 	},
 	props: {
 		groceryList: {
@@ -68,10 +64,10 @@ export default {
 
 			try {
 				if (this.groceryList.id === -1) {
-					const response = await axios.post(OC.generateUrl(`/apps/grocerylist/lists`), this.groceryList)
+					const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/lists`), this.groceryList)
 					this.currentGroceryListId = response.data.id
 				} else {
-					await axios.post(OC.generateUrl(`/apps/grocerylist/lists/${this.groceryList.id}`), this.groceryList)
+					await axios.post(OC.generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`), this.groceryList)
 				}
 			} catch (e) {
 				console.error(e)
@@ -81,7 +77,7 @@ export default {
 		},
 		async deleteGroceryList (groceryList) {
 			try {
-				await axios.delete(OC.generateUrl(`/apps/grocerylist/lists/${this.groceryList.id}`))
+				await axios.delete(OC.generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`))
 				// this.groceryLists.splice(this.groceryLists.indexOf(groceryList), 1)
 				// if (this.currentGroceryListId === groceryList.id) {
 				// 	this.currentGroceryListId = null

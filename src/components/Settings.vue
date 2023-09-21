@@ -8,8 +8,8 @@
 						 :disabled="updating"
 						 v-on:keyup.enter="onSaveCategory()"
 						 style="width: 30%">
-			<ActionButton icon="icon-add"
-										@click="onSaveCategory()"></ActionButton>
+			<NcActionButton icon="icon-add"
+										@click="onSaveCategory()"></NcActionButton>
 			<span v-for="category in categories">
 			<ul>
 			<li @click="editCategory(category)">{{ category.name }}</li>
@@ -29,12 +29,12 @@
 
 <script>
 import axios from "@nextcloud/axios";
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton';
+import {NcActionButton} from "@nextcloud/vue";
 
 export default {
 	name: "Settings",
 	components: {
-		ActionButton
+		NcActionButton
 	},
 	listId: '',
 	data: function () {
@@ -75,7 +75,7 @@ export default {
 		async addCategory() {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/${this.listId}/add`),
+				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/category/${this.listId}/add`),
 						{
 							name: this.category
 						}
@@ -91,7 +91,7 @@ export default {
 		async updateCategory(listId) {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/update`),
+				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/category/update`),
 						{
 							id: this.newCategoryId,
 							newName: this.category,
@@ -108,7 +108,7 @@ export default {
 		},
 		async loadCategories(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/all_categories/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.categories = response.data
 			} catch (e) {
 				console.error(e)
@@ -118,7 +118,7 @@ export default {
 		},
 		async loadSharees(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/sharees/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/sharees/' + id))
 				this.sharees = response.data
 			} catch (e) {
 				console.error(e)
@@ -130,6 +130,7 @@ export default {
 }
 </script>
 <style lang="scss">
+/*
 .modal, .content {
 	background: #fff;
 	width: 80%;
@@ -154,4 +155,5 @@ export default {
 		color: crimson;
 	}
 }
+ */
 </style>

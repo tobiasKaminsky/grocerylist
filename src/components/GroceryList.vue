@@ -2,11 +2,11 @@
 	<div>
 		<h1>{{ title }}</h1>
 		<div>
-			<ActionButton icon="icon-toggle"
-										:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
-										@click="toggleVisibility()">
+			<NcActionButton icon="icon-toggle"
+											:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
+											@click="toggleVisibility()">
 				Show only unchecked
-			</ActionButton>
+			</NcActionButton>
 			<input v-model="newItemQuantity"
 						 placeholder="Quantity…"
 						 :disabled="updating"
@@ -16,30 +16,31 @@
 						 placeholder="Item…"
 						 :disabled="updating"
 						 style="width: 30%">
-			<dropdown :options="allCategories"
-								:label="name"
-								:selected="object"
-								v-model="newItemCategory"
-								:closeOnOutsideClick="true"
-								v-on:updateOption="updateNewItemCategory"
-								id="dropdown"
-								style="width: 20%">
-			</dropdown>
-			<ActionButton icon="icon-add"
-										@click="onSaveItem()">
-			</ActionButton>
+			<NcSelect
+					:options="allCategories"
+					label="name"
+					:value="object"
+					v-model="newItemCategory"
+					:closeOnOutsideClick="true"
+					v-on:updateOption="updateNewItemCategory"
+					id="dropdown"
+					style="width: 20%">
+			</NcSelect>
+			<NcActionButton icon="icon-add"
+											@click="onSaveItem()">
+			</NcActionButton>
 
 			<br/>
 			<span v-for="category in filteredCategories">
-				<span style="font-size: larger; text-transform: uppercase;">
+				<h2 style="font-size: larger; text-transform: uppercase;">
 					{{ category.name }}
-				</span>
+				</h2>
 				<ul>
 						<li v-for="item in filteredItems"
 								v-if="item.category === category.id">
-								<input type="checkbox"
-											 :checked="item.checked === true"
-											 @click="checkItem(item)">
+							<NcCheckboxRadioSwitch
+									:checked="item.checked === true"
+									@update:checked="checkItem(item)">
 								<span @click="editItem(item)"
 											v-bind:style="(item.checked === true) ? 'text-decoration: line-through' : ''">
 									<span v-if="item.quantity !==  ''">
@@ -47,6 +48,7 @@
 									</span>
 									{{ item.name }}
 								</span>
+								</NcCheckboxRadioSwitch>
 						</li>
 					</ul>
 				</span>
@@ -56,24 +58,24 @@
 
 <script>
 import axios from "@nextcloud/axios";
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton';
-import dropdown from "vue-dropdowns";
+import {NcSelect, NcActionButton, NcCheckboxRadioSwitch} from "@nextcloud/vue";
 
 export default {
 	name: "GroceryList",
 	components: {
-		ActionButton,
-		dropdown,
+		NcActionButton,
+		NcCheckboxRadioSwitch,
+		NcSelect,
 	},
 	listId: '',
 	computed: {
-		name () {
+		name() {
 			return "Test"
 		},
-		title () {
+		title() {
 			return this.groceryList === null ? "" : this.groceryList.title;
 		},
-		filteredCategories () {
+		filteredCategories() {
 			if (this.categories == null) {
 				return
 			}
@@ -88,7 +90,7 @@ export default {
 				}
 			})
 		},
-		filteredItems () {
+		filteredItems() {
 			if (this.items == null) {
 				return
 			}
@@ -107,7 +109,7 @@ export default {
 			listId: this.$attrs['listId'],
 			groceryList: null,
 			categories: null,
-			allCategories: null,
+			allCategories: [],
 			items: null,
 			itemsAll: null,
 			updating: false,
@@ -123,7 +125,7 @@ export default {
 			},
 		}
 	},
-	async mounted () {
+	async mounted() {
 		console.warn("Mounted GroceryList " + this.listId)
 		await this.loadGroceryList(this.listId)
 		await this.loadCategories(this.listId)
@@ -131,7 +133,7 @@ export default {
 		await this.loadItems(this.listId)
 	},
 	watch: {
-		$route (to, from) {
+		$route(to, from) {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
 				console.warn("Route: " + to.params.listId)
 				this.listId = to.params.listId
@@ -143,26 +145,26 @@ export default {
 		}
 	},
 	methods: {
-		toggleVisibility () {
+		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.groceryList)
 		},
-		async updateGroceryList (groceryList) {
+		async updateGroceryList(groceryList) {
 			this.updating = true
 			try {
-				await axios.post(OC.generateUrl(`/apps/grocerylist/lists/${groceryList.id}`), groceryList)
+				await axios.post(OC.generateUrl(`/apps/grocerylist/api/lists/${groceryList.id}`), groceryList)
 			} catch (e) {
 				console.error(e)
 				OCP.Toast.error(t('grocerylist', 'Could not update groceryList'))
 			}
 			this.updating = false
 		},
-		updateNewItemCategory (category) {
+		updateNewItemCategory(category) {
 			this.newItemCategory = category;
 		},
-		async loadGroceryList (id) {
+		async loadGroceryList(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/list/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
 			} catch (e) {
 				console.error(e)
@@ -170,9 +172,9 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadCategories (id) {
+		async loadCategories(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/categories/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/categories/' + id))
 				this.categories = response.data
 			} catch (e) {
 				console.error(e)
@@ -180,9 +182,9 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadAllCategories (id) {
+		async loadAllCategories(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/all_categories/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.allCategories = response.data
 				this.newItemCategory = this.allCategories[0]
 			} catch (e) {
@@ -191,9 +193,9 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadItems (id) {
+		async loadItems(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/items/' + id))
+				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/items/' + id))
 				console.warn("Load items for " + id)
 				this.items = response.data;
 				console.warn("Size: " + this.items.length)
@@ -215,7 +217,7 @@ export default {
 			}
 			this.loading = false
 		},
-		async checkItem (item) {
+		async checkItem(item) {
 			this.updating = true
 			if (item.checked === true) {
 				item.checked = false
@@ -223,7 +225,7 @@ export default {
 				item.checked = true
 			}
 			try {
-				await axios.post(OC.generateUrl(`/apps/grocerylist/item/check`),
+				await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/check`),
 						{id: item.id, checked: item.checked}
 				)
 
@@ -245,24 +247,24 @@ export default {
 				OCP.Toast.error(t('grocerylist', 'Could not check item'))
 			}
 		},
-		async editItem (item) {
+		async editItem(item) {
 			this.newItemId = item.id;
 			this.newItemName = item.name;
 			this.newItemQuantity = item.quantity;
 			this.object = this.categories.find(i => i.id === item.category);
 			this.newItemCategory = item.category;
 		},
-		async onSaveItem () {
+		async onSaveItem() {
 			if (this.newItemId === -1) {
 				await this.addItem();
 			} else {
 				await this.updateItem();
 			}
 		},
-		async addItem () {
+		async addItem() {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/item/add`),
+				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/add`),
 						{
 							name: this.newItemName,
 							quantity: this.newItemQuantity,
@@ -282,10 +284,10 @@ export default {
 			}
 			this.updating = false
 		},
-		async updateItem () {
+		async updateItem() {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/item/update`),
+				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/update`),
 						{
 							id: this.newItemId,
 							name: this.newItemName,
@@ -308,6 +310,7 @@ export default {
 }
 </script>
 <style lang="scss">
+/*
 .modal, .content {
 	background: #fff;
 	width: 80%;
@@ -332,4 +335,5 @@ export default {
 		color: crimson;
 	}
 }
+ */
 </style>

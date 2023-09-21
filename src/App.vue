@@ -1,7 +1,7 @@
 <template>
-	<div id="content" class="app-grocerylist">
-		<AppNavigation>
-			<AppNavigationNew v-if="!loading"
+	<NcContent app-name="grocerylist">
+		<NcAppNavigation>
+			<NcAppNavigationNew v-if="!loading"
 												:text="t('grocerylist', 'New list')"
 												:disabled="false"
 												button-id="new-grocerylist-button"
@@ -15,37 +15,37 @@
 																	 :currentGroceryListId="currentGroceryListId"
 				/>
 			</ul>
-		</AppNavigation>
-		<AppContent>
+		</NcAppNavigation>
+		<NcAppContent>
 			<router-view/>
-		</AppContent>
-	</div>
+		</NcAppContent>
+	</NcContent>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent'
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
-import Content from '@nextcloud/vue'
-import dropdown from 'vue-dropdowns'
+import {
+	NcAppNavigationNew,
+	NcAppNavigationItem,
+	NcSelect,
+	NcAppNavigation,
+	NcActionButton,
+	NcAppContent,
+	NcContent
+} from '@nextcloud/vue'
 import axios from '@nextcloud/axios'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import NavigationGroceryListItem from "./components/NavigationGroceryListItem"
-import VueRouter from 'vue-router';
 
 export default {
 	name: 'App',
 	components: {
-		ActionButton,
-		AppContent,
-		AppNavigation,
-		AppNavigationItem,
-		AppNavigationNew,
-		Multiselect,
-		NavigationGroceryListItem,
-		Content
+		NcContent,
+		NcActionButton,
+		NcAppContent,
+		NcAppNavigation,
+		NcAppNavigationItem,
+		NcAppNavigationNew,
+		NcSelect,
+		NavigationGroceryListItem
 	},
 	data: function () {
 		return {
@@ -90,7 +90,7 @@ export default {
 				console.warn("show single list" + this.$route.params)
 			}
 
-			const response = await axios.get(OC.generateUrl('/apps/grocerylist/lists'))
+			const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/lists'))
 			this.groceryLists = response.data
 		} catch (e) {
 			console.error(e)

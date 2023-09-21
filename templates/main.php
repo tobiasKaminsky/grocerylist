@@ -3,4 +3,4 @@
 script('grocerylist', 'grocerylist');
 ?>
 
-<div id="q-app"></div>
+<div id="content"></div>
