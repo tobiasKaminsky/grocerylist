@@ -17,7 +17,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --config webpack.prod.js",
     "dev": "NODE_ENV=development webpack --progress --config webpack.dev.js",
-    "watch": "NODE_ENV=development webpack --progress --watch --config webpack.dev.js",
+    "watch": "NODE_ENV=development webpack --progress --watch --config webpack.prod.js",
     "lint": "eslint --ext .js,.vue src",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "stylelint": "stylelint **/*.css **/*.scss **/*.vue",
@@ -27,9 +27,9 @@
     "@melmacaluso/vue-modal": "^2.1.0",
     "@nextcloud/axios": "^2.4.0",
     "@nextcloud/vue": "8.0.0-beta.5",
-    "eslint-loader": "^4.0.2",
     "sass": "^1.68.0",
     "vue": "^2.7.14",
+    "vue-material-design-icons": "^5.2.0",
     "vue-router": "^3.5.1"
   },
   "browserslist": [
@@ -40,7 +40,10 @@
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "3.0.0",
+    "@nextcloud/eslint-config": "^8.3.0-beta.2",
+    "@nextcloud/eslint-plugin": "^2.1.0",
     "css-loader": "^6.7.3",
+    "eslint": "^8.50.0",
     "file-loader": "^6.0.0",
     "sass-loader": "^13.2.0",
     "url-loader": "^4.1.0",

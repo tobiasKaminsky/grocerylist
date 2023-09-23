@@ -29,7 +29,9 @@ class CategoryMapper extends QBMapper {
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('list', $qb->createNamedParameter($id))
-			);
+			)
+			->orderBy("order")
+		;
 
 		return $this->findEntities($qb);
 	}

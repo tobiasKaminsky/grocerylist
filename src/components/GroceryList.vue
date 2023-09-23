@@ -3,31 +3,42 @@
 		<h1>{{ title }}</h1>
 		<div>
 			<NcActionButton icon="icon-toggle"
-											:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
-											@click="toggleVisibility()">
+							:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
+							@click="toggleVisibility()">
 				Show only unchecked
 			</NcActionButton>
 			<input v-model="newItemQuantity"
-						 placeholder="Quantity…"
-						 :disabled="updating"
-						 style="width: 20%">
+				   placeholder="Quantity…"
+				   :disabled="updating"
+				   style="width: 20%">
 			<input v-model="newItemName"
-						 v-on:keyup.enter="onSaveItem()"
-						 placeholder="Item…"
-						 :disabled="updating"
-						 style="width: 30%">
+				   v-on:keyup.enter="onSaveItem()"
+				   placeholder="Item…"
+				   :disabled="updating"
+				   style="width: 30%">
 			<NcSelect
-					:options="allCategories"
-					label="name"
-					:value="object"
-					v-model="newItemCategory"
-					:closeOnOutsideClick="true"
-					v-on:updateOption="updateNewItemCategory"
-					id="dropdown"
-					style="width: 20%">
+				:options="allCategories"
+				label="name"
+				:value="object"
+				v-model="newItemCategory"
+				:closeOnOutsideClick="true"
+				v-on:updateOption="updateNewItemCategory"
+				id="dropdown"
+				style="width: 20%">
 			</NcSelect>
-			<NcActionButton icon="icon-add"
-											@click="onSaveItem()">
+			<NcActionButton
+				icon="icon-add"
+				:disabled="!canSave"
+				@click="onSaveItem()"
+				style="display:inline-block;">
+			</NcActionButton>
+			<NcActionButton
+				v-if="showDeleteButton"
+				id="deleteButton"
+				icon="icon-delete"
+				:disabled="!canSave"
+				@click="deleteItem()"
+				style="display:inline-block;">
 			</NcActionButton>
 
 			<br/>
@@ -37,18 +48,29 @@
 				</h2>
 				<ul>
 						<li v-for="item in filteredItems"
-								v-if="item.category === category.id">
+							v-if="item.category === category.id">
+              <div>
+              <NcButton
+				  aria-label="Snooze"
+				  type="tertiary"
+				  style="display:inline-block;"
+				  @click="hideItem(item)">
+                <template #icon>
+                  <AlarmSnooze :size="20"/>
+                </template>
+		          </NcButton>
 							<NcCheckboxRadioSwitch
-									:checked="item.checked === true"
-									@update:checked="checkItem(item)">
-								<span @click="editItem(item)"
-											v-bind:style="(item.checked === true) ? 'text-decoration: line-through' : ''">
+								:checked="item.checked === true"
+								@update:checked="checkItem(item)"
+								style="display:inline-block;">
+							</NcCheckboxRadioSwitch>
+								<span @click="editItem(item)">
 									<span v-if="item.quantity !==  ''">
 										{{ item.quantity }}
 									</span>
 									{{ item.name }}
 								</span>
-								</NcCheckboxRadioSwitch>
+                </div>
 						</li>
 					</ul>
 				</span>
@@ -58,7 +80,13 @@
 
 <script>
 import axios from "@nextcloud/axios";
-import {NcSelect, NcActionButton, NcCheckboxRadioSwitch} from "@nextcloud/vue";
+import {
+	NcSelect,
+	NcActionButton,
+	NcCheckboxRadioSwitch,
+	NcButton
+} from "@nextcloud/vue";
+import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze';
 
 export default {
 	name: "GroceryList",
@@ -66,16 +94,18 @@ export default {
 		NcActionButton,
 		NcCheckboxRadioSwitch,
 		NcSelect,
+		NcButton,
+		AlarmSnooze
 	},
 	listId: '',
 	computed: {
-		name() {
+		name () {
 			return "Test"
 		},
-		title() {
+		title () {
 			return this.groceryList === null ? "" : this.groceryList.title;
 		},
-		filteredCategories() {
+		filteredCategories () {
 			if (this.categories == null) {
 				return
 			}
@@ -90,7 +120,7 @@ export default {
 				}
 			})
 		},
-		filteredItems() {
+		filteredItems () {
 			if (this.items == null) {
 				return
 			}
@@ -113,6 +143,7 @@ export default {
 			items: null,
 			itemsAll: null,
 			updating: false,
+			canSave: false,
 			category: '',
 			newCategoryId: -1,
 			loading: false,
@@ -123,9 +154,11 @@ export default {
 			object: {
 				name: 'Select a category…',
 			},
+			toggleButtonCaption: 'Show only unchecked',
+			showDeleteButton: false,
 		}
 	},
-	async mounted() {
+	async mounted () {
 		console.warn("Mounted GroceryList " + this.listId)
 		await this.loadGroceryList(this.listId)
 		await this.loadCategories(this.listId)
@@ -133,7 +166,7 @@ export default {
 		await this.loadItems(this.listId)
 	},
 	watch: {
-		$route(to, from) {
+		$route (to, from) {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
 				console.warn("Route: " + to.params.listId)
 				this.listId = to.params.listId
@@ -145,34 +178,54 @@ export default {
 		}
 	},
 	methods: {
-		toggleVisibility() {
-			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
-			this.updateGroceryList(this.groceryList)
+		updateToggleCaption () {
+			if (this.groceryList.showOnlyUnchecked) {
+				this.toggleButtonCaption = "Show all"
+			} else {
+				this.toggleButtonCaption = "Show only unchecked"
+			}
 		},
-		async updateGroceryList(groceryList) {
+		toggleSaveButton () {
+			if (this.newItemName !== "") {
+				this.canSave = true
+			} else {
+				this.canSave = false
+			}
+		},
+		toggleVisibility () {
+			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
+			this.updateToggleCaption()
+			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
+		},
+		async updateGroceryList (id, value) {
 			this.updating = true
 			try {
-				await axios.post(OC.generateUrl(`/apps/grocerylist/api/lists/${groceryList.id}`), groceryList)
+				await axios.post(OC.generateUrl('/apps/grocerylist/api/lists/' + id),
+					{
+						showOnlyUnchecked: value
+					})
 			} catch (e) {
 				console.error(e)
 				OCP.Toast.error(t('grocerylist', 'Could not update groceryList'))
 			}
 			this.updating = false
 		},
-		updateNewItemCategory(category) {
+		updateNewItemCategory (category) {
 			this.newItemCategory = category;
 		},
-		async loadGroceryList(id) {
+		async loadGroceryList (id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
+
+				this.updateToggleCaption()
 			} catch (e) {
 				console.error(e)
 				OCP.Toast.error(t('grocerylist', ('Could not fetch list ' + id)))
 			}
 			this.loading = false
 		},
-		async loadCategories(id) {
+		async loadCategories (id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/categories/' + id))
 				this.categories = response.data
@@ -182,7 +235,7 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadAllCategories(id) {
+		async loadAllCategories (id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.allCategories = response.data
@@ -193,7 +246,7 @@ export default {
 			}
 			this.loading = false
 		},
-		async loadItems(id) {
+		async loadItems (id) {
 			try {
 				const response = await axios.get(OC.generateUrl('/apps/grocerylist/api/items/' + id))
 				console.warn("Load items for " + id)
@@ -217,7 +270,7 @@ export default {
 			}
 			this.loading = false
 		},
-		async checkItem(item) {
+		async checkItem (item) {
 			this.updating = true
 			if (item.checked === true) {
 				item.checked = false
@@ -225,8 +278,8 @@ export default {
 				item.checked = true
 			}
 			try {
-				await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/check`),
-						{id: item.id, checked: item.checked}
+				await axios.post(OC.generateUrl('/apps/grocerylist/api/item/check'),
+					{id: item.id, checked: item.checked}
 				)
 
 				this.items.sort((a, b) => {
@@ -247,30 +300,49 @@ export default {
 				OCP.Toast.error(t('grocerylist', 'Could not check item'))
 			}
 		},
-		async editItem(item) {
+		async hideItem (item) {
+			this.updating = true
+			try {
+				await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/hide`),
+					{id: item.id}
+				)
+
+				await this.loadItems(this.listId);
+			} catch (e) {
+				console.error(e)
+				OCP.Toast.error(t('grocerylist', 'Could not add item'))
+			}
+			this.updating = false
+		},
+		async editItem (item) {
+			this.showDeleteButton = true;
 			this.newItemId = item.id;
 			this.newItemName = item.name;
 			this.newItemQuantity = item.quantity;
-			this.object = this.categories.find(i => i.id === item.category);
-			this.newItemCategory = item.category;
+			this.object.name = this.allCategories.find(i => i.id === item.category).name;
+			this.newItemCategory = this.allCategories.find(i => i.id === item.category);
+
+			this.toggleSaveButton()
 		},
-		async onSaveItem() {
+		async onSaveItem () {
 			if (this.newItemId === -1) {
 				await this.addItem();
 			} else {
 				await this.updateItem();
 			}
+
+			this.toggleSaveButton()
 		},
-		async addItem() {
+		async addItem () {
 			this.updating = true
 			try {
 				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/add`),
-						{
-							name: this.newItemName,
-							quantity: this.newItemQuantity,
-							category: this.newItemCategory.id,
-							list: this.listId
-						}
+					{
+						name: this.newItemName,
+						quantity: this.newItemQuantity,
+						category: this.newItemCategory.id,
+						list: this.listId
+					}
 				)
 
 				await this.loadItems(this.listId);
@@ -284,16 +356,16 @@ export default {
 			}
 			this.updating = false
 		},
-		async updateItem() {
+		async updateItem () {
 			this.updating = true
 			try {
 				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/update`),
-						{
-							id: this.newItemId,
-							name: this.newItemName,
-							quantity: this.newItemQuantity,
-							category: this.newItemCategory.id
-						}
+					{
+						id: this.newItemId,
+						name: this.newItemName,
+						quantity: this.newItemQuantity,
+						category: this.newItemCategory.id
+					}
 				)
 
 				await this.loadItems(this.listId);
@@ -304,6 +376,25 @@ export default {
 				console.error(e)
 				OCP.Toast.error(t('grocerylist', 'Could not add item'))
 			}
+			this.updating = false
+		},
+		async deleteItem () {
+			this.updating = true
+
+			try {
+				await axios.delete(OC.generateUrl("/apps/grocerylist/api/item/" + this.newItemId));
+
+				await this.loadItems(this.listId);
+				this.newItemName = "";
+				this.newItemQuantity = "";
+				this.newItemCategory = null;
+				this.object.name = 'Select a category…';
+			} catch (e) {
+				console.error(e)
+				OCP.Toast.error(t('grocerylist', 'Could not delete item'))
+			}
+
+			this.showDeleteButton = false
 			this.updating = false
 		},
 	}
