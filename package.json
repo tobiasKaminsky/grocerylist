@@ -40,8 +40,8 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^3.0.0",
-    "@nextcloud/eslint-config": "^8.3.0-beta.2",
+    "@nextcloud/browserslist-config": "3.0.0",
+    "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/eslint-plugin": "^2.1.0",
     "@nextcloud/vite-config": "^1.0.0-beta.19",
     "vue-dropdowns": "^1.1.1",

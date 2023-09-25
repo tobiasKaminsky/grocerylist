@@ -9,6 +9,7 @@ return [
 		['name' => 'GroceryList#saveList', 'url' => '/api/lists', 'verb' => 'POST'],
 		['name' => 'GroceryList#deleteList', 'url' => '/api/lists/{id}', 'verb' => 'DELETE'],
 		['name' => 'GroceryList#updateList', 'url' => '/api/lists/{id}', 'verb' => 'POST'],
+		['name' => 'GroceryList#renameList', 'url' => '/api/list/{id}', 'verb' => 'POST'],
 		['name' => 'GroceryList#showList', 'url' => '/api/list/{id}', 'verb' => 'GET'],
 
 		['name' => 'GroceryList#listItems', 'url' => '/api/items/{id}', 'verb' => 'GET'],

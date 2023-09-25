@@ -106,10 +106,26 @@ class GroceryListController extends Controller
 	 * @param string $title
 	 * @param string $showOnlyUnchecked
 	 */
-	public function updateList(int $id, int $showOnlyUnchecked)
+	public function renameList(int $id, string $title)
+	{
+		$list = $this->groceryListMapper->find($id);
+		$list->setTitle($title);
+
+		$this->groceryListMapper->update($list);
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id
+	 * @param string $title
+	 * @param string $showOnlyUnchecked
+	 */
+	public function updateList(int $id, string $title = '', int $showOnlyUnchecked = 0)
 	{
 		$list = $this->groceryListMapper->find($id);
 		$list->setShowOnlyUnchecked($showOnlyUnchecked);
+		$list->setTitle($title);
 
 		$this->groceryListMapper->update($list);
 	}
