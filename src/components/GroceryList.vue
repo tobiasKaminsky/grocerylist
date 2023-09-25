@@ -79,17 +79,17 @@
 </template>
 
 <script>
-import axios from "@nextcloud/axios";
+import axios from '@nextcloud/axios'
 import {
 	NcSelect,
 	NcActionButton,
 	NcCheckboxRadioSwitch,
 	NcButton
-} from "@nextcloud/vue";
-import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze';
+} from '@nextcloud/vue'
+import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze'
 
 export default {
-	name: "GroceryList",
+	name: 'GroceryList',
 	components: {
 		NcActionButton,
 		NcCheckboxRadioSwitch,
@@ -100,10 +100,10 @@ export default {
 	listId: '',
 	computed: {
 		name () {
-			return "Test"
+			return 'Test'
 		},
 		title () {
-			return this.groceryList === null ? "" : this.groceryList.title;
+			return this.groceryList === null ? '' : this.groceryList.title
 		},
 		filteredCategories () {
 			if (this.categories == null) {
@@ -336,7 +336,7 @@ export default {
 		async addItem () {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/item/add`),
+				const response = await axios.post(OC.generateUrl('/apps/grocerylist/api/item/add'),
 					{
 						name: this.newItemName,
 						quantity: this.newItemQuantity,
@@ -368,10 +368,10 @@ export default {
 					}
 				)
 
-				await this.loadItems(this.listId);
-				this.newItemName = "";
-				this.newItemQuantity = "";
-				this.newItemCategory = null;
+				await this.loadItems(this.listId)
+				this.newItemName = ""
+				this.newItemQuantity = ""
+				this.newItemCategory = null
 			} catch (e) {
 				console.error(e)
 				OCP.Toast.error(t('grocerylist', 'Could not add item'))

@@ -30,7 +30,7 @@ class GroceryListMapper extends QBMapper {
 		if ($result !== null) {
 			return $result[0];
 		} else {
-			return $this->shareeMapper->find($id);
+			return $this->shareeMapper->find($id)[0];
 		}
 	}
 
