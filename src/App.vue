@@ -32,7 +32,7 @@ import {
   NcContent
 } from '@nextcloud/vue'
 import axios from '@nextcloud/axios'
-import NavigationGroceryListItem from "./components/NavigationGroceryListItem"
+import NavigationGroceryListItem from "./components/NavigationGroceryListItem.vue"
 
 export default {
   name: 'App',

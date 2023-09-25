@@ -2,3 +2,7 @@
 /vendor/
 /build/artifacts/
 /*.iml
+
+# The content of this directories is build from the JS source (`src/`) when running `npm run build`
+js/
+css/

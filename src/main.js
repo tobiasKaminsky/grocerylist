@@ -20,8 +20,8 @@
  *
  */
 import Vue from 'vue'
-import App from './App'
-import router from './router'
+import App from './App.vue'
+import router from './router.js'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

@@ -49,28 +49,28 @@
 				<ul>
 						<li v-for="item in filteredItems"
 							v-if="item.category === category.id">
-              <div>
-              <NcButton
-				  aria-label="Snooze"
-				  type="tertiary"
-				  style="display:inline-block;"
-				  @click="hideItem(item)">
-                <template #icon>
-                  <AlarmSnooze :size="20"/>
-                </template>
-		          </NcButton>
+				<div>
+				<NcButton
+					aria-label="Snooze"
+					type="tertiary"
+					style="display:inline-block;"
+					@click="hideItem(item)">
+				<template #icon>
+					<AlarmSnooze :size="20"/>
+				</template>
+					</NcButton>
 							<NcCheckboxRadioSwitch
 								:checked="item.checked === true"
 								@update:checked="checkItem(item)"
 								style="display:inline-block;">
 							</NcCheckboxRadioSwitch>
 								<span @click="editItem(item)">
-									<span v-if="item.quantity !==  ''">
+									<span v-if="item.quantity !== ''">
 										{{ item.quantity }}
 									</span>
 									{{ item.name }}
 								</span>
-                </div>
+				</div>
 						</li>
 					</ul>
 				</span>
@@ -85,8 +85,8 @@ import {
 	NcActionButton,
 	NcCheckboxRadioSwitch,
 	NcButton
-} from '@nextcloud/vue'
-import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze'
+} from "@nextcloud/vue";
+import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue';
 
 export default {
 	name: 'GroceryList',
