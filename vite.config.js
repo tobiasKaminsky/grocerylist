@@ -1,4 +1,4 @@
-import { createAppConfig } from '@nextcloud/vite-config'
+import { createAppConfig } from '@nextcloud/vite-config';
 
 export default createAppConfig({
     main: 'src/main.js',
@@ -8,4 +8,4 @@ export default createAppConfig({
      * But as it increases the bundle size the JS parsing time will be longer -> bad for perfomance!
      */
     inlineCSS: false,
-})
+});

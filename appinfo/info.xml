@@ -17,7 +17,7 @@
     </dependencies>
     <navigations>
         <navigation>
-            <name>Grocery List</name>
+            <name>grocerylist</name>
             <route>grocerylist.GroceryList.index</route>
         </navigation>
     </navigations>
