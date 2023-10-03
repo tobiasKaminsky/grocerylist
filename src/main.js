@@ -3,7 +3,7 @@
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -29,7 +29,7 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
 export default new Vue({
-    el: '#content',
-    router,
-    render: h => h(App),
+	el: '#content',
+	router,
+	render: h => h(App),
 })

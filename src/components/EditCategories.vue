@@ -1,16 +1,16 @@
 <template>
 	<div>
-		<h1>Categories for {{listId}}</h1>
+		<h1>Categories for {{ listId }}</h1>
 		<input ref="name"
-			   v-model="category"
-			   type="text"
-			   :disabled="updating"
-			   style="width: 30%">
+			v-model="category"
+			type="text"
+			:disabled="updating"
+			style="width: 30%">
 		<NcActionButton icon="icon-add"
-					  @click="onSaveCategory()"></NcActionButton>
-		<span v-for="category in categories">
+			@click="onSaveCategory()" />
+		<span v-for="subCategory in categories" :key="subCategory.id">
 			<ul>
-			<li @click="editCategory(category)">{{ category.name }}</li>
+				<li @click="editCategory(subCategory)">{{ subCategory.name }}</li>
 			</ul>
 
 		</span>
@@ -18,71 +18,73 @@
 </template>
 
 <script>
-import axios from "@nextcloud/axios";
-import {NcActionButton} from '@nextcloud/vue'
+import axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+import { NcActionButton } from '@nextcloud/vue'
 
 export default {
-	name: "EditCategories",
+	name: 'EditCategories',
 	components: {
-		NcActionButton
+		NcActionButton,
 	},
 	listId: '',
-	data: function () {
+	data() {
 		return {
-			listId: this.$attrs['listId'],
-			categories: this.$attrs['categories'],
+			listId: this.$attrs.listId,
+			categories: this.$attrs.categories,
 			updating: false,
 			category: '',
 			newCategoryId: -1,
 		}
 	},
 	methods: {
-		editCategory (category) {
-			this.newCategoryId = category.id;
-			this.category = category.name;
+		editCategory(category) {
+			this.newCategoryId = category.id
+			this.category = category.name
 		},
-		async onSaveCategory () {
+		async onSaveCategory() {
 			if (this.newCategoryId === -1) {
-				this.addCategory();
+				this.addCategory()
 			} else {
-				this.updateCategory();
+				this.updateCategory()
 			}
 		},
-		async addCategory () {
+		async addCategory() {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/category/${this.listId}/add`),
-						{
-							name: this.category
-						}
+				const response = await axios.post(generateUrl(`/apps/grocerylist/api/category/${this.listId}/add`),
+					{
+						name: this.category,
+					},
 				)
-				this.categories = response.data;
-				this.category = "";
+				this.categories = response.data
+				this.category = ''
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not add category to list ' . this.listId ))
+				showError(t('grocerylist', 'Could not add category to list '.this.listId))
 			}
 			this.updating = false
 		},
-		async updateCategory (listId) {
+		async updateCategory(listId) {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/api/category/update`),
-						{
-							id: this.newCategoryId,
-							newName: this.category,
-						}
+				const response = await axios.post(generateUrl('/apps/grocerylist/api/category/update'),
+					{
+						id: this.newCategoryId,
+						newName: this.category,
+					},
 				)
 
-				this.categories = response.data;
-				this.category = "";
+				this.categories = response.data
+				this.category = ''
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not update category'))
+				showError(t('grocerylist', 'Could not update category'))
 			}
 			this.updating = false
-		}
-	}
+		},
+	},
 }
 </script>
 <style lang="scss" scoped>
