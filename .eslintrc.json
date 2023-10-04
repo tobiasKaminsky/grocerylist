@@ -1,9 +1,5 @@
 {
 	"extends": [
 		"@nextcloud"
-	],
-	"rules": {
-		"nextcloud/no-deprecations": "warn",
-		"nextcloud/no-removed-apis": "error"
-	}
+	]
 }

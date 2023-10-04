@@ -27,24 +27,27 @@
   "dependencies": {
     "@melmacaluso/vue-modal": "^2.1.0",
     "@nextcloud/axios": "^2.4.0",
+    "@nextcloud/dialogs": "^5.0.0-beta.4",
+    "@nextcloud/router": "^2.1.2",
     "@nextcloud/vue": "8.0.0-beta.5",
-    "sass": "^1.68.0",
     "vue": "^2.7.14",
+    "vue-dropdowns": "^1.1.1",
     "vue-material-design-icons": "^5.2.0",
     "vue-router": "^3.5.1"
-  },
-  "browserslist": [
-    "extends @nextcloud/browserslist-config"
-  ],
-  "engines": {
-    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "3.0.0",
     "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/eslint-plugin": "^2.1.0",
-    "@nextcloud/vite-config": "^1.0.0-beta.19",
-    "vue-dropdowns": "^1.1.1",
+    "@nextcloud/vite-config": "^1.0.0",
+    "sass": "^1.68.0",
     "vite": "^4.4.9"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ]
 }
