@@ -44,6 +44,7 @@ export default {
 			required: true,
 		},
 	},
+	emits: ['delete'],
 	data() {
 		return {}
 	},
@@ -86,6 +87,7 @@ export default {
 				// 	this.currentGroceryListId = null
 				// }
 				showSuccess(t('grocerylist', 'GroceryList deleted'))
+				this.$emit('delete')
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not delete groceryList'))

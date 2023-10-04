@@ -1,18 +1,23 @@
 <template>
 	<NcContent app-name="grocerylist">
 		<NcAppNavigation>
-			<NcAppNavigationNew v-if="!loading"
-				:text="t('grocerylist', 'New list')"
-				:disabled="false"
-				button-id="new-grocerylist-button"
-				button-class="icon-add"
-				@click="newGroceryList" />
-			<ul>
+			<NcAppNavigationNew :text="t('grocerylist', 'New list')"
+				:disabled="loading"
+				@click="newGroceryList">
+				<template #icon>
+					<IconPlus :size="20" />
+				</template>
+			</NcAppNavigationNew>
+			<!-- Loading indicator while lists are not fetched -->
+			<NcAppNavigationItem v-if="loading" :name="t('grocerylist', 'Loading lists…')" :loading="true" />
+			<!-- List of available grocery lists -->
+			<ul v-else>
 				<NavigationGroceryListItem v-for="groceryList in groceryLists"
 					:key="groceryList.id"
 					:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
 					:grocery-list="groceryList"
-					:current-grocery-list-id="currentGroceryListId" />
+					:current-grocery-list-id="currentGroceryListId"
+					@delete="deleteGroceryList(groceryList)" />
 			</ul>
 		</NcAppNavigation>
 		<NcAppContent>
@@ -25,21 +30,25 @@
 import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import {
-	NcAppNavigationNew,
-	NcAppNavigation,
 	NcAppContent,
+	NcAppNavigation,
+	NcAppNavigationItem,
+	NcAppNavigationNew,
 	NcContent,
 } from '@nextcloud/vue'
 
 import axios from '@nextcloud/axios'
 import NavigationGroceryListItem from './components/NavigationGroceryListItem.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 
 export default {
 	name: 'App',
 	components: {
+		IconPlus,
 		NcContent,
 		NcAppContent,
 		NcAppNavigation,
+		NcAppNavigationItem,
 		NcAppNavigationNew,
 		NavigationGroceryListItem,
 	},
@@ -86,8 +95,8 @@ export default {
 				console.warn('show single list' + this.$route.params)
 			}
 
-			const response = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
-			this.groceryLists = response.data
+			const { data } = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
+			this.groceryLists = data
 		} catch (e) {
 			console.error(e)
 			showError(t('grocerylist', 'Could not fetch groceryLists'))
@@ -111,22 +120,18 @@ export default {
 				showError(t('grocerylist', 'Could not rename groceryList'))
 			}
 		},
+		deleteGroceryList(list) {
+			// Remove list from our list of grocery lists
+			this.groceryLists = [...this.groceryLists.filter(({ id }) => id !== list.id)]
+		},
 		async newGroceryList() {
 			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/lists'), { title: '' })
-				// this.currentGroceryListId = response.data.id
+				const { data } = await axios.post(generateUrl('/apps/grocerylist/api/lists'), { title: '' })
+				this.groceryLists.push(data)
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not create groceryList'))
 			}
-			/*
-    this.groceryLists.push({
-      id: -1,
-      title: '',
-      user_id: '',
-      showOnlyUnchecked: false,
-    })
-       */
 		}
 		,
 	},
