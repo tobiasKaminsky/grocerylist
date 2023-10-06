@@ -249,7 +249,7 @@ export default {
 				this.items.sort((a, b) => {
 					if (a.checked === b.checked) {
 						if (a.category === b.category) {
-							return a.name > b.name ? 1 : -1
+							return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 						} else {
 							return a.category - b.category
 						}
@@ -278,7 +278,7 @@ export default {
 				this.items.sort((a, b) => {
 					if (a.checked === b.checked) {
 						if (a.category === b.category) {
-							return a.name > b.name ? 1 : -1
+							return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 						} else {
 							return a.category - b.category
 						}
@@ -331,7 +331,7 @@ export default {
 			try {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/add'),
 					{
-						name: this.newItemName,
+						name: this.newItemName.trim(),
 						quantity: this.newItemQuantity,
 						category: this.newItemCategory.id,
 						list: this.listId,
@@ -355,7 +355,7 @@ export default {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/update'),
 					{
 						id: this.newItemId,
-						name: this.newItemName,
+						name: this.newItemName.trim(),
 						quantity: this.newItemQuantity,
 						category: this.newItemCategory.id,
 					},

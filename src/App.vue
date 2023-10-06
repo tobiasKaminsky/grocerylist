@@ -137,7 +137,10 @@ export default {
 	},
 }
 </script>
-<style scoped>
+<style>
+#content-vue {
+	overflow: inherit !important;
+}
 /*
 #app-content > div {
 	width: 100%;
