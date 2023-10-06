@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<h1>{{ title }}</h1>
 		<div>
 			<NcActionButton icon="icon-toggle"
 				:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
