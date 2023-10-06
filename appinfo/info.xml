@@ -13,7 +13,7 @@
     <category>tools</category>
     <bugs>https://github.com/tobiasKaminsky/GroceryList/issues</bugs>
     <dependencies>
-        <nextcloud min-version="12" max-version="20"/>
+        <nextcloud min-version="27" max-version="28"/>
     </dependencies>
     <navigations>
         <navigation>

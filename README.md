@@ -14,7 +14,7 @@ This requires the following things to be present:
 * curl: used if phpunit and composer are not installed to fetch them from the web
 * npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder
 
-The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present in the **js/** folder. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
+The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
 
 **package.json**:
 ```json
@@ -24,7 +24,6 @@ The make command will install or update Composer dependencies if a composer.json
     "build": "node node_modules/gulp-cli/bin/gulp.js"
 }
 ```
-
 
 ## Publish to App Store
 

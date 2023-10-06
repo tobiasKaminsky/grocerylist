@@ -3,53 +3,51 @@
 		<div>
 			<h1>Categories for {{ listId }}</h1>
 			<input ref="name"
-						 v-model="category"
-						 type="text"
-						 :disabled="updating"
-						 v-on:keyup.enter="onSaveCategory()"
-						 style="width: 30%">
-			<ActionButton icon="icon-add"
-										@click="onSaveCategory()"></ActionButton>
-			<span v-for="category in categories">
-			<ul>
-			<li @click="editCategory(category)">{{ category.name }}</li>
-			</ul>
-		</span>
+				v-model="category"
+				type="text"
+				:disabled="updating"
+				style="width: 30%"
+				@keyup.enter="onSaveCategory()">
+			<NcActionButton icon="icon-add"
+				@click="onSaveCategory()" />
+			<span v-for="subCategory in categories" :key="subCategory.id">
+				<ul>
+					<li @click="editCategory(subCategory)">{{ subCategory.name }}</li>
+				</ul>
+			</span>
 		</div>
 		<div>
 			<h1>Share</h1>
-			<span v-for="sharee in sharees">
-			<ul>
-			<li>{{ sharee.userId }}</li>
-			</ul>
-		</span>
+			<span v-for="sharee in sharees" :key="sharee.userId">
+				<ul>
+					<li>{{ sharee.userId }}</li>
+				</ul>
+			</span>
 		</div>
 	</div>
 </template>
 
 <script>
-import axios from "@nextcloud/axios";
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton';
+import axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+import { NcActionButton } from '@nextcloud/vue'
 
 export default {
-	name: "Settings",
+	name: 'Settings',
 	components: {
-		ActionButton
+		NcActionButton,
 	},
 	listId: '',
-	data: function () {
+	data() {
 		return {
-			listId: this.$attrs['listId'],
+			listId: this.$attrs.listId,
 			categories: null,
 			updating: false,
 			category: '',
 			newCategoryId: -1,
 			sharees: null,
 		}
-	},
-	async mounted() {
-		await this.loadCategories(this.listId)
-		await this.loadSharees(this.listId)
 	},
 	watch: {
 		$route(to, from) {
@@ -58,78 +56,83 @@ export default {
 				this.loadCategories(this.listId)
 				this.loadSharees(this.listId)
 			}
-		}
+		},
+	},
+	async mounted() {
+		await this.loadCategories(this.listId)
+		await this.loadSharees(this.listId)
 	},
 	methods: {
 		editCategory(category) {
-			this.newCategoryId = category.id;
-			this.category = category.name;
+			this.newCategoryId = category.id
+			this.category = category.name
 		},
 		async onSaveCategory() {
 			if (this.newCategoryId === -1) {
-				await this.addCategory();
+				await this.addCategory()
 			} else {
-				await this.updateCategory();
+				await this.updateCategory()
 			}
 		},
 		async addCategory() {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/${this.listId}/add`),
-						{
-							name: this.category
-						}
+				const response = await axios.post(generateUrl(`/apps/grocerylist/api/category/${this.listId}/add`),
+					{
+						name: this.category,
+					},
 				)
-				this.categories = response.data;
-				this.category = "";
+				this.categories = response.data
+				this.category = ''
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not add category to list '.this.listId))
+				showError(t('grocerylist', 'Could not add category to list '.this.listId))
 			}
 			this.updating = false
 		},
 		async updateCategory(listId) {
 			this.updating = true
 			try {
-				const response = await axios.post(OC.generateUrl(`/apps/grocerylist/category/update`),
-						{
-							id: this.newCategoryId,
-							newName: this.category,
-						}
+				const response = await axios.post(generateUrl('/apps/grocerylist/api/category/update'),
+					{
+						id: this.newCategoryId,
+						newName: this.category,
+					},
 				)
 
-				this.categories = response.data;
-				this.category = "";
+				this.categories = response.data
+				this.category = ''
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not update category'))
+				showError(t('grocerylist', 'Could not update category'))
 			}
 			this.updating = false
 		},
 		async loadCategories(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/all_categories/' + id))
+				const response = await axios.get(generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.categories = response.data
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
+				showError(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
 			}
 			this.loading = false
 		},
 		async loadSharees(id) {
 			try {
-				const response = await axios.get(OC.generateUrl('/apps/grocerylist/sharees/' + id))
+				const response = await axios.get(generateUrl('/apps/grocerylist/api/sharees/' + id))
 				this.sharees = response.data
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', ('Could not fetch sharees for groceryList ' + id)))
+				showError(t('grocerylist', ('Could not fetch sharees for groceryList ' + id)))
 			}
 			this.loading = false
 		},
-	}
+	},
 }
 </script>
 <style lang="scss">
+/*
 .modal, .content {
 	background: #fff;
 	width: 80%;
@@ -154,4 +157,5 @@ export default {
 		color: crimson;
 	}
 }
+ */
 </style>

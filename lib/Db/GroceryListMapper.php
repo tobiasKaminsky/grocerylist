@@ -28,9 +28,9 @@ class GroceryListMapper extends QBMapper {
 		$result = $this->findEntities($qb);
 
 		if ($result !== null) {
-			return $result;
+			return $result[0];
 		} else {
-			return $this->shareeMapper->find($id);
+			return $this->shareeMapper->find($id)[0];
 		}
 	}
 

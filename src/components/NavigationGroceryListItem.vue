@@ -1,41 +1,38 @@
 <template>
-	<AppNavigationItem
-			:title="title"
-			:icon="icon"
-			:editable="true"
-			:editLabel="rename"
-			:to="{ name: 'list', params: { id: groceryList.id.toString() } }"
-			:class="{active: currentGroceryListId === groceryList.id}"
-			@click="openGroceryList(groceryList)"
-			@update:title="onRename">
+	<NcAppNavigationItem :name="title"
+		:icon="icon"
+		:editable="true"
+		:edit-label="rename"
+		:to="{ name: 'list', params: { id: groceryList.id.toString() } }"
+		:class="{active: currentGroceryListId === groceryList.id}"
+		@click="openGroceryList(groceryList)"
+		@update:name="onRename">
 		<template #actions>
-			<ActionButton
-					icon="icon-rename"
-					@click="openSettings(groceryList)">
+			<NcActionButton icon="icon-rename"
+				@click="openSettings(groceryList)">
 				{{ t('grocerylist', 'Settings') }}
-			</ActionButton>
-			<ActionButton
-					icon="icon-delete"
-					@click="deleteGroceryList(groceryList)">
+			</NcActionButton>
+			<NcActionButton icon="icon-delete"
+				@click="deleteGroceryList(groceryList)">
 				{{ t('grocerylist', 'Delete list') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 <script>
+import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import {
-	ActionButton,
-	ActionSeparator,
-	AppNavigationItem,
+	NcActionButton,
+	NcAppNavigationItem,
 } from '@nextcloud/vue'
-import axios from "@nextcloud/axios";
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'NavigationGroceryListItem',
 	components: {
-		ActionButton,
-		ActionSeparator,
-		AppNavigationItem,
+		NcActionButton,
+		NcAppNavigationItem,
 	},
 	props: {
 		groceryList: {
@@ -45,70 +42,73 @@ export default {
 		currentGroceryListId: {
 			type: Number,
 			required: true,
-		}
+		},
 	},
-	data () {
+	emits: ['delete'],
+	data() {
 		return {}
 	},
 	computed: {
-		icon () {
-			return 'icon-toggle-filelist';
+		icon() {
+			return 'icon-toggle-filelist'
 		},
-		rename () {
-			return "Rename " + this.groceryList.title;
+		rename() {
+			return 'Rename ' + this.groceryList.title
 		},
-		title () {
-			return this.groceryList.title;
-		}
+		title() {
+			return this.groceryList.title
+		},
 	},
 	methods: {
-		async onRename (newTitle) {
+		async onRename(newTitle) {
+			showInfo('rename to ' + newTitle)
+			console.error('rename to ' + newTitle)
 			this.updating = true
 			this.groceryList.title = newTitle
 
 			try {
 				if (this.groceryList.id === -1) {
-					const response = await axios.post(OC.generateUrl(`/apps/grocerylist/lists`), this.groceryList)
+					const response = await axios.post(generateUrl('/apps/grocerylist/api/lists'), this.groceryList)
 					this.currentGroceryListId = response.data.id
 				} else {
-					await axios.post(OC.generateUrl(`/apps/grocerylist/lists/${this.groceryList.id}`), this.groceryList)
+					await axios.post(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`), this.groceryList)
 				}
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not create groceryList'))
+				showError(t('grocerylist', 'Could not create groceryList'))
 			}
 			this.updating = false
 		},
-		async deleteGroceryList (groceryList) {
+		async deleteGroceryList(groceryList) {
 			try {
-				await axios.delete(OC.generateUrl(`/apps/grocerylist/lists/${this.groceryList.id}`))
+				await axios.delete(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`))
 				// this.groceryLists.splice(this.groceryLists.indexOf(groceryList), 1)
 				// if (this.currentGroceryListId === groceryList.id) {
 				// 	this.currentGroceryListId = null
 				// }
-				OCP.Toast.success(t('grocerylist', 'GroceryList deleted'))
+				showSuccess(t('grocerylist', 'GroceryList deleted'))
+				this.$emit('delete')
 			} catch (e) {
 				console.error(e)
-				OCP.Toast.error(t('grocerylist', 'Could not delete groceryList'))
+				showError(t('grocerylist', 'Could not delete groceryList'))
 			}
 		},
-		openSettings (groceryList) {
+		openSettings(groceryList) {
 			this.$router.push({
-				name: "settings",
+				name: 'settings',
 				params: {
-					listId: groceryList.id
-				}
+					listId: groceryList.id,
+				},
 			})
 		},
-		openGroceryList (groceryList) {
+		openGroceryList(groceryList) {
 			this.$router.push({
-				name: "list",
+				name: 'list',
 				params: {
-					listId: groceryList.id
-				}
+					listId: groceryList.id,
+				},
 			})
-		}
-	}
+		},
+	},
 }
 </script>
-

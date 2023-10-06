@@ -12,6 +12,7 @@ class Item extends Entity implements JsonSerializable {
 	protected $category;
 	protected $list;
 	protected $checked;
+	protected $hidden;
 
 	public function __construct() {
 		$this->addType('name', 'string');
@@ -19,6 +20,7 @@ class Item extends Entity implements JsonSerializable {
 		$this->addType('category', 'int');
 		$this->addType('list', 'int');
 		$this->addType('checked', 'boolean');
+		$this->addType('hidden', 'int');
 	}
 
 	public function jsonSerialize() {
@@ -29,6 +31,7 @@ class Item extends Entity implements JsonSerializable {
 			'category' => $this->category,
 			'list' => $this->list,
 			'checked' => $this->checked,
+			'hidden' => $this->hidden,
 			];
 	}
 }

@@ -83,6 +83,10 @@ class Version000000Date20200604211400 extends SimpleMigrationStep {
 				'notnull' => true,
 				'default' => 0,
 			]);
+			$table->addColumn('hidden', 'integer', [
+				'notnull' => true,
+				'default' => 0,
+			]);
 			$table->setPrimaryKey(['id']);
 		}
 
