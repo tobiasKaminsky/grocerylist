@@ -99,7 +99,7 @@ export default {
 			items: null,
 			itemsAll: null,
 			updating: false,
-			canSave: false,
+			canSave: true,
 			category: '',
 			newCategoryId: -1,
 			loading: false,
