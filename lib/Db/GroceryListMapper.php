@@ -17,7 +17,7 @@ class GroceryListMapper extends QBMapper {
 		$this->userId = $userId;
 	}
 
-	public function find(int $id) {
+	public function find(int $id) : GroceryList {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -27,10 +27,11 @@ class GroceryListMapper extends QBMapper {
 
 		$result = $this->findEntities($qb);
 
-		if ($result !== null) {
+		if (sizeof($result) > 0) {
 			return $result[0];
 		} else {
-			return $this->shareeMapper->find($id)[0];
+			$sharedList = $this->shareeMapper->find($id);
+				return $this->findById($sharedList->list);
 		}
 	}
 
