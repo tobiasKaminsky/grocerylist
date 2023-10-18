@@ -192,7 +192,7 @@ export default {
 		async updateGroceryList(id, value) {
 			this.updating = true
 			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/lists/' + id),
+				await axios.post(generateUrl('/apps/grocerylist/api/lists/' + id + '/visibility'),
 					{
 						showOnlyUnchecked: value,
 					})
