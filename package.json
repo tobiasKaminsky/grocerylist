@@ -29,7 +29,7 @@
     "@nextcloud/axios": "^2.4.0",
     "@nextcloud/dialogs": "^5.0.0-beta.5",
     "@nextcloud/router": "^2.1.2",
-    "@nextcloud/vue": "8.0.0-beta.5",
+    "@nextcloud/vue": "8.0.0-beta.8",
     "vue": "^2.7.14",
     "vue-dropdowns": "^1.1.1",
     "vue-material-design-icons": "^5.2.0",
