@@ -67,6 +67,15 @@ class GroceryListController extends Controller
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function showGroceryListSettings($id)
+	{
+		return $this->index();
+	}
+
+	/**
+	 * @NoAdminRequired
 	 */
 	public function lists()
 	{
