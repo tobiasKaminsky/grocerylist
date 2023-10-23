@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import { generateUrl } from '@nextcloud/router'
 
 import GroceryList from './views/GroceryList.vue'
-import Settings from './components/Settings.vue'
+import ListSettings from './views/ListSettings.vue'
 
 Vue.use(Router)
 
@@ -15,12 +15,9 @@ export default new Router({
 		{
 			path: '/settings/:listId',
 			name: 'settings',
-			components: {
-				default: Settings,
-			},
-			props: {
-				default: true,
-			},
+			component: ListSettings,
+			// Get the property type right by parsing the string to number
+			props: (route) => ({ listId: Number.parseInt(route.params.listId) }),
 		},
 		{
 			path: '/list/:listId',
