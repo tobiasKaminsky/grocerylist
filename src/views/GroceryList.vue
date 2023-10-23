@@ -1,11 +1,10 @@
 <template>
-	<div>
+	<div class="page-wrapper">
+		<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
 		<div>
-			<NcActionButton icon="icon-toggle"
-				:style="{opacity: groceryList != null && groceryList.showOnlyUnchecked ? '1': '0.2'}"
-				@click="toggleVisibility()">
-				Show only unchecked
-			</NcActionButton>
+			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
+				{{ t('grocerylist', 'Show only unchecked') }}
+			</NcCheckboxRadioSwitch>
 			<input v-model="newItemQuantity"
 				placeholder="Quantity…"
 				:disabled="updating"
@@ -23,11 +22,11 @@
 				:close-on-outside-click="true"
 				style="width: 20%"
 				@updateOption="updateNewItemCategory" />
-			<NcActionButton icon="icon-add"
+			<NcButton icon="icon-add"
 				:disabled="!canSave"
 				style="display:inline-block;"
 				@click="onSaveItem()" />
-			<NcActionButton v-if="showDeleteButton"
+			<NcButton v-if="showDeleteButton"
 				id="deleteButton"
 				icon="icon-delete"
 				:disabled="!canSave"
@@ -74,7 +73,6 @@ import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcSelect,
-	NcActionButton,
 	NcCheckboxRadioSwitch,
 	NcButton,
 } from '@nextcloud/vue'
@@ -82,17 +80,23 @@ import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 
 export default {
 	name: 'GroceryList',
+
 	components: {
-		NcActionButton,
 		NcCheckboxRadioSwitch,
 		NcSelect,
 		NcButton,
 		AlarmSnooze,
 	},
-	listId: '',
+
+	props: {
+		listId: {
+			type: Number,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
-			listId: this.$attrs.listId,
 			groceryList: null,
 			categories: null,
 			allCategories: [],
@@ -110,7 +114,6 @@ export default {
 			object: {
 				name: 'Select a category…',
 			},
-			toggleButtonCaption: 'Show only unchecked',
 			showDeleteButton: false,
 		}
 	},
@@ -170,13 +173,6 @@ export default {
 		await this.loadItems(this.listId)
 	},
 	methods: {
-		updateToggleCaption() {
-			if (this.groceryList.showOnlyUnchecked) {
-				this.toggleButtonCaption = 'Show all'
-			} else {
-				this.toggleButtonCaption = 'Show only unchecked'
-			}
-		},
 		toggleSaveButton() {
 			if (this.newItemName !== '') {
 				this.canSave = true
@@ -186,7 +182,6 @@ export default {
 		},
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
-			this.updateToggleCaption()
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
 		},
 		async updateGroceryList(id, value) {
@@ -209,8 +204,6 @@ export default {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
-
-				this.updateToggleCaption()
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', ('Could not fetch list ' + id)))
@@ -392,31 +385,26 @@ export default {
 	},
 }
 </script>
-<style lang="scss">
-/*
-.modal, .content {
-	background: #fff;
-	width: 80%;
-	max-width: 480px;
-	max-height: 60%;
-	box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08);
-	border-radius: 3px;
-	border: 1px solid darkslategray;
-	padding: 1rem;
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	margin: auto;
 
-	code {
-		background: #e4e4e4;
-		border-radius: 3px;
-		padding: 0.25rem 0.5rem;
-		margin: 0.5rem 0;
-		color: crimson;
-	}
+<style lang="scss">
+// Wrapper around all of the view content
+.page-wrapper {
+	width: 100%;
+	max-width: 900px;
+	// center
+	margin-inline: auto;
+	margin-block: var(--app-navigation-padding);
+	// ensure we do not conflict with App Navigation toggle
+	padding-inline: calc(44px + 2 * var(--app-navigation-padding));
 }
- */
+
+h1 {
+	color: var(--color-text-light);
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 30px;
+	text-align: center;
+	// to align with the toggle we need 44px (the toggle) - 30px (h2 line-height) / 2 + padding => 7px + padding
+	margin-block: calc(7px + var(--app-navigation-padding)) 12px;
+}
 </style>
