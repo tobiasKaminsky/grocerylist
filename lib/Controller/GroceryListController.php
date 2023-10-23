@@ -51,7 +51,7 @@ class GroceryListController extends Controller
 	{
 		// Register all scripts and styles we use on the frontend
 		\OCP\Util::addScript($this->appName, $this->appName . '-main'); // adding `js/grocerylist-main.mjs` generated from JS source
-		\OCP\Util::addStyle($this->appName, $this->appName . '-style'); // adding `css/grocerylist-style.css` generated from JS source
+		\OCP\Util::addStyle($this->appName, $this->appName . '-main'); // adding `css/grocerylist-style.css` generated from JS source
 		// return the template we use (see `templates/` folder)
 		return new TemplateResponse('grocerylist', 'main');
 	}
