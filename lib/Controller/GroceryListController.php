@@ -251,10 +251,10 @@ class GroceryListController extends Controller
 	/**
 	 * @NoAdminRequired
 	 * @param string $id
-	 * @param int $checked
+	 * @param bool $checked
 	 * @return DataResponse
 	 */
-	public function checkItem(int $id, int $checked)
+	public function checkItem(int $id, bool $checked)
 	{
 		$item = $this->itemMapper->find($id);
 		$item->setChecked($checked);
