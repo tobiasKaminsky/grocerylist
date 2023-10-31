@@ -5,6 +5,9 @@ namespace OCA\GroceryList\Db;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
+/**
+ * @template-implements QBMapper<Sharee>
+ */
 class ShareeGroceryListMapper extends QBMapper {
 	private $userId;
 

@@ -7,6 +7,9 @@ use OCP\DB\Exception;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
+/**
+ * @template-implements QBMapper<Item>
+ */
 class ItemMapper extends QBMapper {
 
 	const OFFSET = 1 * 60;

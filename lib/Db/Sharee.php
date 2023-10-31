@@ -5,9 +5,22 @@ namespace OCA\GroceryList\Db;
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 
+/**
+ * @method int getList()
+ * @method void setList(int $list)
+ * @method string getUserId()
+ * @method void setUserId(string $userId)
+ */
 class Sharee extends Entity implements JsonSerializable {
 
-	public $list;
+	/**
+	 * @var int
+	 */
+	protected $list;
+
+	/**
+	 * @var string
+	 */
 	protected $userId;
 
 	public function __construct() {
@@ -17,8 +30,9 @@ class Sharee extends Entity implements JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return [
-			'list' => $this->list,
-			'userId' => $this->userId,
-			];
+			'id' => $this->getId(),
+			'list' => $this->getList(),
+			'userId' => $this->getUserId(),
+		];
 	}
 }
