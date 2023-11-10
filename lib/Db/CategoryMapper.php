@@ -6,6 +6,9 @@ use OCP\AppFramework\Db\Entity;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
+/**
+ * @template-implements QBMapper<Category>
+ */
 class CategoryMapper extends QBMapper {
 
 	public function __construct(IDBConnection $db) {

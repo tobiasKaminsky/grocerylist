@@ -6,6 +6,9 @@ use OCP\AppFramework\Db\Entity;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
+/**
+ * @template-implements QBMapper<GroceryList>
+ */
 class GroceryListMapper extends QBMapper {
 	private $userId;
 	private $shareeMapper;
