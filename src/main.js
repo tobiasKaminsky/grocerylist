@@ -22,14 +22,19 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router.js'
+import { createPinia, PiniaVuePlugin } from 'pinia'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
+Vue.use(PiniaVuePlugin)
+
+const pinia = createPinia()
 
 export default new Vue({
 	el: '#content',
 	router,
+	pinia,
 	render: h => h(App),
 })

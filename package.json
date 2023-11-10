@@ -29,9 +29,10 @@
     "@nextcloud/axios": "^2.4.0",
     "@nextcloud/dialogs": "^5.0.0",
     "@nextcloud/router": "^2.2.0",
+    "pinia": "^2.1.7",
     "@nextcloud/vue": "8.0.1",
     "vue": "^2.7.15",
-    "vue-dropdowns": "^1.1.1",
+    "vue-dropdowns": "^1.1.2",
     "vue-material-design-icons": "^5.2.0",
     "vue-router": "^3.5.1"
   },
@@ -39,9 +40,10 @@
     "@nextcloud/browserslist-config": "3.0.0",
     "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/eslint-plugin": "^2.1.0",
-    "vite": "^4.5.0",
     "@nextcloud/vite-config": "^1.1.0",
-    "sass": "^1.69.5"
+    "@vue/tsconfig": "^0.4.0",
+    "sass": "^1.69.5",
+    "vite": "^4.5.0"
   },
   "engines": {
     "node": ">=18.0.0",

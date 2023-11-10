@@ -2,6 +2,7 @@
 return [
 	'routes' => [
 		['name' => 'GroceryList#showGroceryList', 'url' => '/list/{id}', 'verb' => 'GET'],
+		['name' => 'GroceryList#showGroceryListSettings', 'url' => '/settings/{id}', 'verb' => 'GET'],
 
 		['name' => 'GroceryList#index', 'url' => '/', 'verb' => 'GET'],
 

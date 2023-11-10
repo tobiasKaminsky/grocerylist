@@ -1,0 +1,20 @@
+{
+  "extends": "@vue/tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "lib": ["DOM", "ESNext"],
+    "outDir": "./dist",
+    "rootDir": "src/",
+    "sourceMap": true,
+  },
+  "include": [
+    "src/",
+  ],
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
+}
