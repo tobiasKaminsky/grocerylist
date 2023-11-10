@@ -33,7 +33,7 @@ export const useCategoryStore = defineStore('category', {
 					name,
 				},
 			)
-			this.categories[listId] = response.data
+			this.categories = { ...this.categories, [listId]: response.data }
 		},
 
 		/**
