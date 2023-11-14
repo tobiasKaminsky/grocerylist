@@ -19,7 +19,7 @@ return [
 		['name' => 'GroceryList#checkItem', 'url' => '/api/item/check', 'verb' => 'POST'],
 		['name' => 'GroceryList#updateItem', 'url' => '/api/item/update', 'verb' => 'POST'],
 		['name' => 'GroceryList#hideItem', 'url' => '/api/item/hide', 'verb' => 'POST'],
-		['name' => 'GroceryList#deleteItem', 'url' => '/item/{id}', 'verb' => 'DELETE'],
+		['name' => 'GroceryList#deleteItem', 'url' => '/api/item/{id}', 'verb' => 'DELETE'],
 
 		['name' => 'GroceryList#listCategories', 'url' => '/api/categories/{id}', 'verb' => 'GET'],
 		['name' => 'GroceryList#listAllCategories', 'url' => '/api/all_categories/{id}', 'verb' => 'GET'],
