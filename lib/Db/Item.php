@@ -14,6 +14,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setCategory(int $category)
  * @method int getList()
  * @method void setList(int $list)
+ * @method int getHidden()
+ * @method void setHidden(int $hidden)
  */
 class Item extends Entity implements JsonSerializable {
 
@@ -64,14 +66,6 @@ class Item extends Entity implements JsonSerializable {
 		$this->setter('checked', [$checked ? 1 : 0]);
 	}
 
-	public function isHidden(): bool {
-		return $this->hidden !== 0;
-	}
-
-	public function setHidden(bool $hidden): void {
-		$this->setter('hidden', [$hidden ? 1 : 0]);
-	}
-
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
@@ -80,7 +74,7 @@ class Item extends Entity implements JsonSerializable {
 			'category' => $this->getCategory(),
 			'list' => $this->getList(),
 			'checked' => $this->isChecked(),
-			'hidden' => $this->isHidden(),
+			'hidden' => $this->getHidden(),
 		];
 	}
 }
