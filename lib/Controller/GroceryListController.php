@@ -311,6 +311,6 @@ class GroceryListController extends Controller
 	 */
 	public function sharees(int $id): DataResponse
 	{
-		return new DataResponse($this->shareeMapper->find($id));
+		return new DataResponse($this->shareeMapper->findSharees($id));
 	}
 }
