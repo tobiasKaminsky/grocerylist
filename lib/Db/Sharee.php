@@ -16,7 +16,7 @@ class Sharee extends Entity implements JsonSerializable {
 	/**
 	 * @var int
 	 */
-	protected $list;
+	public $list;
 
 	/**
 	 * @var string

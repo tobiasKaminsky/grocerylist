@@ -2,6 +2,7 @@
 
 namespace OCA\GroceryList\Db;
 
+use OCP\DB\Exception;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 
@@ -28,6 +29,22 @@ class ShareeGroceryListMapper extends QBMapper {
 		return $this->findEntities($qb)[0];
 	}
 
+	/**
+	 * @throws Exception
+	 */
+	public function findSharees(int $id) : array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
+
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * @throws Exception
+	 */
 	public function findAll(): array {
 		$qb = $this->db->getQueryBuilder();
 
