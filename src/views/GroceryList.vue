@@ -169,8 +169,8 @@ export default {
 		console.warn('Mounted GroceryList ' + this.listId)
 		await this.loadGroceryList(this.listId)
 		await this.loadCategories(this.listId)
-		await this.loadAllCategories(this.listId)
-		await this.loadItems(this.listId)
+    await this.loadItems(this.listId)
+    await this.loadAllCategories(this.listId)
 	},
 	methods: {
 		toggleSaveButton() {
