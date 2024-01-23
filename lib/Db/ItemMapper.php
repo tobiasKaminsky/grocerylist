@@ -12,7 +12,7 @@ use OCP\AppFramework\Db\QBMapper;
  */
 class ItemMapper extends QBMapper {
 
-	const OFFSET = 1 * 60;
+	const OFFSET = 15 * 60;
 
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'grocerylist_items', Item::class);
