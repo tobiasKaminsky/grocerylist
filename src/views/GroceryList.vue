@@ -5,12 +5,6 @@
 			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
-      <NcButton aria-label="Show add/edit modal"
-          @click="showAddModal">
-        <template #icon>
-          <Plus :size="20"/>
-        </template>
-      </NcButton>
       <NcModal
           v-if="modal"
           ref="modalRef"
@@ -88,6 +82,14 @@
 				</ul>
 			</span>
 		</div>
+    <div class="fixed">
+      <NcButton aria-label="Show add/edit modal"
+                @click="showAddModal">
+        <template #icon>
+          <Plus :size="20"/>
+        </template>
+      </NcButton>
+    </div>
 	</div>
 </template>
 
@@ -457,5 +459,11 @@ h1 {
 }
 .modal__content {
   margin: 50px;
+}
+
+div.fixed {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
 }
 </style>
