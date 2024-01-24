@@ -213,6 +213,7 @@ export default {
 	},
 	methods: {
     showAddModal() {
+      this.newItemId = -1
       this.newItemName = ''
       this.newItemQuantity = ''
       this.modal = true
