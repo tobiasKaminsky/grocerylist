@@ -5,35 +5,59 @@
 			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
-			<input v-model="newItemQuantity"
-				placeholder="Quantity…"
-				:disabled="updating"
-				style="width: 20%">
-			<input v-model="newItemName"
-				placeholder="Item…"
-				:disabled="updating"
-				style="width: 30%"
-				@keyup.enter="onSaveItem()">
-			<NcSelect id="dropdown"
-				v-model="newItemCategory"
-				:options="allCategories"
-				label="name"
-				:value="object"
-				:close-on-outside-click="true"
-				style="width: 20%"
-				@updateOption="updateNewItemCategory" />
-			<NcButton icon="icon-add"
-				:disabled="!canSave"
-				style="display:inline-block;"
-				@click="onSaveItem()" />
-			<NcButton v-if="showDeleteButton"
-				id="deleteButton"
-				icon="icon-delete"
-				:disabled="!canSave"
-				style="display:inline-block;"
-				@click="deleteItem()" />
-
-			<br>
+      <NcButton aria-label="Show add/edit modal"
+          @click="showAddModal">
+        <template #icon>
+          <Plus :size="20"/>
+        </template>
+      </NcButton>
+      <NcModal
+          v-if="modal"
+          ref="modalRef"
+          @close="closeModal"
+          name="Name inside modal">
+        <div class="modal__content">
+          <input v-model="newItemQuantity"
+                 placeholder="Quantity…"
+                 :disabled="updating"
+                 style="width: 50%">
+          <br/>
+          <input v-model="newItemName"
+                 placeholder="Item…"
+                 :disabled="updating"
+                 style="width: 50%"
+                 @keyup.enter="onSaveItem()">
+          <br/>
+          <NcSelect id="dropdown"
+                    v-model="newItemCategory"
+                    :options="allCategories"
+                    label="name"
+                    :value="object"
+                    :close-on-outside-click="true"
+                    style="width: 50%"
+                    @updateOption="updateNewItemCategory" />
+          <br/>
+          <NcButton aria-label="Add item"
+                    style="display:inline-block;"
+                    @click="onSaveItem()">
+            <template #icon>
+              <Plus :size="20"/>
+            </template>
+          </NcButton>
+          <NcButton v-if="showDeleteButton"
+                    id="deleteButton"
+                    aria-label="Delete item"
+                    :disabled="!canSave"
+                    style="display:inline-block;"
+                    @click="deleteItem()">
+            <template #icon>
+              <Delete :size="20"/>
+            </template>
+          </NcButton>
+        </div>
+      </NcModal>
+    </div>
+    <div>
 			<span v-for="category in filteredCategories" :key="category.id">
 				<h2 style="font-size: larger; text-transform: uppercase;">
 					{{ category.name }}
@@ -75,17 +99,29 @@ import {
 	NcSelect,
 	NcCheckboxRadioSwitch,
 	NcButton,
+  NcModal,
 } from '@nextcloud/vue'
 import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import {ref} from "vue";
 
 export default {
 	name: 'GroceryList',
+  setup() {
+    return {
+      modalRef: ref(null),
+    }
+  },
 
 	components: {
 		NcCheckboxRadioSwitch,
 		NcSelect,
 		NcButton,
 		AlarmSnooze,
+    Plus,
+    Delete,
+    NcModal,
 	},
 
 	props: {
@@ -115,6 +151,7 @@ export default {
 				name: 'Select a category…',
 			},
 			showDeleteButton: false,
+      modal: false,
 		}
 	},
 	computed: {
@@ -159,20 +196,28 @@ export default {
 				console.warn('Route: ' + to.params.listId)
 				this.listId = to.params.listId
 				this.loadGroceryList(this.listId)
-				this.loadCategories(this.listId)
-				this.loadAllCategories(this.listId)
-				this.loadItems(this.listId)
+        this.loadItems(this.listId)
+        this.loadCategories(this.listId)
+        this.loadAllCategories(this.listId)
 			}
 		},
 	},
 	async mounted() {
 		console.warn('Mounted GroceryList ' + this.listId)
 		await this.loadGroceryList(this.listId)
-		await this.loadCategories(this.listId)
     await this.loadItems(this.listId)
+    await this.loadCategories(this.listId)
     await this.loadAllCategories(this.listId)
 	},
 	methods: {
+    showAddModal() {
+      this.newItemName = ''
+      this.newItemQuantity = ''
+      this.modal = true
+    },
+    closeModal() {
+      this.modal = false
+    },
 		toggleSaveButton() {
 			if (this.newItemName !== '') {
 				this.canSave = true
@@ -306,6 +351,7 @@ export default {
 			this.newItemQuantity = item.quantity
 			this.object.name = this.allCategories.find(i => i.id === item.category).name
 			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
+      this.modal = true
 
 			this.toggleSaveButton()
 		},
@@ -317,6 +363,7 @@ export default {
 			}
 
 			this.toggleSaveButton()
+      this.closeModal()
 		},
 		async addItem() {
 			this.updating = true
@@ -381,6 +428,7 @@ export default {
 
 			this.showDeleteButton = false
 			this.updating = false
+      this.modal = false
 		},
 	},
 }
@@ -406,5 +454,8 @@ h1 {
 	text-align: center;
 	// to align with the toggle we need 44px (the toggle) - 30px (h2 line-height) / 2 + padding => 7px + padding
 	margin-block: calc(7px + var(--app-navigation-padding)) 12px;
+}
+.modal__content {
+  margin: 50px;
 }
 </style>
