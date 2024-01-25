@@ -1,6 +1,5 @@
 <template>
 	<div class="page-wrapper">
-		<h1>{{ t('grocerylist', 'Settings for list {list}', { list: listId }) }}</h1>
 		<h2>{{ t('grocerylist', 'Categories') }}</h2>
 
 		<NcEmptyContent v-if="loadingCategories" :name="t('grocerylist', 'Categories loading…')">
@@ -17,7 +16,6 @@
 			<ListCategory v-for="category in categories" :key="category.name" :category="category" />
 		</ul>
 
-		<h3>{{ t('grocerylist', 'Add a new category') }}</h3>
 		<ListCategoryNew :list-id="listId" />
 
 <!--		<h2>{{ t('grocerylist', 'Shares') }}</h2>-->
