@@ -1,6 +1,7 @@
 <template>
   <div class="page-wrapper">
     <div class="fixedHeader">
+      <h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
       <NcSelect id="nav_dropdown"
                 v-model="newItemCategory"
                 :options="allCategories"
@@ -8,15 +9,16 @@
                 :value="scrollCategory"
                 :close-on-outside-click="true"
                 :closeOnSelect="true"
-                style="width: 50%"
+                style="width: 50%; margin-left: 20px"
                 @option:selected="scrollToCategory"/>
-    </div>
-    <h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
-    <div>
+
       <NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch"
                              @update:checked="toggleVisibility">
         {{ t('grocerylist', 'Show only unchecked') }}
       </NcCheckboxRadioSwitch>
+    </div>
+    <div>
+
       <NcModal
           v-if="modal"
           ref="modalRef"
@@ -456,7 +458,7 @@ export default {
 // Wrapper around all of the view content
 .page-wrapper {
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   // center
   margin-inline: auto;
   margin-block: calc(200 + var(--app-navigation-padding));
@@ -486,6 +488,7 @@ div.fixedAddButton {
 
 div.fixedHeader {
   position: fixed;
-  top: 50px;
+  top: 55px;
+  display: flex;
 }
 </style>
