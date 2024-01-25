@@ -20,12 +20,12 @@
 		<h3>{{ t('grocerylist', 'Add a new category') }}</h3>
 		<ListCategoryNew :list-id="listId" />
 
-		<h2>{{ t('grocerylist', 'Shares') }}</h2>
-		<span v-for="sharee in sharees" :key="sharee.userId">
-			<ul>
-				<li>{{ sharee.userId }}</li>
-			</ul>
-		</span>
+<!--		<h2>{{ t('grocerylist', 'Shares') }}</h2>-->
+<!--		<span v-for="sharee in sharees" :key="sharee.userId">-->
+<!--			<ul>-->
+<!--				<li>{{ sharee.userId }}</li>-->
+<!--			</ul>-->
+<!--		</span>-->
 	</div>
 </template>
 
