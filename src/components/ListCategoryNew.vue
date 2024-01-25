@@ -8,11 +8,12 @@
 			trailing-button-icon="close"
 			@trailing-button-click="newCategoryName = ''" />
 
-		<NcButton :aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })" @click="addCategory">
+		<NcButton type="tertiary"
+              :aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })"
+              @click="addCategory">
 			<template #icon>
 				<IconPlus :size="20" />
 			</template>
-			{{ t('grocerylist', 'Add') }}
 		</NcButton>
 	</div>
 </template>
