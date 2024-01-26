@@ -4,7 +4,7 @@
       <h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
       <NcSelect id="nav_dropdown"
                 v-model="newItemCategory"
-                :options="allCategories"
+                :options="filteredCategories"
                 label="name"
                 :value="scrollCategory"
                 :close-on-outside-click="true"
@@ -65,7 +65,7 @@
         </div>
       </NcModal>
     </div>
-    <div>
+    <div id="list" class="list">
 			<span v-for="category in filteredCategories" :key="category.id">
 				<h2 style="font-size: larger; text-transform: uppercase;" :id="category.id">
 					{{ category.name }}
@@ -489,6 +489,13 @@ div.fixedAddButton {
 div.fixedHeader {
   position: fixed;
   top: 55px;
-  display: flex;
+}
+.app-content {
+  overflow: unset !important;
+}
+div.list {
+  margin-top: 150px;
+  height: 700px;
+  overflow-y: auto;
 }
 </style>
