@@ -2,9 +2,9 @@
 
 namespace OCA\GroceryList\Db;
 
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
 /**
  * @template-implements QBMapper<Sharee>

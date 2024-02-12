@@ -2,9 +2,8 @@
 
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
-use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\IDBConnection;
 
 /**
  * @template-implements QBMapper<GroceryList>
@@ -34,7 +33,7 @@ class GroceryListMapper extends QBMapper {
 			return $result[0];
 		} else {
 			$sharedList = $this->shareeMapper->find($id);
-				return $this->findById($sharedList->list);
+			return $this->findById($sharedList->list);
 		}
 	}
 
