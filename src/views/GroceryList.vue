@@ -13,12 +13,10 @@
         <div class="modal__content">
           <input v-model="newItemQuantity"
                  placeholder="Quantity…"
-                 :disabled="updating"
                  style="width: 50%">
           <br/>
           <input v-model="newItemName"
                  placeholder="Item…"
-                 :disabled="updating"
                  style="width: 50%"
                  @keyup.enter="onSaveItem()">
           <br/>
@@ -41,7 +39,7 @@
           <NcButton v-if="showDeleteButton"
                     id="deleteButton"
                     aria-label="Delete item"
-                    :disabled="!canSave"
+                    :hidden="newItemId === -1"
                     style="display:inline-block;"
                     @click="deleteItem()">
             <template #icon>
@@ -95,7 +93,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showInfo } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcSelect,
@@ -140,8 +138,6 @@ export default {
 			allCategories: [],
 			items: null,
 			itemsAll: null,
-			updating: false,
-			canSave: true,
 			category: '',
 			newCategoryId: -1,
 			loading: false,
@@ -221,19 +217,11 @@ export default {
     closeModal() {
       this.modal = false
     },
-		toggleSaveButton() {
-			if (this.newItemName !== '') {
-				this.canSave = true
-			} else {
-				this.canSave = false
-			}
-		},
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
 		},
 		async updateGroceryList(id, value) {
-			this.updating = true
 			try {
 				await axios.post(generateUrl('/apps/grocerylist/api/lists/' + id + '/visibility'),
 					{
@@ -243,7 +231,6 @@ export default {
 				console.error(e)
 				showError(t('grocerylist', 'Could not update groceryList'))
 			}
-			this.updating = false
 		},
 		updateNewItemCategory(category) {
 			this.newItemCategory = category
@@ -304,7 +291,6 @@ export default {
 			this.loading = false
 		},
 		async checkItem(item) {
-			this.updating = true
 			if (item.checked === true) {
 				item.checked = false
 			} else {
@@ -327,14 +313,12 @@ export default {
 					}
 				})
 
-				this.updating = false
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not check item'))
 			}
 		},
 		async hideItem(item) {
-			this.updating = true
 			try {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'),
 					{ id: item.id },
@@ -345,7 +329,6 @@ export default {
 				console.error(e)
 				showError(t('grocerylist', 'Could not add item'))
 			}
-			this.updating = false
 		},
 		async editItem(item) {
 			this.showDeleteButton = true
@@ -355,21 +338,22 @@ export default {
 			this.object.name = this.allCategories.find(i => i.id === item.category).name
 			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
       this.modal = true
-
-			this.toggleSaveButton()
 		},
 		async onSaveItem() {
-			if (this.newItemId === -1) {
-				await this.addItem()
-			} else {
-				await this.updateItem()
-			}
+      if (this.newItemName === "") {
+        showInfo("Cannot add empty item!")
+        return
+      }
 
-			this.toggleSaveButton()
+      if (this.newItemId === -1) {
+        await this.addItem()
+      } else {
+        await this.updateItem()
+      }
+
       this.closeModal()
 		},
 		async addItem() {
-			this.updating = true
 			try {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/add'),
 					{
@@ -389,10 +373,8 @@ export default {
 				console.error(e)
 				showError(t('grocerylist', 'Could not add item'))
 			}
-			this.updating = false
 		},
 		async updateItem() {
-			this.updating = true
 			try {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/update'),
 					{
@@ -411,11 +393,8 @@ export default {
 				console.error(e)
 				showError(t('grocerylist', 'Could not add item'))
 			}
-			this.updating = false
 		},
 		async deleteItem() {
-			this.updating = true
-
 			try {
 				await axios.delete(generateUrl('/apps/grocerylist/api/item/' + this.newItemId))
 
@@ -430,7 +409,6 @@ export default {
 			}
 
 			this.showDeleteButton = false
-			this.updating = false
       this.modal = false
 		},
 	},
