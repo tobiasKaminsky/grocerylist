@@ -1,14 +1,20 @@
 {
-    "name": "tobiaskaminsky/grocery_list-0.1",
-    "description": "Grocery list for Nextcloud",
-    "type": "project",
-    "license": "AGPL",
-    "authors": [
-        {
-            "name": "Tobias Kaminsky"
-        }
-    ],
-    "require": {},
-    "require-dev": {
+  "name": "tobiaskaminsky/grocery_list-0.1",
+  "description": "Grocery list for Nextcloud",
+  "type": "project",
+  "license": "AGPL",
+  "authors": [
+    {
+      "name": "Tobias Kaminsky"
     }
+  ],
+  "require": {},
+  "require-dev": {
+    "nextcloud/coding-standard": "^1.1.1"
+  },
+  "scripts": {
+    "lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l",
+    "cs:fix": "php-cs-fixer fix",
+    "cs:check": "php-cs-fixer fix --dry-run --diff"
+  }
 }
