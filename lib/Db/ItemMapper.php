@@ -2,17 +2,16 @@
 
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
 /**
  * @template-implements QBMapper<Item>
  */
 class ItemMapper extends QBMapper {
 
-	const OFFSET = 15 * 60;
+	public const OFFSET = 15 * 60;
 
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'grocerylist_items', Item::class);
