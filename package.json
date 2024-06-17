@@ -40,7 +40,7 @@
     "@nextcloud/browserslist-config": "3.0.0",
     "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/eslint-plugin": "^2.2.0",
-    "@nextcloud/vite-config": "^1.2.2",
+    "@nextcloud/vite-config": "^2.0.2",
     "@vue/tsconfig": "^0.5.1",
     "sass": "^1.75.0",
     "vite": "^5.2.9"
