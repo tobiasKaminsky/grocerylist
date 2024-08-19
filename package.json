@@ -27,7 +27,7 @@
   "dependencies": {
     "@melmacaluso/vue-modal": "^2.1.0",
     "@nextcloud/axios": "^2.4.0",
-    "@nextcloud/dialogs": "^5.3.1",
+    "@nextcloud/dialogs": "^5.3.6",
     "@nextcloud/router": "^3.0.0",
     "pinia": "^2.1.7",
     "@nextcloud/vue": "8.11.2",
