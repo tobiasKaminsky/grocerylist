@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "3.0.1",
-    "@nextcloud/eslint-config": "^8.3.0",
+    "@nextcloud/eslint-config": "^8.4.1",
     "@nextcloud/eslint-plugin": "^2.2.1",
     "@nextcloud/vite-config": "^1.2.2",
     "@vue/tsconfig": "^0.5.1",
