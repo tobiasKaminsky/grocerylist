@@ -79,7 +79,13 @@ class GroceryListController extends Controller
 	 */
 	public function lists()
 	{
-		return new DataResponse($this->groceryListMapper->findAll());
+		$lists = $this->groceryListMapper->findAll();
+
+        foreach ($lists as $list) {
+            $list->setUncheckedCount($this->itemMapper->findAllUnchecked($list->getId()));
+        }
+
+        return new DataResponse($lists);
 	}
 
 	/**
@@ -172,6 +178,16 @@ class GroceryListController extends Controller
 	{
 		return new DataResponse($this->itemMapper->findAll($id));
 	}
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @param int $id
+     */
+    public function countUnckedItems(int $id)
+    {
+        return new DataResponse($this->itemMapper->findAllUnchecked($id));
+    }
 
 	/**
 	 * @NoAdminRequired

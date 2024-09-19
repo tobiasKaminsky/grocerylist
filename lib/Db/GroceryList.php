@@ -28,10 +28,16 @@ class GroceryList extends Entity implements JsonSerializable {
 	 */
 	protected $showOnlyUnchecked;
 
+    /**
+     * @var int
+     */
+    protected $uncheckedCount;
+
 	public function __construct() {
 		$this->addType('title', 'string');
 		$this->addType('userId', 'string');
 		$this->addType('showOnlyUnchecked', 'int');
+        $this->addType('uncheckedCount', 'int');
 	}
 
 	public function getShowOnlyUnchecked(): bool {
@@ -42,12 +48,18 @@ class GroceryList extends Entity implements JsonSerializable {
 		$this->setter('showOnlyUnchecked', [$showOnlyUnchecked ? 1 : 0]);
 	}
 
+    public function setUncheckedCount(int $count): void {
+        $this->setter('uncheckedCount', [$count]);
+    }
+
+
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
 			'title' => $this->getTitle(),
 			'userId' => $this->getUserId(),
 			'showOnlyUnchecked' => $this->getShowOnlyUnchecked(),
+            'uncheckedCount' => $this->uncheckedCount,
 		];
 	}
 }

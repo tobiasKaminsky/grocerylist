@@ -24,6 +24,7 @@ import App from './App.vue'
 import router from './router.js'
 import { createPinia, PiniaVuePlugin } from 'pinia'
 
+Vue.config.devtools = true
 Vue.prototype.t = t
 Vue.prototype.n = n
 Vue.prototype.OC = OC

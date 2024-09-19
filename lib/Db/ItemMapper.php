@@ -31,8 +31,9 @@ class ItemMapper extends QBMapper {
 	}
 
 	/**
-	 * @throws Exception
-	 */
+	 * @return GroceryList[]
+     * @throws Exception
+     */
 	public function findAll(int $id): array {
 		$qb = $this->db->getQueryBuilder();
 
@@ -43,6 +44,20 @@ class ItemMapper extends QBMapper {
 
 		return $this->findEntities($qb);
 	}
+
+    /**
+     * @throws Exception
+     */
+    public function findAllUnchecked(int $id): int {
+        $qb = $this->db->getQueryBuilder();
+
+        $qb->select('*')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
+            ->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0)));
+
+        return sizeof($this->findEntities($qb));
+    }
 
 	public function categoryUsed(int $id): bool {
 		$qb = $this->db->getQueryBuilder();
