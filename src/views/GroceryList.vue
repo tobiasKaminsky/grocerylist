@@ -10,10 +10,16 @@
       </NcButton>
     </div>
 		<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
-		<div>
+    <div style="display: flex; flex-wrap: wrap;">
 			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
+      <NcCheckboxRadioSwitch v-if="!!groceryList?.showOnlyUnchecked"
+                             type="switch"
+                             :checked.sync="hideCategory"
+                             @update:checked="toggleCategory">
+        {{ t('grocerylist', 'Hide category') }}
+      </NcCheckboxRadioSwitch>
 			<NcModal
           v-if="modal"
 				  ref="modalRef"
@@ -172,6 +178,7 @@ export default {
 			allCategories: [],
 			items: null,
 			itemsAll: null,
+      category: '',
 			newCategoryId: -1,
 			loading: false,
 			newItemId: -1,
@@ -183,6 +190,7 @@ export default {
 			},
 			showDeleteButton: false,
 			modal: false,
+      hideCategory: false,
 		}
 	},
 	computed: {
