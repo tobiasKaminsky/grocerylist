@@ -3,8 +3,7 @@
 		:icon="icon"
 		:editable="true"
 		:edit-label="rename"
-		:to="{ name: 'list', params: { id: groceryList.id.toString() } }"
-		:class="{active: currentGroceryListId === groceryList.id}"
+		:to="{ name: 'list', params: { listId: groceryList.id.toString() } }"
 		@click="openGroceryList(groceryList)"
 		@update:name="onRename">
 		<template #actions>
