@@ -48,7 +48,10 @@ class GroceryListMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-	public function findAll() {
+    /**
+     * @return GroceryList[]
+     */
+	public function findAll() : array {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
