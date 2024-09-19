@@ -42,7 +42,7 @@
     "@nextcloud/eslint-plugin": "^2.2.1",
     "@nextcloud/vite-config": "^1.2.2",
     "@vue/tsconfig": "^0.5.1",
-    "sass": "^1.78.0",
+    "sass": "^1.79.1",
     "vite": "^5.4.4"
   },
   "engines": {
