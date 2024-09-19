@@ -8,17 +8,19 @@
 					<IconPlus :size="20" />
 				</template>
 			</NcAppNavigationNew>
-			<!-- Loading indicator while lists are not fetched -->
-			<NcAppNavigationItem v-if="loading" :name="t('grocerylist', 'Loading lists…')" :loading="true" />
-			<!-- List of available grocery lists -->
-			<ul v-else>
-				<NavigationGroceryListItem v-for="groceryList in groceryLists"
-					:key="groceryList.id"
-					:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
-					:grocery-list="groceryList"
-					:current-grocery-list-id="currentGroceryListId"
-					@delete="deleteGroceryList(groceryList)" />
-			</ul>
+			<template #list>
+				<!-- Loading indicator while lists are not fetched -->
+				<NcAppNavigationItem v-if="loading" :name="t('grocerylist', 'Loading lists…')" :loading="true" />
+				<!-- List of available grocery lists -->
+				<ul v-else>
+					<NavigationGroceryListItem v-for="groceryList in groceryLists"
+						:key="groceryList.id"
+						:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
+						:grocery-list="groceryList"
+						:current-grocery-list-id="currentGroceryListId"
+						@delete="deleteGroceryList(groceryList)" />
+				</ul>
+			</template>
 		</NcAppNavigation>
 		<NcAppContent>
 			<router-view />
