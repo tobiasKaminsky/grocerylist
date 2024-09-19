@@ -24,7 +24,6 @@
 import { showError } from '@nextcloud/dialogs'
 import { NcButton, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
-import { nextTick } from 'vue'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
 import IconCheck from 'vue-material-design-icons/Check.vue'
