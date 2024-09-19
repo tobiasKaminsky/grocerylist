@@ -1,55 +1,52 @@
 <template>
 	<div class="page-wrapper">
-    <div>
-      <NcButton aria-label="Show add/edit modal"
-                @click="showAddModal">
-        <template #icon>
-          <Plus :size="20"/>
-        </template>
-        <template>Add</template>
-      </NcButton>
-    </div>
+		<div>
+			<NcButton aria-label="Show add/edit modal"
+				@click="showAddModal">
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				Add
+			</NcButton>
+		</div>
 		<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
-    <div style="display: flex; flex-wrap: wrap;">
+		<div style="display: flex; flex-wrap: wrap;">
 			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
-      <NcCheckboxRadioSwitch v-if="!!groceryList?.showOnlyUnchecked"
-                             type="switch"
-                             :checked.sync="hideCategory"
-                             @update:checked="toggleCategory">
-        {{ t('grocerylist', 'Hide category') }}
-      </NcCheckboxRadioSwitch>
-			<NcModal
-          v-if="modal"
-				  ref="modalRef"
-				  :name="t('grocerylist', 'Add item')"
+			<NcCheckboxRadioSwitch v-if="!groceryList?.showOnlyUnchecked"
+				type="switch"
+				:checked.sync="hideCategory">
+				{{ t('grocerylist', 'Hide category') }}
+			</NcCheckboxRadioSwitch>
+			<NcModal v-if="modal"
+				ref="modalRef"
+				:name="t('grocerylist', 'Add item')"
 				@close="closeModal">
 				<form class="modal__content"
 					@submit.prevent="onSaveItem()">
 					<p class="quantityRow">
 						<NcTextField :value.sync="newItemQuantity"
 							label="Quantity…"
-             @keyup.up="increaseQuantity()"
-             @keyup.down="decreaseQuantity()"
-            />
-          <NcButton aria-label="Increase quantity"
-                    style="display:inline-block;"
-                    type="tertiary"
-                    @click="increaseQuantity()">
-            <template #icon>
-              <Plus :size="20"/>
-            </template>
-          </NcButton>
-          <NcButton aria-label="Decrease quantity"
-                    style="display:inline-block;"
-                    type="tertiary"
-                    @click="decreaseQuantity()">
-            <template #icon>
-              <Minus :size="20"/>
-            </template>
-          </NcButton>
-          </p>
+							@keyup.up="increaseQuantity()"
+							@keyup.down="decreaseQuantity()" />
+						<NcButton aria-label="Increase quantity"
+							style="display:inline-block;"
+							type="tertiary"
+							@click="increaseQuantity()">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+						</NcButton>
+						<NcButton aria-label="Decrease quantity"
+							style="display:inline-block;"
+							type="tertiary"
+							@click="decreaseQuantity()">
+							<template #icon>
+								<Minus :size="20" />
+							</template>
+						</NcButton>
+					</p>
 					<p>
 						<NcTextField :value.sync="newItemName"
 							label="Item…"
@@ -87,34 +84,29 @@
 			</NcModal>
 		</div>
 		<div>
-			<span v-for="category in filteredCategories" :key="category.id">
-				<h2 style="font-size: larger; text-transform: uppercase;">
-					{{ category.name }}
-				</h2>
-				<ul class="item-list">
-					<li v-for="item in filteredItems(category.id)"
+			<div v-if="hideCategory">
+				<ul class="list-item">
+					<ListItem v-for="item in allItems"
 						:key="item.id"
-						:class="{'snoozed': isSnoozed(item)}">
-						<NcButton aria-label="Snooze"
-							type="tertiary"
-							style="display:inline-block;"
-							@click="hideItem(item)">
-							<template #icon>
-								<AlarmSnooze :size="20" />
-							</template>
-						</NcButton>
-						<NcCheckboxRadioSwitch :checked="item.checked === true"
-							style="display:inline-block;"
-							@update:checked="checkItem(item)" />
-						<span @click="editItem(item)">
-							<span v-if="item.quantity !== ''">
-								{{ item.quantity }}
-							</span>
-							{{ item.name }}
-						</span>
-					</li>
+						:item="item"
+						@edit="() => editItem(item)"
+						@update="loadItems(listId)" />
 				</ul>
-			</span>
+			</div>
+			<div v-else>
+				<span v-for="category in filteredCategories" :key="category.id">
+					<h2 style="font-size: larger; text-transform: uppercase;">
+						{{ category.name }}
+					</h2>
+					<ul class="item-list">
+						<ListItem v-for="item in filteredItems(category.id)"
+							:key="item.id"
+							:item="item"
+							@edit="() => editItem(item)"
+							@update="loadItems(listId)" />
+					</ul>
+				</span>
+			</div>
 		</div>
 		<div class="fixed">
 			<NcButton aria-label="Show add/edit modal"
@@ -138,26 +130,26 @@ import {
 	NcModal,
 	NcTextField,
 } from '@nextcloud/vue'
-import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
+import ListItem from './../components/ListItem.vue'
 
 export default {
 	name: 'GroceryList',
 
-  components: {
-    NcCheckboxRadioSwitch,
-    NcSelect,
-    NcButton,
-    AlarmSnooze,
-    NcTextField,
-    Plus,
-    Minus,
-    Delete,
-    NcModal,
-  },
+	components: {
+		NcCheckboxRadioSwitch,
+		NcSelect,
+		NcButton,
+		NcTextField,
+		Plus,
+		Minus,
+		Delete,
+		NcModal,
+		ListItem,
+	},
 
 	props: {
 		listId: {
@@ -178,7 +170,6 @@ export default {
 			allCategories: [],
 			items: null,
 			itemsAll: null,
-      category: '',
 			newCategoryId: -1,
 			loading: false,
 			newItemId: -1,
@@ -190,7 +181,7 @@ export default {
 			},
 			showDeleteButton: false,
 			modal: false,
-      hideCategory: false,
+			hideCategory: false,
 		}
 	},
 	computed: {
@@ -202,6 +193,9 @@ export default {
 		},
 		title() {
 			return this.groceryList === null ? '' : this.groceryList.title
+		},
+		allItems() {
+			return this.items
 		},
 		filteredCategories() {
 			if (this.categories == null) {
@@ -270,6 +264,7 @@ export default {
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
+			this.hideCategory = false
 		},
 		async updateGroceryList(id, value) {
 			try {
@@ -340,46 +335,6 @@ export default {
 			}
 			this.loading = false
 		},
-		async checkItem(item) {
-			if (item.checked === true) {
-				item.checked = false
-			} else {
-				item.checked = true
-			}
-			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/item/check'),
-					{ id: item.id, checked: item.checked },
-				)
-
-				this.items.sort((a, b) => {
-					if (a.checked === b.checked) {
-						if (a.category === b.category) {
-							return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-						} else {
-							return a.category - b.category
-						}
-					} else {
-						return a.checked - b.checked
-					}
-				})
-
-			} catch (e) {
-				console.error(e)
-				showError(t('grocerylist', 'Could not check item'))
-			}
-		},
-		async hideItem(item) {
-			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'),
-					{ id: item.id },
-				)
-
-				await this.loadItems(this.listId)
-			} catch (e) {
-				console.error(e)
-				showError(t('grocerylist', 'Could not add item'))
-			}
-		},
 		async editItem(item) {
 			this.showDeleteButton = true
 			this.newItemId = item.id
@@ -389,37 +344,37 @@ export default {
 			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
 			this.modal = true
 		},
-    increaseQuantity() {
-      if (this.newItemQuantity === '') {
-        this.newItemQuantity = 0
-      }
+		increaseQuantity() {
+			if (this.newItemQuantity === '') {
+				this.newItemQuantity = 0
+			}
 
-      if (this.newItemQuantity >= 1000) {
-        this.newItemQuantity = this.newItemQuantity + 1000
-      } else if (this.newItemQuantity >= 100) {
-        this.newItemQuantity = this.newItemQuantity + 100
-      } else if (this.newItemQuantity >= 10) {
-        this.newItemQuantity = this.newItemQuantity + 10
-      } else {
-        this.newItemQuantity = this.newItemQuantity + 1
-      }
-    },
-    decreaseQuantity() {
-      if (this.newItemQuantity > 1000) {
-        this.newItemQuantity = this.newItemQuantity - 1000
-      } else if (this.newItemQuantity > 100) {
-        this.newItemQuantity = this.newItemQuantity - 100
-      } else if (this.newItemQuantity > 10) {
-        this.newItemQuantity = this.newItemQuantity - 10
-      } else if (this.newItemQuantity > 1) {
-        this.newItemQuantity = this.newItemQuantity - 1
-      } else {
-        this.newItemQuantity = ''
-      }
-    },
+			if (this.newItemQuantity >= 1000) {
+				this.newItemQuantity = this.newItemQuantity + 1000
+			} else if (this.newItemQuantity >= 100) {
+				this.newItemQuantity = this.newItemQuantity + 100
+			} else if (this.newItemQuantity >= 10) {
+				this.newItemQuantity = this.newItemQuantity + 10
+			} else {
+				this.newItemQuantity = this.newItemQuantity + 1
+			}
+		},
+		decreaseQuantity() {
+			if (this.newItemQuantity > 1000) {
+				this.newItemQuantity = this.newItemQuantity - 1000
+			} else if (this.newItemQuantity > 100) {
+				this.newItemQuantity = this.newItemQuantity - 100
+			} else if (this.newItemQuantity > 10) {
+				this.newItemQuantity = this.newItemQuantity - 10
+			} else if (this.newItemQuantity > 1) {
+				this.newItemQuantity = this.newItemQuantity - 1
+			} else {
+				this.newItemQuantity = ''
+			}
+		},
 		async onSaveItem() {
-			if (this.newItemName === "") {
-				showInfo("Cannot add empty item!")
+			if (this.newItemName === '') {
+				showInfo('Cannot add empty item!')
 				return
 			}
 

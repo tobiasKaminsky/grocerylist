@@ -9,8 +9,8 @@
 			@trailing-button-click="newCategoryName = ''" />
 
 		<NcButton type="tertiary"
-              :aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })"
-              @click="addCategory">
+			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })"
+			@click="addCategory">
 			<template #icon>
 				<IconPlus :size="20" />
 			</template>
