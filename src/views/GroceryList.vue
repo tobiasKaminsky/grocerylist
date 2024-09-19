@@ -1,20 +1,49 @@
 <template>
 	<div class="page-wrapper">
+    <div>
+      <NcButton aria-label="Show add/edit modal"
+                @click="showAddModal">
+        <template #icon>
+          <Plus :size="20"/>
+        </template>
+        <template>Add</template>
+      </NcButton>
+    </div>
 		<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
 		<div>
 			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
-			<NcModal v-if="modal"
-				ref="modalRef"
-				:name="t('grocerylist', 'Add item')"
+			<NcModal
+          v-if="modal"
+				  ref="modalRef"
+				  :name="t('grocerylist', 'Add item')"
 				@close="closeModal">
 				<form class="modal__content"
 					@submit.prevent="onSaveItem()">
-					<p>
+					<p class="quantityRow">
 						<NcTextField :value.sync="newItemQuantity"
-							label="Quantity…" />
-					</p>
+							label="Quantity…"
+             @keyup.up="increaseQuantity()"
+             @keyup.down="decreaseQuantity()"
+            />
+          <NcButton aria-label="Increase quantity"
+                    style="display:inline-block;"
+                    type="tertiary"
+                    @click="increaseQuantity()">
+            <template #icon>
+              <Plus :size="20"/>
+            </template>
+          </NcButton>
+          <NcButton aria-label="Decrease quantity"
+                    style="display:inline-block;"
+                    type="tertiary"
+                    @click="decreaseQuantity()">
+            <template #icon>
+              <Minus :size="20"/>
+            </template>
+          </NcButton>
+          </p>
 					<p>
 						<NcTextField :value.sync="newItemName"
 							label="Item…"
@@ -105,22 +134,24 @@ import {
 } from '@nextcloud/vue'
 import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
+import Minus from 'vue-material-design-icons/Minus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
 
 export default {
 	name: 'GroceryList',
 
-	components: {
-		NcCheckboxRadioSwitch,
-		NcSelect,
-		NcButton,
-		NcTextField,
-		AlarmSnooze,
-		Plus,
-		Delete,
-		NcModal,
-	},
+  components: {
+    NcCheckboxRadioSwitch,
+    NcSelect,
+    NcButton,
+    AlarmSnooze,
+    NcTextField,
+    Plus,
+    Minus,
+    Delete,
+    NcModal,
+  },
 
 	props: {
 		listId: {
@@ -350,9 +381,37 @@ export default {
 			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
 			this.modal = true
 		},
+    increaseQuantity() {
+      if (this.newItemQuantity === '') {
+        this.newItemQuantity = 0
+      }
+
+      if (this.newItemQuantity >= 1000) {
+        this.newItemQuantity = this.newItemQuantity + 1000
+      } else if (this.newItemQuantity >= 100) {
+        this.newItemQuantity = this.newItemQuantity + 100
+      } else if (this.newItemQuantity >= 10) {
+        this.newItemQuantity = this.newItemQuantity + 10
+      } else {
+        this.newItemQuantity = this.newItemQuantity + 1
+      }
+    },
+    decreaseQuantity() {
+      if (this.newItemQuantity > 1000) {
+        this.newItemQuantity = this.newItemQuantity - 1000
+      } else if (this.newItemQuantity > 100) {
+        this.newItemQuantity = this.newItemQuantity - 100
+      } else if (this.newItemQuantity > 10) {
+        this.newItemQuantity = this.newItemQuantity - 10
+      } else if (this.newItemQuantity > 1) {
+        this.newItemQuantity = this.newItemQuantity - 1
+      } else {
+        this.newItemQuantity = ''
+      }
+    },
 		async onSaveItem() {
-			if (this.newItemName === '') {
-				showInfo('Cannot add empty item!')
+			if (this.newItemName === "") {
+				showInfo("Cannot add empty item!")
 				return
 			}
 
@@ -451,9 +510,17 @@ h1 {
 .modal__content {
   margin: 50px;
 
-	p {
-		margin-bottom: calc(var(--default-grid-baseline) * 4);
-	}
+  p {
+    margin-bottom: calc(var(--default-grid-baseline) * 4);
+
+    &.quantityRow {
+      display: flex;
+
+      input {
+        flex-grow: 1;
+      }
+    }
+  }
 }
 
 .button-list {
