@@ -16,11 +16,11 @@
 				{{ t('grocerylist', 'Delete list') }}
 			</NcActionButton>
 		</template>
-    <template #counter v-if="groceryList.uncheckedCount > 0">
-      <NcCounterBubble>
-        {{ groceryList.uncheckedCount }}
-      </NcCounterBubble>
-    </template>
+		<template v-if="groceryList.uncheckedCount > 0" #counter>
+			<NcCounterBubble>
+				{{ groceryList.uncheckedCount }}
+			</NcCounterBubble>
+		</template>
 	</NcAppNavigationItem>
 </template>
 <script>
@@ -28,7 +28,7 @@ import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import {
 	NcActionButton,
 	NcAppNavigationItem,
-  NcCounterBubble,
+	NcCounterBubble,
 } from '@nextcloud/vue'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
@@ -38,7 +38,7 @@ export default {
 	components: {
 		NcActionButton,
 		NcAppNavigationItem,
-    NcCounterBubble
+		NcCounterBubble,
 	},
 	props: {
 		groceryList: {
@@ -63,14 +63,14 @@ export default {
 		},
 		title() {
 			return this.groceryList.title
-    },
-    titleWithCount() {
-      if (this.groceryList.uncheckedCount > 0) {
-        return this.groceryList.title + ' (' + this.groceryList.uncheckedCount + ')'
-      } else {
-        return this.groceryList.title
-      }
-    },
+		},
+		titleWithCount() {
+			if (this.groceryList.uncheckedCount > 0) {
+				return this.groceryList.title + ' (' + this.groceryList.uncheckedCount + ')'
+			} else {
+				return this.groceryList.title
+			}
+		},
 	},
 	methods: {
 		async onRename(newTitle) {
