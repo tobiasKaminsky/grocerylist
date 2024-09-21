@@ -3,7 +3,13 @@
 		<h2>Categories for {{ listId }}</h2>
 
 		<ul>
-			<ListCategory v-for="category in categories" :key="category.id" :category="category" />
+      {{ sortUp() }}
+			<ListCategory v-for="category in categories.sort((a, b) => a.order > b.order)"
+                    :key="category.id"
+                    :category="category"
+                    @sortUp="sortUp()"
+                    @sortDown="sortDown()"
+      />
 		</ul>
 
 		<div class="new-category__wrapper">
@@ -74,6 +80,12 @@ export default {
 			this.newCategoryId = category.id
 			this.category = category.name
 		},
+    sortUp() {
+      console.error("sortup ")
+    },
+    sortDown() {
+      console.error("sort down")
+    },
 		async onSaveCategory() {
 			if (this.newCategoryId === -1) {
 				this.addCategory()
