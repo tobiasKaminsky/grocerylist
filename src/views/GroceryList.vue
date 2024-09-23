@@ -86,7 +86,7 @@
 		<div>
 			<div v-if="hideCategory">
 				<ul class="list-item">
-					<ListItem v-for="item in allItems"
+					<ListItem v-for="item in sortedItems"
 						:key="item.id"
 						:item="item"
 						@edit="() => editItem(item)"
@@ -197,6 +197,11 @@ export default {
 		allItems() {
 			return this.items
 		},
+    sortedItems() {
+      return this.items.sort((a, b) => {
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      })
+    },
 		filteredCategories() {
 			if (this.categories == null) {
 				return

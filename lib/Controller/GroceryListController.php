@@ -255,8 +255,8 @@ class GroceryListController extends Controller
 	public function updateItem(int $id, string $name, string $quantity, int $category)
 	{
 		$item = $this->itemMapper->find($id);
-		$item->setName($name);
-		$item->setQuantity($quantity);
+		$item->setName(trim($name));
+		$item->setQuantity(trim($quantity));
 		$item->setCategory($category);
 
 		return new DataResponse($this->itemMapper->update($item));
