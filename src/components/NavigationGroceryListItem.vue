@@ -25,6 +25,7 @@
 </template>
 <script>
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import {
 	NcActionButton,
 	NcAppNavigationItem,
@@ -73,55 +74,68 @@ export default {
 		},
 	},
 	methods: {
-		async onRename(newTitle) {
-			showInfo('rename to ' + newTitle)
-			console.error('rename to ' + newTitle)
-			this.updating = true
-			this.groceryList.title = newTitle
+    async onRename(newTitle) {
+      showInfo('rename to ' + newTitle)
+      console.error('rename to ' + newTitle)
+      this.updating = true
+      this.groceryList.title = newTitle
 
-			try {
-				if (this.groceryList.id === -1) {
-					const response = await axios.post(generateUrl('/apps/grocerylist/api/lists'), this.groceryList)
-					this.currentGroceryListId = response.data.id
-				} else {
-					await axios.post(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`), this.groceryList)
-				}
-			} catch (e) {
-				console.error(e)
-				showError(t('grocerylist', 'Could not create groceryList'))
-			}
-			this.updating = false
-		},
-		async deleteGroceryList(groceryList) {
-			try {
-				await axios.delete(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`))
-				// this.groceryLists.splice(this.groceryLists.indexOf(groceryList), 1)
-				// if (this.currentGroceryListId === groceryList.id) {
-				// 	this.currentGroceryListId = null
-				// }
-				showSuccess(t('grocerylist', 'GroceryList deleted'))
-				this.$emit('delete')
-			} catch (e) {
-				console.error(e)
-				showError(t('grocerylist', 'Could not delete groceryList'))
-			}
-		},
-		openSettings(groceryList) {
-			this.$router.push({
-				name: 'settings',
-				params: {
-					listId: groceryList.id,
-				},
-			})
-		},
-		openGroceryList(groceryList) {
-			this.$router.push({
-				name: 'list',
-				params: {
-					listId: groceryList.id,
-				},
-			})
-		},
-	},
+      try {
+        if (this.groceryList.id === -1) {
+          const response = await axios.post(generateUrl('/apps/grocerylist/api/lists'), this.groceryList)
+          this.currentGroceryListId = response.data.id
+        } else {
+          await axios.post(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`), this.groceryList)
+        }
+      } catch (e) {
+        console.error(e)
+        showError(t('grocerylist', 'Could not create groceryList'))
+      }
+      this.updating = false
+    },
+    async deleteGroceryList(groceryList) {
+      try {
+        await axios.delete(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`))
+        // this.groceryLists.splice(this.groceryLists.indexOf(groceryList), 1)
+        // if (this.currentGroceryListId === groceryList.id) {
+        // 	this.currentGroceryListId = null
+        // }
+        showSuccess(t('grocerylist', 'GroceryList deleted'))
+        this.$emit('delete')
+      } catch (e) {
+        console.error(e)
+        showError(t('grocerylist', 'Could not delete groceryList'))
+      }
+    },
+    openSettings(groceryList) {
+      this.$router.push({
+        name: 'settings',
+        params: {
+          listId: groceryList.id,
+        },
+      })
+    },
+    openGroceryList(groceryList) {
+      this.$router.push({
+        name: 'list',
+        params: {
+          listId: groceryList.id,
+        },
+      })
+
+      if (this.isMobile()) {
+        emit('toggle-navigation', {
+          open: false,
+        })
+      }
+    },
+    isMobile() {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        return true
+      } else {
+        return false
+      }
+    },
+  }
 }
 </script>
