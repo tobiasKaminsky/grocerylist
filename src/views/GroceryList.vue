@@ -351,7 +351,7 @@ export default {
 		},
 		increaseQuantity() {
 			if (this.newItemQuantity === '') {
-				this.newItemQuantity = 0
+				this.newItemQuantity = 1
 			}
 
 			if (this.newItemQuantity >= 1000) {
@@ -371,7 +371,7 @@ export default {
 				this.newItemQuantity = this.newItemQuantity - 100
 			} else if (this.newItemQuantity > 10) {
 				this.newItemQuantity = this.newItemQuantity - 10
-			} else if (this.newItemQuantity > 1) {
+			} else if (this.newItemQuantity > 2) {
 				this.newItemQuantity = this.newItemQuantity - 1
 			} else {
 				this.newItemQuantity = ''
@@ -418,7 +418,7 @@ export default {
 					{
 						id: this.newItemId,
 						name: this.newItemName.trim(),
-						quantity: this.newItemQuantity,
+						quantity: this.newItemQuantity.toString(),
 						category: this.newItemCategory.id,
 					},
 				)
