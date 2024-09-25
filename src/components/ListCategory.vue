@@ -1,22 +1,34 @@
 <template>
 	<li class="list-category">
+    <NcButton type="tertiary"
+              :aria-label="isEditing ? t('grocerylist', 'Save changed category') : t('grocerylist', 'Edit category')"
+              @click="toggleEditMode">
+      <template #icon>
+        <IconCheck v-if="isEditing" :size="20" />
+        <IconPencil v-else :size="20" />
+      </template>
+    </NcButton>
 		<NcTextField v-if="isEditing"
 			ref="input"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
 			:loading="loading"
 			:value.sync="newCategoryName" />
-		<span v-else class="list-category__name">
+		<span v-else class="list-category__name" @click="$emit('sortUp')">
 			{{ category.name }}
 		</span>
-		<NcButton type="tertiary"
-			:aria-label="isEditing ? t('grocerylist', 'Save changed category') : t('grocerylist', 'Edit category')"
-			@click="toggleEditMode">
-			<template #icon>
-				<IconCheck v-if="isEditing" :size="20" />
-				<IconPencil v-else :size="20" />
-			</template>
-		</NcButton>
+    <NcButton type="tertiary"
+              @click="$emit('sortUp')">
+      <template #icon>
+        <IconArrowUp :size="20" />
+      </template>
+    </NcButton>
+    <NcButton type="tertiary"
+              @click="$emit('sortDown')">
+      <template #icon>
+        <IconArrowDown :size="20" />
+      </template>
+    </NcButton>
 	</li>
 </template>
 
@@ -28,6 +40,8 @@ import { useCategoryStore } from '../store/categoryStore.ts'
 
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import IconArrowUp from 'vue-material-design-icons/ArrowUp.vue'
+import IconArrowDown from 'vue-material-design-icons/ArrowDown.vue'
 
 export default {
 	name: 'ListCategory',
@@ -35,6 +49,8 @@ export default {
 	components: {
 		IconCheck,
 		IconPencil,
+    IconArrowUp,
+    IconArrowDown,
 		NcButton,
 		NcTextField,
 	},

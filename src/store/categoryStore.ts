@@ -46,9 +46,22 @@ export const useCategoryStore = defineStore('category', {
 				{
 					id: category.id,
 					newName: category.name,
+					order: category.order
 				},
 			)
 			this.categories = { ...this.categories, [category.grocery_list]: data }
+		},
+
+		async updateCategory(category: ICategory) {
+			const { data } = await axios.post<ICategory[]>(
+				generateUrl('/apps/grocerylist/api/category/update'),
+				{
+					id: category.id,
+					newName: category.name,
+					order: category.order
+				},
+			)
+			// this.categories = { ...this.categories, [category.grocery_list]: data }
 		},
 
 		async loadCategories(listId: number) {
