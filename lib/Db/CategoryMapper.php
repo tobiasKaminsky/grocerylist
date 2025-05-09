@@ -2,9 +2,8 @@
 
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
-use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\IDBConnection;
 
 /**
  * @template-implements QBMapper<Category>
