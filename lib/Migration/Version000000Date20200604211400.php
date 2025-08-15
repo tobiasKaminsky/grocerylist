@@ -4,8 +4,8 @@ namespace OCA\GroceryList\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version000000Date20200604211400 extends SimpleMigrationStep {
 
