@@ -13,7 +13,12 @@
 			</template>
 		</NcEmptyContent>
 		<ul v-else class="category-list">
-			<ListCategory v-for="category in categories" :key="category.name" :category="category" />
+			<ListCategory
+          v-for="category in categories.sort((a, b) => a.order > b.order)"
+                    :key="category.name"
+                    :category="category"
+                    @sortUp="() => sortUp(category)"
+                    @sortDown="sortDown()"/>
 		</ul>
 
 		<ListCategoryNew :list-id="listId" />
@@ -80,6 +85,19 @@ export default {
 	},
 
 	methods: {
+    async sortUp(category) {
+      category.order = category.order + 1
+
+      try {
+        this.categoryStore.updateCategory({ ...this.category, id: category.id, name: category.name, order: category.order })
+      } catch (e) {
+        console.error(e)
+        showError(t('grocerylist', 'Could not update category order'))
+      }
+    },
+    sortDown() {
+      console.error("sort down ")
+    },
 		/**
 		 * Handle loading categories, sets the loading state and triggers store updates
 		 */
