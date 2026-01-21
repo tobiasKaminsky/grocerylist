@@ -1,4 +1,5 @@
 <?php
+
 return [
 	'routes' => [
 		['name' => 'GroceryList#showGroceryList', 'url' => '/list/{id}', 'verb' => 'GET'],
