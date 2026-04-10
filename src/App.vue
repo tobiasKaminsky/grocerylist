@@ -63,7 +63,15 @@ export default {
 			updating: false,
 			loading: true,
 			modal: false,
+			lastOpenedListStorageKey: 'grocerylist:lastOpenedListId',
 		}
+	},
+	watch: {
+		$route(to) {
+			if (to.name === 'list' && to.params.listId) {
+				localStorage.setItem(this.lastOpenedListStorageKey, String(to.params.listId))
+			}
+		},
 	},
 	computed: {
 		/**
@@ -99,6 +107,7 @@ export default {
 
 			const { data } = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
 			this.groceryLists = data
+			this.restoreLastOpenedList()
 		} catch (e) {
 			console.error(e)
 			showError(t('grocerylist', 'Could not fetch groceryLists'))
@@ -110,6 +119,24 @@ export default {
 			if (this.$route.name === 'lists') {
 				console.warn('show single list' + this.$route.params)
 			}
+		},
+		restoreLastOpenedList() {
+			if (this.$route.name === 'list') {
+				return
+			}
+			const stored = localStorage.getItem(this.lastOpenedListStorageKey)
+			if (stored === null) {
+				return
+			}
+			const listId = Number.parseInt(stored, 10)
+			if (Number.isNaN(listId)) {
+				return
+			}
+			if (!this.groceryLists.some((list) => list.id === listId)) {
+				localStorage.removeItem(this.lastOpenedListStorageKey)
+				return
+			}
+			this.$router.replace({ name: 'list', params: { listId: listId.toString() } })
 		},
 		renameGroceryList(id, value) {
 			try {
@@ -125,6 +152,10 @@ export default {
 		deleteGroceryList(list) {
 			// Remove list from our list of grocery lists
 			this.groceryLists = [...this.groceryLists.filter(({ id }) => id !== list.id)]
+			const stored = localStorage.getItem(this.lastOpenedListStorageKey)
+			if (stored !== null && Number.parseInt(stored, 10) === list.id) {
+				localStorage.removeItem(this.lastOpenedListStorageKey)
+			}
 		},
 		async newGroceryList() {
 			try {
