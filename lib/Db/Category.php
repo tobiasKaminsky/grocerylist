@@ -12,6 +12,9 @@ use OCP\AppFramework\Db\Entity;
  * @method void setOrder(int $order)
  * @method int getList()
  * @method void setList(int $list)
+ * @method string|null getColor()
+ * @method void setColor(?string $color)
+ * @method int getItemCount()
  */
 class Category extends Entity implements JsonSerializable {
 
@@ -31,6 +34,11 @@ class Category extends Entity implements JsonSerializable {
 	protected $list;
 
 	/**
+	 * @var string|null
+	 */
+	protected $color;
+
+	/**
 	 * Virtual field populated by the controller – not stored in the DB.
 	 * @var int
 	 */
@@ -40,6 +48,7 @@ class Category extends Entity implements JsonSerializable {
 		$this->addType('name', 'string');
 		$this->addType('order', 'int');
 		$this->addType('list', 'int');
+		$this->addType('color', 'string');
 		$this->addType('itemCount', 'int');
 	}
 
@@ -52,6 +61,7 @@ class Category extends Entity implements JsonSerializable {
 			'id' => $this->getId(),
 			'order' => $this->getOrder(),
 			'name' => $this->getName(),
+			'color' => $this->getColor(),
 			'grocery_list' => $this->getList(),
 			'itemCount' => $this->itemCount ?? 0,
 		];

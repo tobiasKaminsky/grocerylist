@@ -1,6 +1,8 @@
 <template>
-	<div class="page-wrapper">
+	<div class="settings-wrapper">
 		<h2>{{ t('grocerylist', 'Categories') }}</h2>
+
+		<ListCategoryNew :list-id="listId" />
 
 		<NcEmptyContent v-if="loadingCategories" :name="t('grocerylist', 'Categories loading…')">
 			<template #icon>
@@ -13,16 +15,17 @@
 			</template>
 		</NcEmptyContent>
 		<draggable v-else
-			:value="categories"
+			:model-value="categories"
 			tag="ul"
 			class="category-list"
+			item-key="id"
 			handle=".list-category__drag-handle"
 			ghost-class="list-category--ghost"
-			@input="onReorder">
-			<ListCategory v-for="category in categories" :key="category.id" :category="category" />
+			@change="onReorderEvent">
+			<template #item="{ element }">
+				<ListCategory :category="element" />
+			</template>
 		</draggable>
-
-		<ListCategoryNew :list-id="listId" />
 
 		<div class="danger-zone">
 			<h2>{{ t('grocerylist', 'Danger zone') }}</h2>
@@ -165,6 +168,23 @@ export default {
 		},
 
 		/**
+		 * vuedraggable v4 emits a `change` event with `{ moved: { oldIndex, newIndex } }`
+		 * for in-list reordering. Compute the new order and delegate to onReorder.
+		 *
+		 * @param {object} event The vuedraggable change payload.
+		 */
+		onReorderEvent(event) {
+			if (!event?.moved) {
+				return
+			}
+			const { oldIndex, newIndex } = event.moved
+			const reordered = [...this.categories]
+			const [moved] = reordered.splice(oldIndex, 1)
+			reordered.splice(newIndex, 0, moved)
+			this.onReorder(reordered)
+		},
+
+		/**
 		 * Ask the user for confirmation and, if confirmed, delete the
 		 * current grocery list. On success, navigate away from the now
 		 * stale settings page and broadcast a `grocerylist:list-deleted`
@@ -228,20 +248,33 @@ export default {
 	},
 }
 </script>
-<style lang="scss">
-// Wrapper around all of the view content
-.page-wrapper {
+<style lang="scss" scoped>
+.settings-wrapper {
 	width: 100%;
 	max-width: 900px;
-	// center
 	margin-inline: auto;
-	margin-block: var(--app-navigation-padding);
-	// ensure we do not conflict with App Navigation toggle
+	padding-block: var(--app-navigation-padding);
 	padding-inline: calc(44px + 2 * var(--app-navigation-padding));
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 3);
+
+	@media (max-width: 768px) {
+		padding-inline: var(--default-grid-baseline, 4px);
+	}
+}
+
+h2 {
+	font-size: 24px;
+	font-weight: bold;
+	color: var(--color-text-light);
+	margin: 0;
 }
 
 .category-list {
-	// Prevent issues when there are no categories and you add one (otherwise the content would "jump")
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 1);
 	min-height: 140px;
 
 	// sortablejs placeholder while dragging
@@ -255,19 +288,5 @@ export default {
 	margin-top: 32px;
 	padding-top: 16px;
 	border-top: 1px solid var(--color-border);
-}
-
-h2 {
-	margin-block: 10px 7px;
-}
-
-h1 {
-	color: var(--color-text-light);
-	font-weight: bold;
-	font-size: 24px;
-	line-height: 30px;
-	text-align: center;
-	// to align with the toggle we need 44px (the toggle) - 30px (h2 line-height) / 2 + padding => 7px + padding
-	margin-block: calc(7px + var(--app-navigation-padding)) 12px;
 }
 </style>

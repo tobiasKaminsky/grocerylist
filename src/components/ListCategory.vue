@@ -5,12 +5,22 @@
 			:title="t('grocerylist', 'Drag to reorder')">
 			<IconDrag :size="20" />
 		</span>
+		<NcColorPicker v-model="categoryColor"
+			:aria-label="t('grocerylist', 'Category color')"
+			@update:model-value="updateColor">
+			<NcButton type="tertiary"
+				:aria-label="t('grocerylist', 'Pick color')">
+				<template #icon>
+					<Circle :size="24" :fill-color="categoryColor || '#aaa'" />
+				</template>
+			</NcButton>
+		</NcColorPicker>
 		<NcTextField v-if="isEditing"
 			ref="input"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
 			:loading="loading"
-			:value.sync="newCategoryName" />
+			v-model="newCategoryName" />
 		<span v-else class="list-category__name">
 			{{ category.name }}
 		</span>
@@ -35,10 +45,11 @@
 
 <script>
 import { DialogSeverity, getDialogBuilder, showError } from '@nextcloud/dialogs'
-import { NcButton, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
+import Circle from 'vue-material-design-icons/Circle.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconDrag from 'vue-material-design-icons/Drag.vue'
@@ -48,11 +59,13 @@ export default {
 	name: 'ListCategory',
 
 	components: {
+		Circle,
 		IconCheck,
 		IconDelete,
 		IconDrag,
 		IconPencil,
 		NcButton,
+		NcColorPicker,
 		NcTextField,
 	},
 
@@ -69,15 +82,24 @@ export default {
 			loading: false,
 			deleting: false,
 			newCategoryName: '',
+			categoryColor: this.category.color || '#aaa',
 		}
 	},
 
 	computed: {
-		// as we do not use the Composition API, this makes the store available using "this.categoryStore" (store id + 'Store')
 		...mapStores(useCategoryStore),
 	},
 
 	methods: {
+		async updateColor(color) {
+			try {
+				await this.categoryStore.updateCategoryColor(this.category.id, color, this.category.grocery_list)
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not update category color'))
+			}
+		},
+
 		async onDelete() {
 			const itemCount = this.category.itemCount ?? 0
 			if (itemCount > 0) {
@@ -139,9 +161,7 @@ export default {
 		async toggleEditMode() {
 			if (!this.isEditing) {
 				this.newCategoryName = this.category.name
-				// Set focus to input element
-				// eslint-disable-next-line vue/valid-next-tick
-				this.$nextTick(() => this.$nextTick(() => this.$refs.input.$el.querySelector('input').focus()))
+				this.$nextTick(() => this.$nextTick(() => this.$refs.input?.$el?.querySelector('input')?.focus()))
 			} else if (this.newCategoryName !== this.category.name) {
 				this.loading = true
 				try {
@@ -177,13 +197,12 @@ export default {
 	}
 
 	&__name {
+		flex: 1;
 		padding-block: 6px;
-		min-width: 245px;
 	}
 
 	&__input {
-		min-width: 245px;
-		width: fit-content!important;
+		flex: 1;
 	}
 }
 </style>

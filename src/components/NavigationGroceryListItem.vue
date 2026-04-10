@@ -7,15 +7,15 @@
 		@click="openGroceryList(groceryList)"
 		@update:name="onRename">
 		<template #actions>
-			<NcActionButton icon="icon-rename"
-				@click="openSettings(groceryList)">
+			<NcActionButton @click="openSettings(groceryList)">
+				<template #icon>
+					<Cog :size="20" />
+				</template>
 				{{ t('grocerylist', 'Settings') }}
 			</NcActionButton>
 		</template>
 		<template v-if="groceryList.uncheckedCount > 0" #counter>
-			<NcCounterBubble>
-				{{ groceryList.uncheckedCount }}
-			</NcCounterBubble>
+			<NcCounterBubble :count="groceryList.uncheckedCount" />
 		</template>
 	</NcAppNavigationItem>
 </template>
@@ -27,6 +27,7 @@ import {
 	NcAppNavigationItem,
 	NcCounterBubble,
 } from '@nextcloud/vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 
@@ -36,6 +37,7 @@ export default {
 		NcActionButton,
 		NcAppNavigationItem,
 		NcCounterBubble,
+		Cog,
 	},
 	props: {
 		groceryList: {
@@ -53,7 +55,7 @@ export default {
 	mounted() {
 		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
 	computed: {

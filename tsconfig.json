@@ -1,5 +1,4 @@
 {
-  "extends": "@vue/tsconfig",
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -15,6 +14,6 @@
     "src/",
   ],
   "vueCompilerOptions": {
-    "target": 2.7
+    "target": 3
   }
 }
