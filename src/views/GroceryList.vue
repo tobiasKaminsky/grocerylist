@@ -269,7 +269,7 @@ export default {
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
-			this.hideCategory = false
+			this.hideCategory = !this.groceryList.showOnlyUnchecked
 		},
 		async updateGroceryList(id, value) {
 			try {
