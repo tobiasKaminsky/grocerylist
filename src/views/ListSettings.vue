@@ -14,19 +14,44 @@
 				<IconTagOff :size="40" />
 			</template>
 		</NcEmptyContent>
-		<ul v-else class="category-list">
-			<ListCategory v-for="category in categories" :key="category.name" :category="category" />
-		</ul>
+		<draggable v-else
+			:model-value="categories"
+			tag="ul"
+			class="category-list"
+			item-key="id"
+			handle=".list-category__drag-handle"
+			ghost-class="list-category--ghost"
+			@change="onReorderEvent">
+			<template #item="{ element }">
+				<ListCategory :category="element" />
+			</template>
+		</draggable>
+
+		<div class="danger-zone">
+			<h2>{{ t('grocerylist', 'Danger zone') }}</h2>
+			<NcButton type="error"
+				:disabled="deleting"
+				:aria-label="t('grocerylist', 'Delete list')"
+				@click="onDeleteList">
+				<template #icon>
+					<IconDelete :size="20" />
+				</template>
+				{{ t('grocerylist', 'Delete list') }}
+			</NcButton>
+		</div>
 	</div>
 </template>
 
 <script>
 import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
+import { DialogSeverity, getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
-import { NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
+import { NcButton, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
+import draggable from 'vuedraggable'
 import { useCategoryStore } from '../store/categoryStore.ts'
+import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconTagOff from 'vue-material-design-icons/TagOff.vue'
 
 import ListCategory from '../components/ListCategory.vue'
@@ -36,11 +61,14 @@ export default {
 	name: 'ListSettings',
 
 	components: {
+		draggable,
+		IconDelete,
 		IconTagOff,
 		ListCategory,
+		ListCategoryNew,
+		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,
-		ListCategoryNew,
 	},
 
 	props: {
@@ -54,6 +82,8 @@ export default {
 		return {
 			updating: false,
 			loadingCategories: true,
+			deleting: false,
+			groceryList: null,
 			sharees: null,
 		}
 	},
@@ -69,17 +99,33 @@ export default {
 
 	watch: {
 		listId() {
+			this.loadGroceryList()
 			this.loadCategories()
 			this.loadSharees()
 		},
 	},
 
 	mounted() {
+		this.loadGroceryList()
 		this.loadCategories()
 		this.loadSharees()
 	},
 
 	methods: {
+		/**
+		 * Load the grocery list itself so we can show its title in the
+		 * delete confirmation dialog.
+		 */
+		async loadGroceryList() {
+			try {
+				const response = await axios.get(generateUrl(`/apps/grocerylist/api/list/${this.listId}`))
+				this.groceryList = response.data
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not fetch list {id}', { id: this.listId }))
+			}
+		},
+
 		/**
 		 * Handle loading categories, sets the loading state and triggers store updates
 		 */
@@ -103,6 +149,101 @@ export default {
 				showError(t('grocerylist', ('Could not fetch sharees')))
 			}
 			this.loading = false
+		},
+
+		/**
+		 * Persist the new category order after a drag-and-drop.
+		 *
+		 * @param {Array} orderedCategories The categories in their new order.
+		 */
+		async onReorder(orderedCategories) {
+			try {
+				await this.categoryStore.reorderCategories(this.listId, orderedCategories)
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not save category order'))
+				// Reload to get back to the authoritative order on failure
+				this.loadCategories()
+			}
+		},
+
+		/**
+		 * vuedraggable v4 emits a `change` event with `{ moved: { oldIndex, newIndex } }`
+		 * for in-list reordering. Compute the new order and delegate to onReorder.
+		 *
+		 * @param {object} event The vuedraggable change payload.
+		 */
+		onReorderEvent(event) {
+			if (!event?.moved) {
+				return
+			}
+			const { oldIndex, newIndex } = event.moved
+			const reordered = [...this.categories]
+			const [moved] = reordered.splice(oldIndex, 1)
+			reordered.splice(newIndex, 0, moved)
+			this.onReorder(reordered)
+		},
+
+		/**
+		 * Ask the user for confirmation and, if confirmed, delete the
+		 * current grocery list. On success, navigate away from the now
+		 * stale settings page and broadcast a `grocerylist:list-deleted`
+		 * event on the Nextcloud event bus so the app navigation can
+		 * drop the list from its sidebar.
+		 */
+		async onDeleteList() {
+			const confirmed = await this.confirmListDeletion()
+			if (!confirmed) {
+				return
+			}
+
+			this.deleting = true
+			try {
+				await axios.delete(generateUrl(`/apps/grocerylist/api/lists/${this.listId}`))
+				emit('grocerylist:list-deleted', { listId: this.listId })
+				showSuccess(t('grocerylist', 'List deleted'))
+				this.$router.replace('/')
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not delete list'))
+				this.deleting = false
+			}
+		},
+
+		/**
+		 * Build and show a confirmation dialog for deleting the list.
+		 *
+		 * @return {Promise<boolean>} Resolves to `true` when the user
+		 * confirms the deletion, `false` otherwise (including when the
+		 * dialog is dismissed without a button click).
+		 */
+		confirmListDeletion() {
+			const title = this.groceryList?.title
+			const text = title
+				? t('grocerylist', 'Are you sure you want to delete the list "{title}"? This will also remove all its items and categories.', { title })
+				: t('grocerylist', 'Are you sure you want to delete this list? This will also remove all its items and categories.')
+
+			return new Promise((resolve) => {
+				const dialog = getDialogBuilder(t('grocerylist', 'Delete list'))
+					.setText(text)
+					.setSeverity(DialogSeverity.Warning)
+					.setButtons([
+						{
+							label: t('grocerylist', 'Cancel'),
+							type: 'secondary',
+							callback: () => resolve(false),
+						},
+						{
+							label: t('grocerylist', 'Delete'),
+							type: 'error',
+							callback: () => resolve(true),
+						},
+					])
+					.build()
+				// The show() promise rejects when the dialog is closed
+				// without pressing a button – treat that like a cancel.
+				dialog.show().catch(() => resolve(false))
+			})
 		},
 	},
 }
@@ -135,5 +276,17 @@ h2 {
 	flex-direction: column;
 	gap: calc(var(--default-grid-baseline) * 1);
 	min-height: 140px;
+
+	// sortablejs placeholder while dragging
+	.list-category--ghost {
+		opacity: 0.4;
+		background: var(--color-background-hover);
+	}
+}
+
+.danger-zone {
+	margin-top: 32px;
+	padding-top: 16px;
+	border-top: 1px solid var(--color-border);
 }
 </style>

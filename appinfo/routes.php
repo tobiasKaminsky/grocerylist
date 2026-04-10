@@ -26,6 +26,8 @@ return [
 		['name' => 'GroceryList#addCategory', 'url' => '/api/category/{id}/add', 'verb' => 'POST'],
 		['name' => 'GroceryList#updateCategory', 'url' => '/api/category/update', 'verb' => 'POST'],
 		['name' => 'GroceryList#updateCategoryColor', 'url' => '/api/category/color', 'verb' => 'POST'],
+		['name' => 'GroceryList#deleteCategory', 'url' => '/api/category/{id}', 'verb' => 'DELETE'],
+		['name' => 'GroceryList#reorderCategories', 'url' => '/api/categories/{id}/reorder', 'verb' => 'POST'],
 
 		['name' => 'GroceryList#sharees', 'url' => '/api/sharees/{id}', 'verb' => 'GET'],
 	]

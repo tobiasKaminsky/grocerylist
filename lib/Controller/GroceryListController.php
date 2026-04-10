@@ -218,7 +218,23 @@ class GroceryListController extends Controller
 	 */
 	public function listAllCategories(int $id)
 	{
-		return new DataResponse($this->categoryMapper->findAll($id));
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
+	}
+
+	/**
+	 * Populate the virtual itemCount property on each category so the
+	 * frontend can decide whether to ask for confirmation before deleting.
+	 *
+	 * @param Category[] $categories
+	 * @return Category[]
+	 */
+	private function enrichWithItemCount(array $categories): array
+	{
+		foreach ($categories as $category) {
+			$category->setItemCount(count($this->itemMapper->findByCategory($category->getId())));
+		}
+
+		return $categories;
 	}
 
 	/**
@@ -299,7 +315,7 @@ class GroceryListController extends Controller
 
 		$this->categoryMapper->insert($category);
 
-		return new DataResponse($this->categoryMapper->findAll($id));
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
 	}
 
 	/**
@@ -318,7 +334,7 @@ class GroceryListController extends Controller
 
 		$this->categoryMapper->update($category);
 
-		return new DataResponse($this->categoryMapper->findAll($category->getList()));
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($category->getList())));
 	}
 
 	/**
@@ -334,7 +350,43 @@ class GroceryListController extends Controller
 
 		$this->categoryMapper->update($category);
 
-		return new DataResponse($this->categoryMapper->findAll($category->getList()));
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($category->getList())));
+	}
+
+	/**
+	 * Delete a category and – if any exist – also delete every item that
+	 * references it. Caller is expected to have asked the user for
+	 * confirmation when items are present.
+	 *
+	 * @NoAdminRequired
+	 * @param int $id The category id.
+	 * @return DataResponse
+	 */
+	public function deleteCategory(int $id)
+	{
+		$category = $this->categoryMapper->find($id);
+		$listId = $category->getList();
+
+		foreach ($this->itemMapper->findByCategory($id) as $item) {
+			$this->itemMapper->delete($item);
+		}
+
+		$this->categoryMapper->delete($category);
+
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($listId)));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id The list id.
+	 * @param int[] $orderedCategoryIds Category ids in the new order.
+	 * @return DataResponse
+	 */
+	public function reorderCategories(int $id, array $orderedCategoryIds)
+	{
+		$this->categoryMapper->reorder($id, $orderedCategoryIds);
+
+		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
 	}
 
 	/**

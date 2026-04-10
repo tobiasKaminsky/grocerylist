@@ -67,4 +67,22 @@ class ItemMapper extends QBMapper {
 
 		return sizeof($this->findEntities($qb)) > 0;
 	}
+
+	/**
+	 * Return every item that belongs to the given category. Unlike
+	 * {@see self::categoryUsed()} this includes snoozed/hidden items since
+	 * the caller typically wants to act on (e.g. delete) every row that
+	 * references the category.
+	 *
+	 * @return Item[]
+	 */
+	public function findByCategory(int $categoryId): array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('category', $qb->createNamedParameter($categoryId)));
+
+		return $this->findEntities($qb);
+	}
 }
