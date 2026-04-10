@@ -11,10 +11,6 @@
 				@click="openSettings(groceryList)">
 				{{ t('grocerylist', 'Settings') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-delete"
-				@click="deleteGroceryList(groceryList)">
-				{{ t('grocerylist', 'Delete list') }}
-			</NcActionButton>
 		</template>
 		<template v-if="groceryList.uncheckedCount > 0" #counter>
 			<NcCounterBubble>
@@ -24,7 +20,7 @@
 	</NcAppNavigationItem>
 </template>
 <script>
-import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
+import { showError, showInfo } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import {
 	NcActionButton,
@@ -51,7 +47,6 @@ export default {
 			required: true,
 		},
 	},
-	emits: ['delete'],
 	data() {
 		return {}
 	},
@@ -107,20 +102,6 @@ export default {
         showError(t('grocerylist', 'Could not create groceryList'))
       }
       this.updating = false
-    },
-    async deleteGroceryList(groceryList) {
-      try {
-        await axios.delete(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`))
-        // this.groceryLists.splice(this.groceryLists.indexOf(groceryList), 1)
-        // if (this.currentGroceryListId === groceryList.id) {
-        // 	this.currentGroceryListId = null
-        // }
-        showSuccess(t('grocerylist', 'GroceryList deleted'))
-        this.$emit('delete')
-      } catch (e) {
-        console.error(e)
-        showError(t('grocerylist', 'Could not delete groceryList'))
-      }
     },
     openSettings(groceryList) {
       this.$router.push({
