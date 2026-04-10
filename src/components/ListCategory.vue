@@ -1,11 +1,21 @@
 <template>
 	<li class="list-category">
+		<NcColorPicker v-model="categoryColor"
+			:aria-label="t('grocerylist', 'Category color')"
+			@update:model-value="updateColor">
+			<NcButton type="tertiary"
+				:aria-label="t('grocerylist', 'Pick color')">
+				<template #icon>
+					<Circle :size="24" :fill-color="categoryColor || '#aaa'" />
+				</template>
+			</NcButton>
+		</NcColorPicker>
 		<NcTextField v-if="isEditing"
 			ref="input"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
 			:loading="loading"
-			:value.sync="newCategoryName" />
+			v-model="newCategoryName" />
 		<span v-else class="list-category__name">
 			{{ category.name }}
 		</span>
@@ -22,10 +32,11 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { NcButton, NcTextField } from '@nextcloud/vue'
+import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
+import Circle from 'vue-material-design-icons/Circle.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
 
@@ -33,9 +44,11 @@ export default {
 	name: 'ListCategory',
 
 	components: {
+		Circle,
 		IconCheck,
 		IconPencil,
 		NcButton,
+		NcColorPicker,
 		NcTextField,
 	},
 
@@ -51,21 +64,27 @@ export default {
 			isEditing: false,
 			loading: false,
 			newCategoryName: '',
+			categoryColor: this.category.color || '#aaa',
 		}
 	},
 
 	computed: {
-		// as we do not use the Composition API, this makes the store available using "this.categoryStore" (store id + 'Store')
 		...mapStores(useCategoryStore),
 	},
 
 	methods: {
+		async updateColor(color) {
+			try {
+				await this.categoryStore.updateCategoryColor(this.category.id, color, this.category.grocery_list)
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not update category color'))
+			}
+		},
 		async toggleEditMode() {
 			if (!this.isEditing) {
 				this.newCategoryName = this.category.name
-				// Set focus to input element
-				// eslint-disable-next-line vue/valid-next-tick
-				this.$nextTick(() => this.$nextTick(() => this.$refs.input.$el.querySelector('input').focus()))
+				this.$nextTick(() => this.$nextTick(() => this.$refs.input?.$el?.querySelector('input')?.focus()))
 			} else if (this.newCategoryName !== this.category.name) {
 				this.loading = true
 				try {
@@ -90,13 +109,12 @@ export default {
 	gap: 12px;
 
 	&__name {
+		flex: 1;
 		padding-block: 6px;
-		min-width: 245px;
 	}
 
 	&__input {
-		min-width: 245px;
-		width: fit-content!important;
+		flex: 1;
 	}
 }
 </style>

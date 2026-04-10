@@ -7,7 +7,7 @@
 		</ul>
 
 		<div class="new-category__wrapper">
-			<NcTextField :value.sync="newCategoryName"
+			<NcTextField v-model="newCategoryName"
 				:disabled="updating"
 				:label="t('grocerylist', 'Category name')"
 				:show-trailing-button="newCategoryName !== ''"

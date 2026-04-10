@@ -39,8 +39,7 @@ class ItemMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->lt('hidden', $qb->createNamedParameter(time() - $this::OFFSET)));
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
 
 		return $this->findEntities($qb);
 	}
@@ -64,8 +63,7 @@ class ItemMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('category', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->lt('hidden', $qb->createNamedParameter(time() - $this::OFFSET)));
+			->where($qb->expr()->eq('category', $qb->createNamedParameter($id)));
 
 		return sizeof($this->findEntities($qb)) > 0;
 	}

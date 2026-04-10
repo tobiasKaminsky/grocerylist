@@ -229,7 +229,7 @@ class GroceryListController extends Controller
 	 * @param int $list
 	 * @return DataResponse
 	 */
-	public function addItem(string $name, string $quantity, int $category, int $list)
+	public function addItem(string $name, string $quantity, int $list, int $category = 0)
 	{
 		$item = new Item();
 		$item->setName($name);
@@ -289,12 +289,13 @@ class GroceryListController extends Controller
 	 * @param string $name
 	 * @return DataResponse
 	 */
-	public function addCategory(int $id, string $name)
+	public function addCategory(int $id, string $name, ?string $color = null)
 	{
 		$category = new Category();
 		$category->setList($id);
 		$category->setName($name);
 		$category->setOrder(0);
+		$category->setColor($color);
 
 		$this->categoryMapper->insert($category);
 
@@ -307,10 +308,29 @@ class GroceryListController extends Controller
 	 * @param string $newName
 	 * @return DataResponse
 	 */
-	public function updateCategory(int $id, string $newName)
+	public function updateCategory(int $id, string $newName, ?string $color = null)
 	{
 		$category = $this->categoryMapper->find($id);
 		$category->setName($newName);
+		if ($color !== null) {
+			$category->setColor($color);
+		}
+
+		$this->categoryMapper->update($category);
+
+		return new DataResponse($this->categoryMapper->findAll($category->getList()));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @param int $id
+	 * @param string $color
+	 * @return DataResponse
+	 */
+	public function updateCategoryColor(int $id, string $color)
+	{
+		$category = $this->categoryMapper->find($id);
+		$category->setColor($color);
 
 		$this->categoryMapper->update($category);
 

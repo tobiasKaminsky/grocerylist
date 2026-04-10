@@ -3,7 +3,7 @@
 		<NcAppNavigation>
 			<NcAppNavigationNew :text="t('grocerylist', 'New list')"
 				:disabled="loading"
-				@click="newGroceryList">
+				@click="showNewListModal">
 				<template #icon>
 					<IconPlus :size="20" />
 				</template>
@@ -25,6 +25,33 @@
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
+		<NcModal v-if="newListModal"
+			:name="t('grocerylist', 'New list')"
+			@close="closeNewListModal">
+			<form class="new-list-modal__content" @submit.prevent="createNewList">
+				<NcTextField v-model="newListName"
+					:label="t('grocerylist', 'List name')"
+					:placeholder="t('grocerylist', 'My grocery list')" />
+				<NcCheckboxRadioSwitch v-model="newListShowOnlyUnchecked"
+					type="switch">
+					{{ t('grocerylist', 'Show only unchecked') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch v-model="newListHideCategory"
+					type="switch">
+					{{ t('grocerylist', 'Hide category') }}
+				</NcCheckboxRadioSwitch>
+				<div class="new-list-modal__actions">
+					<NcButton type="primary"
+						native-type="submit"
+						:disabled="newListName.trim() === ''">
+						<template #icon>
+							<IconPlus :size="20" />
+						</template>
+						{{ t('grocerylist', 'Create list') }}
+					</NcButton>
+				</div>
+			</form>
+		</NcModal>
 	</NcContent>
 </template>
 
@@ -36,7 +63,11 @@ import {
 	NcAppNavigation,
 	NcAppNavigationItem,
 	NcAppNavigationNew,
+	NcButton,
+	NcCheckboxRadioSwitch,
 	NcContent,
+	NcModal,
+	NcTextField,
 } from '@nextcloud/vue'
 
 import axios from '@nextcloud/axios'
@@ -47,11 +78,15 @@ export default {
 	name: 'App',
 	components: {
 		IconPlus,
+		NcButton,
+		NcCheckboxRadioSwitch,
 		NcContent,
 		NcAppContent,
 		NcAppNavigation,
 		NcAppNavigationItem,
 		NcAppNavigationNew,
+		NcModal,
+		NcTextField,
 		NavigationGroceryListItem,
 	},
 	data() {
@@ -62,7 +97,10 @@ export default {
 			currentGroceryListId: -1,
 			updating: false,
 			loading: true,
-			modal: false,
+			newListModal: false,
+			newListName: '',
+			newListShowOnlyUnchecked: false,
+			newListHideCategory: false,
 			lastOpenedListStorageKey: 'grocerylist:lastOpenedListId',
 		}
 	},
@@ -157,28 +195,59 @@ export default {
 				localStorage.removeItem(this.lastOpenedListStorageKey)
 			}
 		},
-		async newGroceryList() {
+		showNewListModal() {
+			this.newListName = ''
+			this.newListShowOnlyUnchecked = false
+			this.newListHideCategory = false
+			this.newListModal = true
+		},
+		closeNewListModal() {
+			this.newListModal = false
+		},
+		async createNewList() {
+			if (this.newListName.trim() === '') {
+				return
+			}
+
 			try {
-				const { data } = await axios.post(generateUrl('/apps/grocerylist/api/lists'), { title: 'New list' })
+				const { data } = await axios.post(generateUrl('/apps/grocerylist/api/lists'), { title: this.newListName.trim() })
 				this.groceryLists.push(data)
+
+				if (this.newListShowOnlyUnchecked) {
+					await axios.post(generateUrl(`/apps/grocerylist/api/lists/${data.id}/visibility`), {
+						showOnlyUnchecked: 1,
+					})
+				}
+
+				this.closeNewListModal()
+				this.$router.push({
+					name: 'list',
+					params: { listId: data.id.toString() },
+					query: this.newListHideCategory ? { hideCategory: '1' } : {},
+				})
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not create groceryList'))
 			}
-		}
-		,
+		},
 	},
 }
 </script>
-<style>
-/*
-#app-content > div {
-	width: 100%;
-	height: 100%;
-	padding: 20px;
+<style lang="scss">
+// Prevent the app content area from scrolling — the inner .page-items handles its own scrolling
+.app-content {
+	overflow: hidden !important;
+}
+
+.new-list-modal__content {
+	padding: calc(var(--default-grid-baseline) * 4);
 	display: flex;
 	flex-direction: column;
-	flex-grow: 1;
+	gap: calc(var(--default-grid-baseline) * 4);
 }
-*/
+
+.new-list-modal__actions {
+	display: flex;
+	justify-content: end;
+}
 </style>

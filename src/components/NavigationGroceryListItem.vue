@@ -7,19 +7,21 @@
 		@click="openGroceryList(groceryList)"
 		@update:name="onRename">
 		<template #actions>
-			<NcActionButton icon="icon-rename"
-				@click="openSettings(groceryList)">
+			<NcActionButton @click="openSettings(groceryList)">
+				<template #icon>
+					<Cog :size="20" />
+				</template>
 				{{ t('grocerylist', 'Settings') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-delete"
-				@click="deleteGroceryList(groceryList)">
+			<NcActionButton @click="deleteGroceryList(groceryList)">
+				<template #icon>
+					<Delete :size="20" />
+				</template>
 				{{ t('grocerylist', 'Delete list') }}
 			</NcActionButton>
 		</template>
 		<template v-if="groceryList.uncheckedCount > 0" #counter>
-			<NcCounterBubble>
-				{{ groceryList.uncheckedCount }}
-			</NcCounterBubble>
+			<NcCounterBubble :count="groceryList.uncheckedCount" />
 		</template>
 	</NcAppNavigationItem>
 </template>
@@ -31,6 +33,8 @@ import {
 	NcAppNavigationItem,
 	NcCounterBubble,
 } from '@nextcloud/vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 
@@ -40,6 +44,8 @@ export default {
 		NcActionButton,
 		NcAppNavigationItem,
 		NcCounterBubble,
+		Cog,
+		Delete,
 	},
 	props: {
 		groceryList: {
@@ -58,7 +64,7 @@ export default {
 	mounted() {
 		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
 	computed: {

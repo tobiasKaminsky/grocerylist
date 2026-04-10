@@ -1,6 +1,8 @@
 <template>
-	<div class="page-wrapper">
+	<div class="settings-wrapper">
 		<h2>{{ t('grocerylist', 'Categories') }}</h2>
+
+		<ListCategoryNew :list-id="listId" />
 
 		<NcEmptyContent v-if="loadingCategories" :name="t('grocerylist', 'Categories loading…')">
 			<template #icon>
@@ -15,8 +17,6 @@
 		<ul v-else class="category-list">
 			<ListCategory v-for="category in categories" :key="category.name" :category="category" />
 		</ul>
-
-		<ListCategoryNew :list-id="listId" />
 	</div>
 </template>
 
@@ -107,34 +107,33 @@ export default {
 	},
 }
 </script>
-<style lang="scss">
-// Wrapper around all of the view content
-.page-wrapper {
+<style lang="scss" scoped>
+.settings-wrapper {
 	width: 100%;
 	max-width: 900px;
-	// center
 	margin-inline: auto;
-	margin-block: var(--app-navigation-padding);
-	// ensure we do not conflict with App Navigation toggle
+	padding-block: var(--app-navigation-padding);
 	padding-inline: calc(44px + 2 * var(--app-navigation-padding));
-}
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 3);
 
-.category-list {
-	// Prevent issues when there are no categories and you add one (otherwise the content would "jump")
-	min-height: 140px;
+	@media (max-width: 768px) {
+		padding-inline: var(--default-grid-baseline, 4px);
+	}
 }
 
 h2 {
-	margin-block: 10px 7px;
+	font-size: 24px;
+	font-weight: bold;
+	color: var(--color-text-light);
+	margin: 0;
 }
 
-h1 {
-	color: var(--color-text-light);
-	font-weight: bold;
-	font-size: 24px;
-	line-height: 30px;
-	text-align: center;
-	// to align with the toggle we need 44px (the toggle) - 30px (h2 line-height) / 2 + padding => 7px + padding
-	margin-block: calc(7px + var(--app-navigation-padding)) 12px;
+.category-list {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 1);
+	min-height: 140px;
 }
 </style>
