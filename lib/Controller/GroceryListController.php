@@ -319,6 +319,19 @@ class GroceryListController extends Controller
 
 	/**
 	 * @NoAdminRequired
+	 * @param int $id The list id.
+	 * @param int[] $orderedCategoryIds Category ids in the new order.
+	 * @return DataResponse
+	 */
+	public function reorderCategories(int $id, array $orderedCategoryIds)
+	{
+		$this->categoryMapper->reorder($id, $orderedCategoryIds);
+
+		return new DataResponse($this->categoryMapper->findAll($id));
+	}
+
+	/**
+	 * @NoAdminRequired
 	 * @param int $id
 	 */
 	public function sharees(int $id): DataResponse

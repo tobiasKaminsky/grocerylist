@@ -1,5 +1,10 @@
 <template>
 	<li class="list-category">
+		<span class="list-category__drag-handle"
+			:aria-label="t('grocerylist', 'Drag to reorder')"
+			:title="t('grocerylist', 'Drag to reorder')">
+			<IconDrag :size="20" />
+		</span>
 		<NcTextField v-if="isEditing"
 			ref="input"
 			class="list-category__input"
@@ -27,6 +32,7 @@ import { mapStores } from 'pinia'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconDrag from 'vue-material-design-icons/Drag.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
 
 export default {
@@ -34,6 +40,7 @@ export default {
 
 	components: {
 		IconCheck,
+		IconDrag,
 		IconPencil,
 		NcButton,
 		NcTextField,
@@ -88,6 +95,17 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 12px;
+
+	&__drag-handle {
+		display: inline-flex;
+		align-items: center;
+		cursor: grab;
+		color: var(--color-text-maxcontrast);
+
+		&:active {
+			cursor: grabbing;
+		}
+	}
 
 	&__name {
 		padding-block: 6px;

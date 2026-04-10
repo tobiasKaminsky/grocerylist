@@ -57,5 +57,27 @@ export const useCategoryStore = defineStore('category', {
 			)
 			this.categories[listId] = response.data
 		},
+
+		/**
+		 * Persist a new category order for the given list.
+		 *
+		 * The ordered array is applied to the local store immediately so
+		 * the UI stays responsive; the server is then asked to persist the
+		 * order and returns the authoritative list which replaces the
+		 * optimistic one.
+		 *
+		 * @param listId The list whose categories are being reordered.
+		 * @param orderedCategories Categories in the desired order.
+		 */
+		async reorderCategories(listId: number, orderedCategories: ICategory[]) {
+			this.categories = { ...this.categories, [listId]: orderedCategories }
+			const { data } = await axios.post<ICategory[]>(
+				generateUrl(`/apps/grocerylist/api/categories/${listId}/reorder`),
+				{
+					orderedCategoryIds: orderedCategories.map((category) => category.id),
+				},
+			)
+			this.categories = { ...this.categories, [listId]: data }
+		},
 	},
 })
