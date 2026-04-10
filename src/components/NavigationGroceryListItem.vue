@@ -25,7 +25,7 @@
 </template>
 <script>
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import {
 	NcActionButton,
 	NcAppNavigationItem,
@@ -55,6 +55,12 @@ export default {
 	data() {
 		return {}
 	},
+	mounted() {
+		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
+	},
+	beforeDestroy() {
+		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
+	},
 	computed: {
 		icon() {
 			return 'icon-toggle-filelist'
@@ -74,6 +80,15 @@ export default {
 		},
 	},
 	methods: {
+    onItemCheckedChanged({ listId, checked }) {
+      if (listId !== this.groceryList.id) {
+        return
+      }
+      const current = this.groceryList.uncheckedCount ?? 0
+      this.groceryList.uncheckedCount = checked
+        ? Math.max(0, current - 1)
+        : current + 1
+    },
     async onRename(newTitle) {
       showInfo('rename to ' + newTitle)
       console.error('rename to ' + newTitle)
