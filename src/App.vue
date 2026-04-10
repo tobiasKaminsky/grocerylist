@@ -17,8 +17,7 @@
 						:key="groceryList.id"
 						:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
 						:grocery-list="groceryList"
-						:current-grocery-list-id="currentGroceryListId"
-						@delete="deleteGroceryList(groceryList)" />
+						:current-grocery-list-id="currentGroceryListId" />
 				</ul>
 			</template>
 		</NcAppNavigation>
@@ -30,6 +29,7 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcAppContent,
@@ -100,6 +100,7 @@ export default {
 	 * Fetch list of groceryLists when the component is loaded
 	 */
 	async mounted() {
+		subscribe('grocerylist:list-deleted', this.onListDeleted)
 		try {
 			if (this.$route.name === 'lists') {
 				console.warn('show single list' + this.$route.params)
@@ -113,6 +114,9 @@ export default {
 			showError(t('grocerylist', 'Could not fetch groceryLists'))
 		}
 		this.loading = false
+	},
+	beforeDestroy() {
+		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
 	},
 	methods: {
 		onCreated() {
@@ -156,6 +160,9 @@ export default {
 			if (stored !== null && Number.parseInt(stored, 10) === list.id) {
 				localStorage.removeItem(this.lastOpenedListStorageKey)
 			}
+		},
+		onListDeleted({ listId }) {
+			this.deleteGroceryList({ id: listId })
 		},
 		async newGroceryList() {
 			try {
