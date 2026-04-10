@@ -12,9 +12,15 @@
 				<IconTagOff :size="40" />
 			</template>
 		</NcEmptyContent>
-		<ul v-else class="category-list">
-			<ListCategory v-for="category in categories" :key="category.name" :category="category" />
-		</ul>
+		<draggable v-else
+			:value="categories"
+			tag="ul"
+			class="category-list"
+			handle=".list-category__drag-handle"
+			ghost-class="list-category--ghost"
+			@input="onReorder">
+			<ListCategory v-for="category in categories" :key="category.id" :category="category" />
+		</draggable>
 
 		<ListCategoryNew :list-id="listId" />
 	</div>
@@ -26,6 +32,7 @@ import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
+import draggable from 'vuedraggable'
 import { useCategoryStore } from '../store/categoryStore.ts'
 import IconTagOff from 'vue-material-design-icons/TagOff.vue'
 
@@ -36,6 +43,7 @@ export default {
 	name: 'ListSettings',
 
 	components: {
+		draggable,
 		IconTagOff,
 		ListCategory,
 		NcEmptyContent,
@@ -104,6 +112,22 @@ export default {
 			}
 			this.loading = false
 		},
+
+		/**
+		 * Persist the new category order after a drag-and-drop.
+		 *
+		 * @param {Array} orderedCategories The categories in their new order.
+		 */
+		async onReorder(orderedCategories) {
+			try {
+				await this.categoryStore.reorderCategories(this.listId, orderedCategories)
+			} catch (e) {
+				console.error(e)
+				showError(t('grocerylist', 'Could not save category order'))
+				// Reload to get back to the authoritative order on failure
+				this.loadCategories()
+			}
+		},
 	},
 }
 </script>
@@ -122,6 +146,12 @@ export default {
 .category-list {
 	// Prevent issues when there are no categories and you add one (otherwise the content would "jump")
 	min-height: 140px;
+
+	// sortablejs placeholder while dragging
+	.list-category--ghost {
+		opacity: 0.4;
+		background: var(--color-background-hover);
+	}
 }
 
 h2 {
