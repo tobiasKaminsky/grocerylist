@@ -9,7 +9,6 @@ use OCA\GroceryList\Db\GroceryListMapper;
 use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
@@ -23,7 +22,6 @@ class GroceryListController extends Controller
 	private CategoryMapper $categoryMapper;
 	private ShareeGroceryListMapper $shareeMapper;
 	private $userId;
-	private ILogger $logger;
 
 	public function __construct($AppName,
 								IRequest $request,
@@ -31,7 +29,6 @@ class GroceryListController extends Controller
 								ItemMapper $itemMapper,
 								CategoryMapper $categoryMapper,
 								ShareeGroceryListMapper $shareeMapper,
-								ILogger $logger,
 		$UserId)
 	{
 		parent::__construct($AppName, $request);
@@ -39,7 +36,6 @@ class GroceryListController extends Controller
 		$this->itemMapper = $itemMapper;
 		$this->categoryMapper = $categoryMapper;
 		$this->shareeMapper = $shareeMapper;
-		$this->logger = $logger;
 		$this->userId = $UserId;
 	}
 
