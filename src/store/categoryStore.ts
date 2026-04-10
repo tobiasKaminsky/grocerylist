@@ -8,6 +8,7 @@ export interface ICategory {
 	order: number
 	name: string
 	grocery_list: number
+	itemCount: number
 }
 
 export const useCategoryStore = defineStore('category', {
@@ -56,6 +57,20 @@ export const useCategoryStore = defineStore('category', {
 				generateUrl(`/apps/grocerylist/api/all_categories/${listId}`),
 			)
 			this.categories[listId] = response.data
+		},
+
+		/**
+		 * Delete an existing category. The backend also deletes every item
+		 * that references the category, so the caller is expected to have
+		 * asked the user for confirmation if the category still has items.
+		 *
+		 * @param category The category to delete.
+		 */
+		async deleteCategory(category: ICategory) {
+			const { data } = await axios.delete<ICategory[]>(
+				generateUrl(`/apps/grocerylist/api/category/${category.id}`),
+			)
+			this.categories = { ...this.categories, [category.grocery_list]: data }
 		},
 
 		/**

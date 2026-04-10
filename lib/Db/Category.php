@@ -30,10 +30,21 @@ class Category extends Entity implements JsonSerializable {
 	 */
 	protected $list;
 
+	/**
+	 * Virtual field populated by the controller – not stored in the DB.
+	 * @var int
+	 */
+	protected $itemCount;
+
 	public function __construct() {
 		$this->addType('name', 'string');
 		$this->addType('order', 'int');
 		$this->addType('list', 'int');
+		$this->addType('itemCount', 'int');
+	}
+
+	public function setItemCount(int $count): void {
+		$this->setter('itemCount', [$count]);
 	}
 
 	public function jsonSerialize(): array {
@@ -42,6 +53,7 @@ class Category extends Entity implements JsonSerializable {
 			'order' => $this->getOrder(),
 			'name' => $this->getName(),
 			'grocery_list' => $this->getList(),
+			'itemCount' => $this->itemCount ?? 0,
 		];
 	}
 }
