@@ -23,6 +23,7 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 
 import {
@@ -58,6 +59,10 @@ export default {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/check'),
 					{ id: item.id, checked: item.checked },
 				)
+				emit('grocerylist:item-checked-changed', {
+					listId: item.list,
+					checked: item.checked,
+				})
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not check item'))
