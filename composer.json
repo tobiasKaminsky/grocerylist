@@ -10,5 +10,12 @@
     ],
     "require": {},
     "require-dev": {
-    }
+      "nextcloud/ocp": "dev-stable28",
+      "psalm/phar": "^5.17"
+    },
+  "scripts": {
+    "psalm": "psalm.phar --threads=1",
+    "psalm:dev": "psalm.phar --no-cache --threads=$(nproc)",
+    "psalm:update-baseline": "psalm.phar --threads=1 --update-baseline"
+  }
 }
