@@ -15,7 +15,7 @@ on:
 
 jobs:
   php-lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         php-versions: ['8.1', '8.2', '8.3']
@@ -36,7 +36,7 @@ jobs:
         run: composer run lint
 
   summary:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: php-lint
 
     if: always()
