@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   static-analysis:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       # do not stop on another job's failure
       fail-fast: false
