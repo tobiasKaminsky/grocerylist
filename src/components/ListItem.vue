@@ -5,12 +5,6 @@
 		</span>
 		<NcCheckboxRadioSwitch :model-value="item.checked === true"
 			@update:model-value="checkItem(item)" />
-		<span class="list-item__label" @click="$emit('edit')">
-			<span v-if="item.quantity !== ''">
-				{{ item.quantity }}
-			</span>
-			{{ item.name }}
-		</span>
 		<NcButton :aria-label="t('grocerylist', 'Snooze')"
 			type="tertiary"
 			@click="hideItem(item)">
@@ -18,6 +12,12 @@
 				<AlarmSnooze :size="20" />
 			</template>
 		</NcButton>
+		<span class="list-item__label" @click="$emit('edit')">
+			<span v-if="item.quantity !== ''">
+				{{ item.quantity }}
+			</span>
+			{{ item.name }}
+		</span>
 	</li>
 </template>
 <script>
