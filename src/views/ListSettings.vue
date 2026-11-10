@@ -44,7 +44,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { DialogSeverity, getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import { NcButton, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
@@ -226,16 +226,16 @@ export default {
 			return new Promise((resolve) => {
 				const dialog = getDialogBuilder(t('grocerylist', 'Delete list'))
 					.setText(text)
-					.setSeverity(DialogSeverity.Warning)
+					.setSeverity('warning')
 					.setButtons([
 						{
 							label: t('grocerylist', 'Cancel'),
-							type: 'secondary',
+							variant: 'secondary',
 							callback: () => resolve(false),
 						},
 						{
 							label: t('grocerylist', 'Delete'),
-							type: 'error',
+							variant: 'error',
 							callback: () => resolve(true),
 						},
 					])

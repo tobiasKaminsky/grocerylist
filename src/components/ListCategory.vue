@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { DialogSeverity, getDialogBuilder, showError } from '@nextcloud/dialogs'
+import { getDialogBuilder, showError } from '@nextcloud/dialogs'
 import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import { useCategoryStore } from '../store/categoryStore.ts'
@@ -138,16 +138,16 @@ export default {
 							itemCount,
 						),
 					)
-					.setSeverity(DialogSeverity.Warning)
+					.setSeverity('warning')
 					.setButtons([
 						{
 							label: t('grocerylist', 'Cancel'),
-							type: 'secondary',
+							variant: 'secondary',
 							callback: () => resolve(false),
 						},
 						{
 							label: t('grocerylist', 'Delete'),
-							type: 'error',
+							variant: 'error',
 							callback: () => resolve(true),
 						},
 					])
