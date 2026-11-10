@@ -12,7 +12,7 @@
 			</NcButton>
 		</div>
 		<div class="page-items">
-			<div v-if="hideCategory">
+			<div v-if="hideCategory" ref="flatList">
 				<draggable v-model="sortedItemsList"
 					tag="ul"
 					class="item-list"
@@ -22,10 +22,13 @@
 					<template #item="{ element }">
 						<ListItem :item="element"
 							:category-color="categoryColorForItem(element)"
+							:data-index-letter="firstItemIdByLetter[indexLetter(element.name)] === element.id ? indexLetter(element.name) : null"
 							@edit="() => editItem(element)"
 							@update="loadItems(listId)" />
 					</template>
 				</draggable>
+				<AlphabetIndex :available="Object.keys(firstItemIdByLetter)"
+					@select="scrollToLetter" />
 			</div>
 			<div v-else>
 				<div v-if="uncategorizedItems.length > 0">
@@ -166,6 +169,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
 import ListItem from './../components/ListItem.vue'
+import AlphabetIndex, { indexLetter } from './../components/AlphabetIndex.vue'
 
 export default {
 	name: 'GroceryList',
@@ -183,6 +187,7 @@ export default {
 		NcModal,
 		ListItem,
 		draggable,
+		AlphabetIndex,
 	},
 
 	props: {
@@ -239,6 +244,16 @@ export default {
 			set(value) {
 				this.items = value
 			},
+		},
+		firstItemIdByLetter() {
+			const result = {}
+			for (const item of this.sortedItemsList) {
+				const letter = indexLetter(item.name)
+				if (!(letter in result)) {
+					result[letter] = item.id
+				}
+			}
+			return result
 		},
 		uncategorizedItems() {
 			if (this.items == null) {
@@ -311,6 +326,12 @@ export default {
 		await this.loadAllCategories(this.listId)
 	},
 	methods: {
+		indexLetter,
+		scrollToLetter(letter) {
+			this.$refs.flatList
+				?.querySelector(`[data-index-letter="${letter}"]`)
+				?.scrollIntoView({ block: 'start' })
+		},
 		showAddModal() {
 			this.newItemId = -1
 			this.newItemName = ''
@@ -558,6 +579,7 @@ export default {
 <style lang="scss">
 // Wrapper around all of the view content
 .page-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
