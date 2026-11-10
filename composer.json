@@ -1,8 +1,8 @@
 {
-    "name": "tobiaskaminsky/grocery_list-0.1",
+    "name": "tobiaskaminsky/grocerylist",
     "description": "Grocery list for Nextcloud",
     "type": "project",
-    "license": "AGPL",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Tobias Kaminsky"
@@ -10,5 +10,31 @@
     ],
     "require": {},
     "require-dev": {
+        "nextcloud/coding-standard": "^1.5",
+        "nextcloud/ocp": "dev-stable33",
+        "phpunit/phpunit": "^11",
+        "vimeo/psalm": "^6"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OCA\\GroceryList\\": "lib/",
+            "OCA\\GroceryList\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.27"
+        },
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "lint": "find . -name \\*.php -not -path './vendor/*' -not -path './node_modules/*' -not -path './build/*' -not -path './.claude/*' -print0 | xargs -0 -n1 php -l",
+        "cs:check": "php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "psalm": "psalm --no-cache",
+        "psalm:update-baseline": "psalm --no-cache --update-baseline",
+        "test:unit": "phpunit -c tests/phpunit.xml --testsuite unit --colors=always --fail-on-warning",
+        "test:integration": "phpunit -c tests/phpunit.xml --testsuite integration --colors=always --fail-on-warning"
     }
 }

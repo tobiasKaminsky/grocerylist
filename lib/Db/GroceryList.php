@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Db;
 
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method string getTitle()
@@ -28,16 +34,16 @@ class GroceryList extends Entity implements JsonSerializable {
 	 */
 	protected $showOnlyUnchecked;
 
-    /**
-     * @var int
-     */
-    protected $uncheckedCount;
+	/**
+	 * @var int|null
+	 */
+	protected $uncheckedCount;
 
 	public function __construct() {
-		$this->addType('title', 'string');
-		$this->addType('userId', 'string');
-		$this->addType('showOnlyUnchecked', 'int');
-        $this->addType('uncheckedCount', 'int');
+		$this->addType('title', Types::STRING);
+		$this->addType('userId', Types::STRING);
+		$this->addType('showOnlyUnchecked', Types::INTEGER);
+		$this->addType('uncheckedCount', Types::INTEGER);
 	}
 
 	public function getShowOnlyUnchecked(): bool {
@@ -48,18 +54,18 @@ class GroceryList extends Entity implements JsonSerializable {
 		$this->setter('showOnlyUnchecked', [$showOnlyUnchecked ? 1 : 0]);
 	}
 
-    public function setUncheckedCount(int $count): void {
-        $this->setter('uncheckedCount', [$count]);
-    }
+	public function setUncheckedCount(int $count): void {
+		$this->setter('uncheckedCount', [$count]);
+	}
 
-
+	#[\Override]
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
 			'title' => $this->getTitle(),
 			'userId' => $this->getUserId(),
 			'showOnlyUnchecked' => $this->getShowOnlyUnchecked(),
-            'uncheckedCount' => $this->uncheckedCount,
+			'uncheckedCount' => $this->uncheckedCount,
 		];
 	}
 }

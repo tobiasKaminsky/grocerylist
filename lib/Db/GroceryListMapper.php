@@ -1,13 +1,17 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
-use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\IDBConnection;
 
 /**
- * @template-implements QBMapper<GroceryList>
+ * @template-extends QBMapper<GroceryList>
  */
 class GroceryListMapper extends QBMapper {
 	private $userId;
@@ -34,11 +38,11 @@ class GroceryListMapper extends QBMapper {
 			return $result[0];
 		} else {
 			$sharedList = $this->shareeMapper->find($id);
-				return $this->findById($sharedList->list);
+			return $this->findById($sharedList->list);
 		}
 	}
 
-	private function findById(int $id) {
+	private function findById(int $id): GroceryList {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -48,9 +52,9 @@ class GroceryListMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-    /**
-     * @return GroceryList[]
-     */
+	/**
+	 * @return GroceryList[]
+	 */
 	public function findAll() : array {
 		$qb = $this->db->getQueryBuilder();
 

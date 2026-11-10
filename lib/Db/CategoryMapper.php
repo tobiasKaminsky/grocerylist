@@ -1,13 +1,17 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
-use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\IDBConnection;
 
 /**
- * @template-implements QBMapper<Category>
+ * @template-extends QBMapper<Category>
  */
 class CategoryMapper extends QBMapper {
 
@@ -15,7 +19,7 @@ class CategoryMapper extends QBMapper {
 		parent::__construct($db, 'grocerylist_categories', Category::class);
 	}
 
-	public function find(int $id) {
+	public function find(int $id): Category {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -25,7 +29,10 @@ class CategoryMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-	public function findAll(int $id) {
+	/**
+	 * @return Category[]
+	 */
+	public function findAll(int $id): array {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -33,7 +40,7 @@ class CategoryMapper extends QBMapper {
 			->where(
 				$qb->expr()->eq('list', $qb->createNamedParameter($id))
 			)
-			->orderBy("order")
+			->orderBy('order')
 		;
 
 		return $this->findEntities($qb);
