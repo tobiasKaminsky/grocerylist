@@ -128,7 +128,7 @@ export default {
 				const response = await axios.get(generateUrl(`/apps/grocerylist/api/list/${this.listId}`))
 				this.groceryList = response.data
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch list ' + this.listId, { error: e })
 				showError(t('grocerylist', 'Could not fetch list {id}', { id: this.listId }))
 			}
 		},
@@ -141,7 +141,7 @@ export default {
 			try {
 				await this.categoryStore.loadCategories(this.listId)
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch categories', { error: e })
 				showError(t('grocerylist', ('Could not fetch categories')))
 			}
 			this.loadingCategories = false
@@ -152,7 +152,7 @@ export default {
 				const response = await axios.get(generateUrl(`/apps/grocerylist/api/sharees/${this.listId}`))
 				this.sharees = response.data
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch sharees', { error: e })
 				showError(t('grocerylist', ('Could not fetch sharees')))
 			}
 			this.loading = false
@@ -167,7 +167,7 @@ export default {
 			try {
 				await this.categoryStore.reorderCategories(this.listId, orderedCategories)
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not save category order', { error: e })
 				showError(t('grocerylist', 'Could not save category order'))
 				// Reload to get back to the authoritative order on failure
 				this.loadCategories()
@@ -211,7 +211,7 @@ export default {
 				showSuccess(t('grocerylist', 'List deleted'))
 				this.$router.replace('/')
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not delete list', { error: e })
 				showError(t('grocerylist', 'Could not delete list'))
 				this.deleting = false
 			}

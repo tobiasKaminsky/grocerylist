@@ -396,7 +396,7 @@ export default {
 					showOnlyUnchecked: value,
 				})
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not update groceryList', { error: e })
 				showError(t('grocerylist', 'Could not update groceryList'))
 			}
 		},
@@ -406,7 +406,7 @@ export default {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch list ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch list ' + id)))
 			}
 			this.loading = false
@@ -417,7 +417,7 @@ export default {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/categories/' + id))
 				this.categories = response.data
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch categories for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
 			}
 			this.loading = false
@@ -429,7 +429,7 @@ export default {
 				this.allCategories = response.data
 				this.newItemCategory = this.allCategories[0]
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch all categories for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch all categories for groceryList ' + id)))
 			}
 			this.loading = false
@@ -454,7 +454,7 @@ export default {
 					}
 				})
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not fetch items for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch items for groceryList ' + id)))
 			}
 			this.loading = false
@@ -562,7 +562,7 @@ export default {
 				this.newItemName = ''
 				this.newItemQuantity = ''
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
@@ -582,7 +582,7 @@ export default {
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
@@ -602,7 +602,7 @@ export default {
 						await this.loadItems(this.listId)
 						await this.loadCategories(this.listId)
 					} catch (e) {
-						logger.error('Request failed', { error: e })
+						logger.error('Could not update item category', { error: e })
 						showError(t('grocerylist', 'Could not update item category'))
 					}
 				}
@@ -618,7 +618,7 @@ export default {
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not delete item', { error: e })
 				showError(t('grocerylist', 'Could not delete item'))
 			}
 

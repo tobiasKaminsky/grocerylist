@@ -83,7 +83,7 @@ export default {
 					checked: item.checked,
 				})
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not check item', { error: e })
 				showError(t('grocerylist', 'Could not check item'))
 			}
 		},
@@ -94,7 +94,7 @@ export default {
 
 				this.$emit('update')
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},

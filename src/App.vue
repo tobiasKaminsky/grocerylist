@@ -23,7 +23,8 @@
 						v-for="groceryList in groceryLists"
 						:key="groceryList.id"
 						:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
-						:groceryList="groceryList" />
+						:groceryList="groceryList"
+						@rename="(title) => renameGroceryList(groceryList, title)" />
 				</ul>
 			</template>
 		</NcAppNavigation>
@@ -157,6 +158,7 @@ export default {
 	 */
 	async mounted() {
 		subscribe('grocerylist:list-deleted', this.onListDeleted)
+		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 		try {
 			if (this.$route.name === 'lists') {
 				logger.debug('show single list' + this.$route.params)
@@ -166,7 +168,7 @@ export default {
 			this.groceryLists = data
 			this.restoreLastOpenedList()
 		} catch (e) {
-			logger.error('Request failed', { error: e })
+			logger.error('Could not fetch groceryLists', { error: e })
 			showError(t('grocerylist', 'Could not fetch groceryLists'))
 		}
 		this.loading = false
@@ -174,6 +176,7 @@ export default {
 
 	beforeUnmount() {
 		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
+		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
 
 	methods: {
@@ -202,15 +205,27 @@ export default {
 			this.$router.replace({ name: 'list', params: { listId: listId.toString() } })
 		},
 
-		renameGroceryList(id, value) {
+		async renameGroceryList(list, title) {
+			const previousTitle = list.title
+			list.title = title
 			try {
-				axios.post(generateUrl('/apps/grocerylist/api/list/' + id), {
-					title: value,
-				})
+				await axios.post(generateUrl(`/apps/grocerylist/api/lists/${list.id}`), list)
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				list.title = previousTitle
+				logger.error('Could not rename groceryList', { error: e })
 				showError(t('grocerylist', 'Could not rename groceryList'))
 			}
+		},
+
+		onItemCheckedChanged({ listId, checked }) {
+			const list = this.groceryLists.find(({ id }) => id === listId)
+			if (!list) {
+				return
+			}
+			const current = list.uncheckedCount ?? 0
+			list.uncheckedCount = checked
+				? Math.max(0, current - 1)
+				: current + 1
 		},
 
 		deleteGroceryList(list) {
@@ -259,7 +274,7 @@ export default {
 					query: this.newListHideCategory ? { hideCategory: '1' } : {},
 				})
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not create groceryList', { error: e })
 				showError(t('grocerylist', 'Could not create groceryList'))
 			}
 		},

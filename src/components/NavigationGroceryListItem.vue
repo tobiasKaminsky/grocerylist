@@ -27,17 +27,13 @@
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
-import { showError, showInfo } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { generateUrl } from '@nextcloud/router'
+import { emit } from '@nextcloud/event-bus'
 import {
 	NcActionButton,
 	NcAppNavigationItem,
 	NcCounterBubble,
 } from '@nextcloud/vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
-import logger from '../logger.js'
 
 export default {
 	name: 'NavigationGroceryListItem',
@@ -53,9 +49,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+
 	},
 
-	emits: ['update:currentGroceryListId'],
+	emits: ['rename'],
 
 	data() {
 		return {}
@@ -83,43 +80,9 @@ export default {
 		},
 	},
 
-	mounted() {
-		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
-	},
-
-	beforeUnmount() {
-		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
-	},
-
 	methods: {
-		onItemCheckedChanged({ listId, checked }) {
-			if (listId !== this.groceryList.id) {
-				return
-			}
-			const current = this.groceryList.uncheckedCount ?? 0
-			this.groceryList.uncheckedCount = checked
-				? Math.max(0, current - 1)
-				: current + 1
-		},
-
-		async onRename(newTitle) {
-			showInfo('rename to ' + newTitle)
-			logger.debug('rename to ' + newTitle)
-			this.updating = true
-			this.groceryList.title = newTitle
-
-			try {
-				if (this.groceryList.id === -1) {
-					const response = await axios.post(generateUrl('/apps/grocerylist/api/lists'), this.groceryList)
-					this.$emit('update:currentGroceryListId', response.data.id)
-				} else {
-					await axios.post(generateUrl(`/apps/grocerylist/api/lists/${this.groceryList.id}`), this.groceryList)
-				}
-			} catch (e) {
-				logger.error('Request failed', { error: e })
-				showError(t('grocerylist', 'Could not create groceryList'))
-			}
-			this.updating = false
+		onRename(newTitle) {
+			this.$emit('rename', newTitle)
 		},
 
 		openSettings(groceryList) {

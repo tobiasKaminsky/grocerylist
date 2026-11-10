@@ -4,7 +4,7 @@ SPDX-PackageSupplier = "Tobias Kaminsky <tobias@kaminsky.me>"
 SPDX-PackageDownloadLocation = "https://github.com/tobiasKaminsky/grocerylist"
 
 [[annotations]]
-path = ["composer.json", "composer.lock", "package.json", "package-lock.json", "tsconfig.json", ".gitignore", ".idea/.gitignore", "README.md"]
+path = ["composer.json", "composer.lock", "package.json", "package-lock.json", "renovate.json", "tsconfig.json", ".gitignore", ".idea/.gitignore", "README.md"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2020 Tobias Kaminsky <tobias@kaminsky.me>"
 SPDX-License-Identifier = "AGPL-3.0-or-later"

@@ -19,7 +19,7 @@
 				variant="tertiary"
 				:aria-label="t('grocerylist', 'Pick color')">
 				<template #icon>
-					<CircleIcon :size="24" :fillColor="categoryColor || '#aaa'" />
+					<IconCircle :size="24" :fillColor="categoryColor || '#aaa'" />
 				</template>
 			</NcButton>
 		</NcColorPicker>
@@ -59,7 +59,7 @@ import { getDialogBuilder, showError } from '@nextcloud/dialogs'
 import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import CircleIcon from 'vue-material-design-icons/Circle.vue'
+import IconCircle from 'vue-material-design-icons/Circle.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconDrag from 'vue-material-design-icons/Drag.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
@@ -70,8 +70,8 @@ export default {
 	name: 'ListCategory',
 
 	components: {
-		CircleIcon,
 		IconCheck,
+		IconCircle,
 		IconDelete,
 		IconDrag,
 		IconPencil,
@@ -106,7 +106,7 @@ export default {
 			try {
 				await this.categoryStore.updateCategoryColor(this.category.id, color, this.category.grocery_list)
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not update category color', { error: e })
 				showError(t('grocerylist', 'Could not update category color'))
 			}
 		},
@@ -124,7 +124,7 @@ export default {
 			try {
 				await this.categoryStore.deleteCategory(this.category)
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error('Could not delete category', { error: e })
 				showError(t('grocerylist', 'Could not delete category'))
 			}
 			this.deleting = false
@@ -180,7 +180,7 @@ export default {
 				try {
 					this.categoryStore.editCategory({ ...this.category, name: this.newCategoryName })
 				} catch (e) {
-					logger.error('Request failed', { error: e })
+					logger.error('Could not rename category', { error: e })
 					showError(t('grocerylist', 'Could not rename category'))
 				}
 				this.loading = false

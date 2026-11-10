@@ -79,7 +79,7 @@ export default {
 				await this.categoryStore.createCategory(this.listId, this.newCategoryName)
 				this.newCategoryName = ''
 			} catch (e) {
-				logger.error('Request failed', { error: e })
+				logger.error(`Could not add category to list ${this.listId}`, { error: e })
 				showError(t('grocerylist', `Could not add category to list ${this.listId}`))
 			}
 			this.updating = false
