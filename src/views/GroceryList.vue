@@ -85,13 +85,16 @@
 		</div>
 		<div>
 			<div v-if="hideCategory">
-				<ul class="list-item">
+				<ul ref="flatList" class="list-item">
 					<ListItem v-for="item in sortedItems"
 						:key="item.id"
 						:item="item"
+						:data-index-letter="firstItemIdByLetter[indexLetter(item.name)] === item.id ? indexLetter(item.name) : null"
 						@edit="() => editItem(item)"
 						@update="loadItems(listId)" />
 				</ul>
+				<AlphabetIndex :available="Object.keys(firstItemIdByLetter)"
+					@select="scrollToLetter" />
 			</div>
 			<div v-else>
 				<span v-for="category in filteredCategories" :key="category.id">
@@ -135,6 +138,7 @@ import Minus from 'vue-material-design-icons/Minus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
 import ListItem from './../components/ListItem.vue'
+import AlphabetIndex, { indexLetter } from './../components/AlphabetIndex.vue'
 
 export default {
 	name: 'GroceryList',
@@ -149,6 +153,7 @@ export default {
 		Delete,
 		NcModal,
 		ListItem,
+		AlphabetIndex,
 	},
 
 	props: {
@@ -197,11 +202,21 @@ export default {
 		allItems() {
 			return this.items
 		},
-    sortedItems() {
-      return this.items.sort((a, b) => {
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-      })
-    },
+		sortedItems() {
+			return [...(this.items ?? [])].sort((a, b) => {
+				return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+			})
+		},
+		firstItemIdByLetter() {
+			const result = {}
+			for (const item of this.sortedItems ?? []) {
+				const letter = indexLetter(item.name)
+				if (!(letter in result)) {
+					result[letter] = item.id
+				}
+			}
+			return result
+		},
 		filteredCategories() {
 			if (this.categories == null) {
 				return
@@ -257,6 +272,12 @@ export default {
 		await this.loadAllCategories(this.listId)
 	},
 	methods: {
+		indexLetter,
+		scrollToLetter(letter) {
+			this.$refs.flatList
+				?.querySelector(`[data-index-letter="${letter}"]`)
+				?.scrollIntoView({ block: 'start' })
+		},
 		showAddModal() {
 			this.newItemId = -1
 			this.newItemName = ''
