@@ -1,30 +1,40 @@
+<!--
+  - SPDX-FileCopyrightText: 2023 Tobias Kaminsky <tobias@kaminsky.me>
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<li class="list-category">
-		<span class="list-category__drag-handle"
+		<span
+			class="list-category__drag-handle"
 			:aria-label="t('grocerylist', 'Drag to reorder')"
 			:title="t('grocerylist', 'Drag to reorder')">
 			<IconDrag :size="20" />
 		</span>
-		<NcColorPicker v-model="categoryColor"
+		<NcColorPicker
+			v-model="categoryColor"
 			:aria-label="t('grocerylist', 'Category color')"
-			@update:model-value="updateColor">
-			<NcButton type="tertiary"
+			@update:modelValue="updateColor">
+			<NcButton
+				variant="tertiary"
 				:aria-label="t('grocerylist', 'Pick color')">
 				<template #icon>
-					<Circle :size="24" :fill-color="categoryColor || '#aaa'" />
+					<CircleIcon :size="24" :fillColor="categoryColor || '#aaa'" />
 				</template>
 			</NcButton>
 		</NcColorPicker>
-		<NcTextField v-if="isEditing"
+		<NcTextField
+			v-if="isEditing"
 			ref="input"
+			v-model="newCategoryName"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
-			:loading="loading"
-			v-model="newCategoryName" />
+			:loading="loading" />
 		<span v-else class="list-category__name">
 			{{ category.name }}
 		</span>
-		<NcButton type="tertiary"
+		<NcButton
+			variant="tertiary"
 			:aria-label="isEditing ? t('grocerylist', 'Save changed category') : t('grocerylist', 'Edit category')"
 			@click="toggleEditMode">
 			<template #icon>
@@ -32,7 +42,8 @@
 				<IconPencil v-else :size="20" />
 			</template>
 		</NcButton>
-		<NcButton type="tertiary"
+		<NcButton
+			variant="tertiary"
 			:aria-label="t('grocerylist', 'Delete category')"
 			:disabled="deleting"
 			@click="onDelete">
@@ -47,19 +58,19 @@
 import { getDialogBuilder, showError } from '@nextcloud/dialogs'
 import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
-import { useCategoryStore } from '../store/categoryStore.ts'
-
-import Circle from 'vue-material-design-icons/Circle.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import CircleIcon from 'vue-material-design-icons/Circle.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconDrag from 'vue-material-design-icons/Drag.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import logger from '../logger.js'
+import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListCategory',
 
 	components: {
-		Circle,
+		CircleIcon,
 		IconCheck,
 		IconDelete,
 		IconDrag,
@@ -95,7 +106,7 @@ export default {
 			try {
 				await this.categoryStore.updateCategoryColor(this.category.id, color, this.category.grocery_list)
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not update category color'))
 			}
 		},
@@ -113,7 +124,7 @@ export default {
 			try {
 				await this.categoryStore.deleteCategory(this.category)
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not delete category'))
 			}
 			this.deleting = false
@@ -130,14 +141,12 @@ export default {
 		confirmDeletion(itemCount) {
 			return new Promise((resolve) => {
 				const dialog = getDialogBuilder(t('grocerylist', 'Delete category'))
-					.setText(
-						n(
-							'grocerylist',
-							'This category contains %n item. Deleting the category will also delete this item. Continue?',
-							'This category contains %n items. Deleting the category will also delete these items. Continue?',
-							itemCount,
-						),
-					)
+					.setText(n(
+						'grocerylist',
+						'This category contains %n item. Deleting the category will also delete this item. Continue?',
+						'This category contains %n items. Deleting the category will also delete these items. Continue?',
+						itemCount,
+					))
 					.setSeverity('warning')
 					.setButtons([
 						{
@@ -161,13 +170,17 @@ export default {
 		async toggleEditMode() {
 			if (!this.isEditing) {
 				this.newCategoryName = this.category.name
-				this.$nextTick(() => this.$nextTick(() => this.$refs.input?.$el?.querySelector('input')?.focus()))
+				this.$nextTick(() => {
+					this.$nextTick(() => {
+						this.$refs.input?.$el?.querySelector('input')?.focus()
+					})
+				})
 			} else if (this.newCategoryName !== this.category.name) {
 				this.loading = true
 				try {
 					this.categoryStore.editCategory({ ...this.category, name: this.newCategoryName })
 				} catch (e) {
-					console.error(e)
+					logger.error('Request failed', { error: e })
 					showError(t('grocerylist', 'Could not rename category'))
 				}
 				this.loading = false

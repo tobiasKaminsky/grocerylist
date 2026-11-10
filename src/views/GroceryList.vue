@@ -1,8 +1,14 @@
+<!--
+  - SPDX-FileCopyrightText: 2021 Tobias Kaminsky <tobias@kaminsky.me>
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<div class="page-wrapper">
 		<div class="page-header">
 			<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
-			<NcButton type="primary"
+			<NcButton
+				variant="primary"
 				:aria-label="t('grocerylist', 'Add item')"
 				@click="showAddModal">
 				<template #icon>
@@ -13,21 +19,24 @@
 		</div>
 		<div class="page-items">
 			<div v-if="hideCategory" ref="flatList">
-				<draggable v-model="sortedItemsList"
+				<Draggable
+					v-model="sortedItemsList"
 					tag="ul"
 					class="item-list"
-					item-key="id"
+					itemKey="id"
 					handle=".drag-handle"
 					:animation="200">
 					<template #item="{ element }">
-						<ListItem :item="element"
-							:category-color="categoryColorForItem(element)"
+						<ListItem
+							:item="element"
+							:categoryColor="categoryColorForItem(element)"
 							:data-index-letter="firstItemIdByLetter[indexLetter(element.name)] === element.id ? indexLetter(element.name) : null"
 							@edit="() => editItem(element)"
 							@update="loadItems(listId)" />
 					</template>
-				</draggable>
-				<AlphabetIndex :available="Object.keys(firstItemIdByLetter)"
+				</Draggable>
+				<AlphabetIndex
+					:available="Object.keys(firstItemIdByLetter)"
 					@select="scrollToLetter" />
 			</div>
 			<div v-else>
@@ -37,21 +46,23 @@
 						<ChevronRight v-else :size="20" />
 						{{ t('grocerylist', 'Uncategorized') }}
 					</h2>
-					<draggable v-show="!collapsedCategories['uncategorized']"
-						:model-value="uncategorizedItems"
+					<Draggable
+						v-show="!collapsedCategories['uncategorized']"
+						:modelValue="uncategorizedItems"
 						tag="ul"
 						class="item-list"
-						item-key="id"
+						itemKey="id"
 						group="items"
 						handle=".drag-handle"
 						:animation="200"
 						@change="(evt) => onDragChange(evt, 0)">
 						<template #item="{ element }">
-							<ListItem :item="element"
+							<ListItem
+								:item="element"
 								@edit="() => editItem(element)"
 								@update="loadItems(listId)" />
 						</template>
-					</draggable>
+					</Draggable>
 				</div>
 				<div v-for="category in filteredCategories" :key="category.id">
 					<h2 class="category-heading" @click="toggleCollapsed(category.id)">
@@ -59,83 +70,94 @@
 						<ChevronRight v-else :size="20" :style="category.color ? { color: category.color } : {}" />
 						{{ category.name }}
 					</h2>
-					<draggable v-show="!collapsedCategories[category.id]"
-						:model-value="filteredItems(category.id)"
+					<Draggable
+						v-show="!collapsedCategories[category.id]"
+						:modelValue="filteredItems(category.id)"
 						tag="ul"
 						class="item-list"
-						item-key="id"
+						itemKey="id"
 						group="items"
 						handle=".drag-handle"
 						:animation="200"
 						@change="(evt) => onDragChange(evt, category.id)">
 						<template #item="{ element }">
-							<ListItem :item="element"
-								:category-color="category.color"
+							<ListItem
+								:item="element"
+								:categoryColor="category.color"
 								@edit="() => editItem(element)"
 								@update="loadItems(listId)" />
 						</template>
-					</draggable>
+					</Draggable>
 				</div>
 			</div>
 		</div>
 		<div class="page-options">
-			<NcCheckboxRadioSwitch :model-value="!!groceryList?.showOnlyUnchecked" type="switch" @update:model-value="toggleVisibility">
+			<NcCheckboxRadioSwitch :modelValue="!!groceryList?.showOnlyUnchecked" type="switch" @update:modelValue="toggleVisibility">
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-model="hideCategory"
+			<NcCheckboxRadioSwitch
+				v-model="hideCategory"
 				type="switch">
 				{{ t('grocerylist', 'Hide category') }}
 			</NcCheckboxRadioSwitch>
 		</div>
-		<NcModal v-if="modal"
+		<NcModal
+			v-if="modal"
 			ref="modalRef"
 			:name="newItemId === -1 ? t('grocerylist', 'Add item') : t('grocerylist', 'Edit item')"
 			@close="closeModal">
-			<form class="modal__content"
+			<form
+				class="modal__content"
 				@submit.prevent="onSaveItem()">
-				<NcTextField v-model="newItemName"
+				<NcTextField
+					v-model="newItemName"
 					:label="t('grocerylist', 'Item name')"
 					:placeholder="t('grocerylist', 'e.g. Milk, Bread, Eggs…')"
 					@keyup.enter="onSaveItem()" />
 				<div class="quantityRow">
-					<NcTextField v-model="newItemQuantity"
+					<NcTextField
+						v-model="newItemQuantity"
 						:label="t('grocerylist', 'Quantity')"
 						:placeholder="t('grocerylist', '1')"
 						@keyup.up="increaseQuantity()"
 						@keyup.down="decreaseQuantity()" />
-					<NcButton :aria-label="t('grocerylist', 'Increase quantity')"
-						type="tertiary"
+					<NcButton
+						:aria-label="t('grocerylist', 'Increase quantity')"
+						variant="tertiary"
 						@click="increaseQuantity()">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
 					</NcButton>
-					<NcButton :aria-label="t('grocerylist', 'Decrease quantity')"
-						type="tertiary"
+					<NcButton
+						:aria-label="t('grocerylist', 'Decrease quantity')"
+						variant="tertiary"
 						@click="decreaseQuantity()">
 						<template #icon>
 							<Minus :size="20" />
 						</template>
 					</NcButton>
 				</div>
-				<NcSelect id="dropdown"
+				<NcSelect
+					id="dropdown"
 					v-model="newItemCategory"
 					:options="allCategories"
 					label="name"
 					:placeholder="t('grocerylist', 'Select or create a category…')"
 					:taggable="true"
-					:create-option="(name) => ({ name, id: null })"
-					:close-on-outside-click="true" />
+					:createOption="(name) => ({ name, id: null })"
+					:closeOnOutsideClick="true" />
 				<div class="button-list">
-					<NcButton type="primary" native-type="submit" :aria-label="t('grocerylist', 'Add item')">
+					<NcButton variant="primary" type="submit" :aria-label="t('grocerylist', 'Add item')">
 						<template #icon>
 							<Plus :size="20" />
 						</template>
 						{{ t('grocerylist', 'Add item') }}
 					</NcButton>
-					<NcButton v-if="showDeleteButton"
+					<NcButton
+						v-if="showDeleteButton"
 						id="deleteButton"
-						type="error"
+						variant="error"
 						:aria-label="t('grocerylist', 'Delete item')"
 						:hidden="newItemId === -1"
 						@click="deleteItem()">
@@ -155,21 +177,22 @@ import axios from '@nextcloud/axios'
 import { showError, showInfo } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import {
-	NcSelect,
-	NcCheckboxRadioSwitch,
 	NcButton,
+	NcCheckboxRadioSwitch,
 	NcModal,
+	NcSelect,
 	NcTextField,
 } from '@nextcloud/vue'
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
-import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import Minus from 'vue-material-design-icons/Minus.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
-import ListItem from './../components/ListItem.vue'
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import Minus from 'vue-material-design-icons/Minus.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import AlphabetIndex, { indexLetter } from './../components/AlphabetIndex.vue'
+import ListItem from './../components/ListItem.vue'
+import logger from '../logger.js'
 
 export default {
 	name: 'GroceryList',
@@ -186,7 +209,7 @@ export default {
 		Delete,
 		NcModal,
 		ListItem,
-		draggable,
+		Draggable: draggable,
 		AlphabetIndex,
 	},
 
@@ -196,6 +219,7 @@ export default {
 			required: true,
 		},
 	},
+
 	setup() {
 		return {
 			modalRef: ref(null),
@@ -221,30 +245,39 @@ export default {
 			collapsedCategories: {},
 		}
 	},
+
 	computed: {
 		isSnoozed() {
 			return (item) => item.hidden > (Math.floor(Date.now() / 1000) - (15 * 60))
 		},
+
 		name() {
 			return 'Test'
 		},
+
 		title() {
 			return this.groceryList === null ? '' : this.groceryList.title
 		},
+
 		allItems() {
 			return this.items
 		},
+
 		sortedItemsList: {
 			get() {
-				if (!this.items) return []
+				if (!this.items) {
+					return []
+				}
 				return [...this.items].sort((a, b) => {
 					return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 				})
 			},
+
 			set(value) {
 				this.items = value
 			},
 		},
+
 		firstItemIdByLetter() {
 			const result = {}
 			for (const item of this.sortedItemsList) {
@@ -255,11 +288,12 @@ export default {
 			}
 			return result
 		},
+
 		uncategorizedItems() {
-			if (this.items == null) {
+			if (!this.items) {
 				return []
 			}
-			return this.items.filter(item => {
+			return this.items.filter((item) => {
 				if (item.category) {
 					return false
 				}
@@ -269,14 +303,15 @@ export default {
 				return true
 			})
 		},
+
 		filteredCategories() {
-			if (this.categories == null) {
+			if (!this.categories) {
 				return
 			}
 
-			return this.categories.filter(category => {
+			return this.categories.filter((category) => {
 				if (this.groceryList.showOnlyUnchecked) {
-					return this.filteredItems().filter(item => {
+					return this.filteredItems().filter((item) => {
 						return item.category === category.id
 					}).length > 0
 				} else {
@@ -284,13 +319,14 @@ export default {
 				}
 			})
 		},
+
 		filteredItems() {
 			return (category) => {
-				if (this.items == null) {
+				if (!this.items) {
 					return
 				}
 
-				return this.items.filter(item => {
+				return this.items.filter((item) => {
 					if (category && category !== item.category) {
 						return false
 					}
@@ -304,10 +340,11 @@ export default {
 			}
 		},
 	},
+
 	watch: {
 		$route(to, from) {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
-				console.warn('Route: ' + to.params.listId)
+				logger.debug('Route: ' + to.params.listId)
 				// this.listId = to.params.listId
 				this.loadGroceryList(this.listId)
 				this.loadItems(this.listId)
@@ -316,6 +353,7 @@ export default {
 			}
 		},
 	},
+
 	async mounted() {
 		if (this.$route.query.hideCategory === '1') {
 			this.hideCategory = true
@@ -325,6 +363,7 @@ export default {
 		await this.loadCategories(this.listId)
 		await this.loadAllCategories(this.listId)
 	},
+
 	methods: {
 		indexLetter,
 		scrollToLetter(letter) {
@@ -332,6 +371,7 @@ export default {
 				?.querySelector(`[data-index-letter="${letter}"]`)
 				?.scrollIntoView({ block: 'start' })
 		},
+
 		showAddModal() {
 			this.newItemId = -1
 			this.newItemName = ''
@@ -339,62 +379,68 @@ export default {
 			this.showDeleteButton = false
 			this.modal = true
 		},
+
 		closeModal() {
 			this.modal = false
 		},
+
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
 			this.hideCategory = !this.groceryList.showOnlyUnchecked
 		},
+
 		async updateGroceryList(id, value) {
 			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/lists/' + id + '/visibility'),
-					{
-						showOnlyUnchecked: value,
-					})
+				await axios.post(generateUrl('/apps/grocerylist/api/lists/' + id + '/visibility'), {
+					showOnlyUnchecked: value,
+				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not update groceryList'))
 			}
 		},
+
 		async loadGroceryList(id) {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', ('Could not fetch list ' + id)))
 			}
 			this.loading = false
 		},
+
 		async loadCategories(id) {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/categories/' + id))
 				this.categories = response.data
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
 			}
 			this.loading = false
 		},
+
 		async loadAllCategories(id) {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.allCategories = response.data
 				this.newItemCategory = this.allCategories[0]
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', ('Could not fetch all categories for groceryList ' + id)))
 			}
 			this.loading = false
 		},
+
 		async loadItems(id) {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/items/' + id))
-				console.warn('Load items for ' + id)
+				logger.debug('Load items for ' + id)
 				this.items = response.data
-				console.warn('Size: ' + this.items.length)
+				logger.debug('Size: ' + this.items.length)
 
 				this.items.sort((a, b) => {
 					if (a.checked === b.checked) {
@@ -408,19 +454,21 @@ export default {
 					}
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', ('Could not fetch items for groceryList ' + id)))
 			}
 			this.loading = false
 		},
+
 		async editItem(item) {
 			this.showDeleteButton = true
 			this.newItemId = item.id
 			this.newItemName = item.name
 			this.newItemQuantity = item.quantity
-			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
+			this.newItemCategory = this.allCategories.find((i) => i.id === item.category)
 			this.modal = true
 		},
+
 		increaseQuantity() {
 			if (this.newItemQuantity === '') {
 				this.newItemQuantity = 1
@@ -436,6 +484,7 @@ export default {
 				this.newItemQuantity = this.newItemQuantity + 1
 			}
 		},
+
 		decreaseQuantity() {
 			if (this.newItemQuantity > 1000) {
 				this.newItemQuantity = this.newItemQuantity - 1000
@@ -449,6 +498,7 @@ export default {
 				this.newItemQuantity = ''
 			}
 		},
+
 		async onSaveItem() {
 			if (this.newItemName === '') {
 				showInfo('Cannot add empty item!')
@@ -463,19 +513,22 @@ export default {
 
 			this.closeModal()
 		},
+
 		toggleCollapsed(key) {
 			this.collapsedCategories = {
 				...this.collapsedCategories,
 				[key]: !this.collapsedCategories[key],
 			}
 		},
+
 		categoryColorForItem(item) {
 			if (!item.category || !this.allCategories) {
 				return null
 			}
-			const cat = this.allCategories.find(c => c.id === item.category)
+			const cat = this.allCategories.find((c) => c.id === item.category)
 			return cat?.color || null
 		},
+
 		async ensureCategoryExists() {
 			if (!this.newItemCategory) {
 				return 0
@@ -492,17 +545,16 @@ export default {
 			this.newItemCategory = created
 			return created.id
 		},
+
 		async addItem() {
 			try {
 				const categoryId = await this.ensureCategoryExists()
-				await axios.post(generateUrl('/apps/grocerylist/api/item/add'),
-					{
-						name: this.newItemName.trim(),
-						quantity: this.newItemQuantity.toString(),
-						category: categoryId,
-						list: this.listId,
-					},
-				)
+				await axios.post(generateUrl('/apps/grocerylist/api/item/add'), {
+					name: this.newItemName.trim(),
+					quantity: this.newItemQuantity.toString(),
+					category: categoryId,
+					list: this.listId,
+				})
 
 				await this.loadItems(this.listId)
 				await this.loadCategories(this.listId)
@@ -510,31 +562,31 @@ export default {
 				this.newItemName = ''
 				this.newItemQuantity = ''
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
+
 		async updateItem() {
 			try {
 				const categoryId = await this.ensureCategoryExists()
-				await axios.post(generateUrl('/apps/grocerylist/api/item/update'),
-					{
-						id: this.newItemId,
-						name: this.newItemName.trim(),
-						quantity: this.newItemQuantity.toString(),
-						category: categoryId,
-					},
-				)
+				await axios.post(generateUrl('/apps/grocerylist/api/item/update'), {
+					id: this.newItemId,
+					name: this.newItemName.trim(),
+					quantity: this.newItemQuantity.toString(),
+					category: categoryId,
+				})
 
 				await this.loadItems(this.listId)
 				this.newItemName = ''
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
+
 		async onDragChange(evt, categoryId) {
 			if (evt.added) {
 				const item = evt.added.element
@@ -550,12 +602,13 @@ export default {
 						await this.loadItems(this.listId)
 						await this.loadCategories(this.listId)
 					} catch (e) {
-						console.error(e)
+						logger.error('Request failed', { error: e })
 						showError(t('grocerylist', 'Could not update item category'))
 					}
 				}
 			}
 		},
+
 		async deleteItem() {
 			try {
 				await axios.delete(generateUrl('/apps/grocerylist/api/item/' + this.newItemId))
@@ -565,7 +618,7 @@ export default {
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				console.error(e)
+				logger.error('Request failed', { error: e })
 				showError(t('grocerylist', 'Could not delete item'))
 			}
 
@@ -619,7 +672,6 @@ export default {
     }
   }
 }
-
 
 .page-items {
   flex: 1;
