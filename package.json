@@ -30,7 +30,7 @@
   "dependencies": {
     "@nextcloud/axios": "^2.6.0",
     "@nextcloud/dialogs": "^7.0.0",
-    "@nextcloud/event-bus": "^3.3.2",
+    "@nextcloud/event-bus": "^3.3.3",
     "@nextcloud/logger": "^3.0.3",
     "@nextcloud/router": "^3.0.0",
     "@nextcloud/vue": "^9.0.0",
