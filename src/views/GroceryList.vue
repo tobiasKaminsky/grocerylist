@@ -187,6 +187,7 @@ import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import AlphabetIndex, { indexLetter } from './../components/AlphabetIndex.vue'
 import ListItem from './../components/ListItem.vue'
+import logger from '../logger.js'
 
 export default {
 	name: 'GroceryList',
@@ -259,7 +260,9 @@ export default {
 
 		sortedItemsList: {
 			get() {
-				if (!this.items) { return [] }
+				if (!this.items) {
+					return []
+				}
 				return [...this.items].sort((a, b) => {
 					return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 				})
@@ -282,7 +285,7 @@ export default {
 		},
 
 		uncategorizedItems() {
-			if (this.items == null) {
+			if (!this.items) {
 				return []
 			}
 			return this.items.filter((item) => {
@@ -297,7 +300,7 @@ export default {
 		},
 
 		filteredCategories() {
-			if (this.categories == null) {
+			if (!this.categories) {
 				return
 			}
 
@@ -314,7 +317,7 @@ export default {
 
 		filteredItems() {
 			return (category) => {
-				if (this.items == null) {
+				if (!this.items) {
 					return
 				}
 
@@ -336,7 +339,7 @@ export default {
 	watch: {
 		$route(to, from) {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
-				console.warn('Route: ' + to.params.listId)
+				logger.debug('Route: ' + to.params.listId)
 				// this.listId = to.params.listId
 				this.loadGroceryList(this.listId)
 				this.loadItems(this.listId)
@@ -388,7 +391,7 @@ export default {
 					showOnlyUnchecked: value,
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not update groceryList', { error: e })
 				showError(t('grocerylist', 'Could not update groceryList'))
 			}
 		},
@@ -398,7 +401,7 @@ export default {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/list/' + id))
 				this.groceryList = response.data
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not fetch list ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch list ' + id)))
 			}
 			this.loading = false
@@ -409,7 +412,7 @@ export default {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/categories/' + id))
 				this.categories = response.data
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not fetch categories for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
 			}
 			this.loading = false
@@ -421,7 +424,7 @@ export default {
 				this.allCategories = response.data
 				this.newItemCategory = this.allCategories[0]
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not fetch all categories for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch all categories for groceryList ' + id)))
 			}
 			this.loading = false
@@ -430,9 +433,9 @@ export default {
 		async loadItems(id) {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/items/' + id))
-				console.warn('Load items for ' + id)
+				logger.debug('Load items for ' + id)
 				this.items = response.data
-				console.warn('Size: ' + this.items.length)
+				logger.debug('Size: ' + this.items.length)
 
 				this.items.sort((a, b) => {
 					if (a.checked === b.checked) {
@@ -446,7 +449,7 @@ export default {
 					}
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not fetch items for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch items for groceryList ' + id)))
 			}
 			this.loading = false
@@ -554,7 +557,7 @@ export default {
 				this.newItemName = ''
 				this.newItemQuantity = ''
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
@@ -574,7 +577,7 @@ export default {
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
@@ -594,7 +597,7 @@ export default {
 						await this.loadItems(this.listId)
 						await this.loadCategories(this.listId)
 					} catch (e) {
-						console.error(e)
+						logger.error('Could not update item category', { error: e })
 						showError(t('grocerylist', 'Could not update item category'))
 					}
 				}
@@ -610,7 +613,7 @@ export default {
 				this.newItemQuantity = ''
 				this.newItemCategory = null
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not delete item', { error: e })
 				showError(t('grocerylist', 'Could not delete item'))
 			}
 

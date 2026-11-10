@@ -28,6 +28,7 @@ import {
 } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import logger from '../logger.js'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
@@ -73,7 +74,7 @@ export default {
 				await this.categoryStore.createCategory(this.listId, this.newCategoryName)
 				this.newCategoryName = ''
 			} catch (e) {
-				console.error(e)
+				logger.error(`Could not add category to list ${this.listId}`, { error: e })
 				showError(t('grocerylist', `Could not add category to list ${this.listId}`))
 			}
 			this.updating = false

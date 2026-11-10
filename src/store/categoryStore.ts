@@ -26,7 +26,7 @@ export const useCategoryStore = defineStore('category', {
 		 *
 		 * @param listId List to create the category for
 		 * @param name Name of the category
-		 * @param color
+		 * @param color Optional color of the category
 		 */
 		async createCategory(listId: number, name: string, color?: string | null) {
 			const response = await axios.post<ICategory[]>(

@@ -34,6 +34,7 @@ import {
 } from '@nextcloud/vue'
 import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 import DragVerticalVariant from 'vue-material-design-icons/DragVerticalVariant.vue'
+import logger from '../logger.js'
 export default {
 	name: 'ListItem',
 	components: {
@@ -55,6 +56,8 @@ export default {
 		},
 	},
 
+	emits: ['edit', 'update'],
+
 	computed: {
 		isSnoozed() {
 			return this.item?.hidden > (Math.floor(Date.now() / 1000) - (15 * 60))
@@ -75,7 +78,7 @@ export default {
 					checked: item.checked,
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not check item', { error: e })
 				showError(t('grocerylist', 'Could not check item'))
 			}
 		},
@@ -86,7 +89,7 @@ export default {
 
 				this.$emit('update')
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},

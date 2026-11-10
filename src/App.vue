@@ -19,7 +19,7 @@
 						:key="groceryList.id"
 						:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
 						:groceryList="groceryList"
-						:currentGroceryListId="currentGroceryListId" />
+						@rename="(title) => renameGroceryList(groceryList, title)" />
 				</ul>
 			</template>
 		</NcAppNavigation>
@@ -79,6 +79,7 @@ import {
 } from '@nextcloud/vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import NavigationGroceryListItem from './components/NavigationGroceryListItem.vue'
+import logger from './logger.js'
 
 export default {
 	name: 'App',
@@ -152,16 +153,17 @@ export default {
 	 */
 	async mounted() {
 		subscribe('grocerylist:list-deleted', this.onListDeleted)
+		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 		try {
 			if (this.$route.name === 'lists') {
-				console.warn('show single list' + this.$route.params)
+				logger.debug('show single list' + this.$route.params)
 			}
 
 			const { data } = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
 			this.groceryLists = data
 			this.restoreLastOpenedList()
 		} catch (e) {
-			console.error(e)
+			logger.error('Could not fetch groceryLists', { error: e })
 			showError(t('grocerylist', 'Could not fetch groceryLists'))
 		}
 		this.loading = false
@@ -169,12 +171,13 @@ export default {
 
 	beforeUnmount() {
 		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
+		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
 	},
 
 	methods: {
 		onCreated() {
 			if (this.$route.name === 'lists') {
-				console.warn('show single list' + this.$route.params)
+				logger.debug('show single list' + this.$route.params)
 			}
 		},
 
@@ -197,15 +200,27 @@ export default {
 			this.$router.replace({ name: 'list', params: { listId: listId.toString() } })
 		},
 
-		renameGroceryList(id, value) {
+		async renameGroceryList(list, title) {
+			const previousTitle = list.title
+			list.title = title
 			try {
-				axios.post(generateUrl('/apps/grocerylist/api/list/' + id), {
-					title: value,
-				})
+				await axios.post(generateUrl(`/apps/grocerylist/api/lists/${list.id}`), list)
 			} catch (e) {
-				console.error(e)
+				list.title = previousTitle
+				logger.error('Could not rename groceryList', { error: e })
 				showError(t('grocerylist', 'Could not rename groceryList'))
 			}
+		},
+
+		onItemCheckedChanged({ listId, checked }) {
+			const list = this.groceryLists.find(({ id }) => id === listId)
+			if (!list) {
+				return
+			}
+			const current = list.uncheckedCount ?? 0
+			list.uncheckedCount = checked
+				? Math.max(0, current - 1)
+				: current + 1
 		},
 
 		deleteGroceryList(list) {
@@ -254,7 +269,7 @@ export default {
 					query: this.newListHideCategory ? { hideCategory: '1' } : {},
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not create groceryList', { error: e })
 				showError(t('grocerylist', 'Could not create groceryList'))
 			}
 		},

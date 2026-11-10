@@ -14,7 +14,7 @@
 				variant="tertiary"
 				:aria-label="t('grocerylist', 'Pick color')">
 				<template #icon>
-					<Circle :size="24" :fillColor="categoryColor || '#aaa'" />
+					<IconCircle :size="24" :fillColor="categoryColor || '#aaa'" />
 				</template>
 			</NcButton>
 		</NcColorPicker>
@@ -54,18 +54,19 @@ import { getDialogBuilder, showError } from '@nextcloud/dialogs'
 import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import Circle from 'vue-material-design-icons/Circle.vue'
+import IconCircle from 'vue-material-design-icons/Circle.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconDrag from 'vue-material-design-icons/Drag.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import logger from '../logger.js'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListCategory',
 
 	components: {
-		Circle,
 		IconCheck,
+		IconCircle,
 		IconDelete,
 		IconDrag,
 		IconPencil,
@@ -100,7 +101,7 @@ export default {
 			try {
 				await this.categoryStore.updateCategoryColor(this.category.id, color, this.category.grocery_list)
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not update category color', { error: e })
 				showError(t('grocerylist', 'Could not update category color'))
 			}
 		},
@@ -118,7 +119,7 @@ export default {
 			try {
 				await this.categoryStore.deleteCategory(this.category)
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not delete category', { error: e })
 				showError(t('grocerylist', 'Could not delete category'))
 			}
 			this.deleting = false
@@ -164,13 +165,17 @@ export default {
 		async toggleEditMode() {
 			if (!this.isEditing) {
 				this.newCategoryName = this.category.name
-				this.$nextTick(() => this.$nextTick(() => this.$refs.input?.$el?.querySelector('input')?.focus()))
+				this.$nextTick(() => {
+					this.$nextTick(() => {
+						this.$refs.input?.$el?.querySelector('input')?.focus()
+					})
+				})
 			} else if (this.newCategoryName !== this.category.name) {
 				this.loading = true
 				try {
 					this.categoryStore.editCategory({ ...this.category, name: this.newCategoryName })
 				} catch (e) {
-					console.error(e)
+					logger.error('Could not rename category', { error: e })
 					showError(t('grocerylist', 'Could not rename category'))
 				}
 				this.loading = false
