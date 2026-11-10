@@ -1,7 +1,8 @@
 <template>
-	<NcContent app-name="grocerylist">
+	<NcContent appName="grocerylist">
 		<NcAppNavigation>
-			<NcAppNavigationNew :text="t('grocerylist', 'New list')"
+			<NcAppNavigationNew
+				:text="t('grocerylist', 'New list')"
 				:disabled="loading"
 				@click="showNewListModal">
 				<template #icon>
@@ -13,35 +14,41 @@
 				<NcAppNavigationItem v-if="loading" :name="t('grocerylist', 'Loading lists…')" :loading="true" />
 				<!-- List of available grocery lists -->
 				<ul v-else>
-					<NavigationGroceryListItem v-for="groceryList in groceryLists"
+					<NavigationGroceryListItem
+						v-for="groceryList in groceryLists"
 						:key="groceryList.id"
 						:title="groceryList.title ? groceryList.title : t('grocerylist', 'New list')"
-						:grocery-list="groceryList"
-						:current-grocery-list-id="currentGroceryListId" />
+						:groceryList="groceryList"
+						:currentGroceryListId="currentGroceryListId" />
 				</ul>
 			</template>
 		</NcAppNavigation>
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
-		<NcModal v-if="newListModal"
+		<NcModal
+			v-if="newListModal"
 			:name="t('grocerylist', 'New list')"
 			@close="closeNewListModal">
 			<form class="new-list-modal__content" @submit.prevent="createNewList">
-				<NcTextField v-model="newListName"
+				<NcTextField
+					v-model="newListName"
 					:label="t('grocerylist', 'List name')"
 					:placeholder="t('grocerylist', 'My grocery list')" />
-				<NcCheckboxRadioSwitch v-model="newListShowOnlyUnchecked"
+				<NcCheckboxRadioSwitch
+					v-model="newListShowOnlyUnchecked"
 					type="switch">
 					{{ t('grocerylist', 'Show only unchecked') }}
 				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-model="newListHideCategory"
+				<NcCheckboxRadioSwitch
+					v-model="newListHideCategory"
 					type="switch">
 					{{ t('grocerylist', 'Hide category') }}
 				</NcCheckboxRadioSwitch>
 				<div class="new-list-modal__actions">
-					<NcButton type="primary"
-						native-type="submit"
+					<NcButton
+						variant="primary"
+						type="submit"
 						:disabled="newListName.trim() === ''">
 						<template #icon>
 							<IconPlus :size="20" />
@@ -55,6 +62,7 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
@@ -69,10 +77,8 @@ import {
 	NcModal,
 	NcTextField,
 } from '@nextcloud/vue'
-
-import axios from '@nextcloud/axios'
-import NavigationGroceryListItem from './components/NavigationGroceryListItem.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import NavigationGroceryListItem from './components/NavigationGroceryListItem.vue'
 
 export default {
 	name: 'App',
@@ -89,6 +95,7 @@ export default {
 		NcTextField,
 		NavigationGroceryListItem,
 	},
+
 	data() {
 		return {
 			groceryLists: [],
@@ -104,16 +111,11 @@ export default {
 			lastOpenedListStorageKey: 'grocerylist:lastOpenedListId',
 		}
 	},
-	watch: {
-		$route(to) {
-			if (to.name === 'list' && to.params.listId) {
-				localStorage.setItem(this.lastOpenedListStorageKey, String(to.params.listId))
-			}
-		},
-	},
+
 	computed: {
 		/**
 		 * Return the currently selected groceryList object
+		 *
 		 * @return {object | null}
 		 */
 		currentGroceryList() {
@@ -125,15 +127,26 @@ export default {
 
 		/**
 		 * Returns true if a list is selected and its title is not empty
+		 *
 		 * @return {boolean}
 		 */
 		savePossible() {
 			return this.currentGroceryList && this.currentGroceryList.title !== ''
 		},
 	},
+
+	watch: {
+		$route(to) {
+			if (to.name === 'list' && to.params.listId) {
+				localStorage.setItem(this.lastOpenedListStorageKey, String(to.params.listId))
+			}
+		},
+	},
+
 	created() {
 		this.onCreated()
 	},
+
 	/**
 	 * Fetch list of groceryLists when the component is loaded
 	 */
@@ -153,15 +166,18 @@ export default {
 		}
 		this.loading = false
 	},
-	beforeDestroy() {
+
+	beforeUnmount() {
 		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
 	},
+
 	methods: {
 		onCreated() {
 			if (this.$route.name === 'lists') {
 				console.warn('show single list' + this.$route.params)
 			}
 		},
+
 		restoreLastOpenedList() {
 			if (this.$route.name === 'list') {
 				return
@@ -180,17 +196,18 @@ export default {
 			}
 			this.$router.replace({ name: 'list', params: { listId: listId.toString() } })
 		},
+
 		renameGroceryList(id, value) {
 			try {
-				axios.post(generateUrl('/apps/grocerylist/api/list/' + id),
-					{
-						title: value,
-					})
+				axios.post(generateUrl('/apps/grocerylist/api/list/' + id), {
+					title: value,
+				})
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not rename groceryList'))
 			}
 		},
+
 		deleteGroceryList(list) {
 			// Remove list from our list of grocery lists
 			this.groceryLists = [...this.groceryLists.filter(({ id }) => id !== list.id)]
@@ -199,23 +216,26 @@ export default {
 				localStorage.removeItem(this.lastOpenedListStorageKey)
 			}
 		},
+
 		onListDeleted({ listId }) {
 			this.deleteGroceryList({ id: listId })
 		},
+
 		showNewListModal() {
 			this.newListName = ''
 			this.newListShowOnlyUnchecked = false
 			this.newListHideCategory = false
 			this.newListModal = true
 		},
+
 		closeNewListModal() {
 			this.newListModal = false
 		},
+
 		async createNewList() {
 			if (this.newListName.trim() === '') {
 				return
 			}
-
 
 			try {
 				const { data } = await axios.post(generateUrl('/apps/grocerylist/api/lists'), { title: this.newListName.trim() })
@@ -241,6 +261,7 @@ export default {
 	},
 }
 </script>
+
 <style lang="scss">
 // Prevent the app content area from scrolling — the inner .page-items handles its own scrolling
 .app-content {

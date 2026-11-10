@@ -2,7 +2,7 @@
 	<div class="settings-wrapper">
 		<h2>{{ t('grocerylist', 'Categories') }}</h2>
 
-		<ListCategoryNew :list-id="listId" />
+		<ListCategoryNew :listId="listId" />
 
 		<NcEmptyContent v-if="loadingCategories" :name="t('grocerylist', 'Categories loading…')">
 			<template #icon>
@@ -14,22 +14,24 @@
 				<IconTagOff :size="40" />
 			</template>
 		</NcEmptyContent>
-		<draggable v-else
-			:model-value="categories"
+		<Draggable
+			v-else
+			:modelValue="categories"
 			tag="ul"
 			class="category-list"
-			item-key="id"
+			itemKey="id"
 			handle=".list-category__drag-handle"
-			ghost-class="list-category--ghost"
+			ghostClass="list-category--ghost"
 			@change="onReorderEvent">
 			<template #item="{ element }">
 				<ListCategory :category="element" />
 			</template>
-		</draggable>
+		</Draggable>
 
 		<div class="danger-zone">
 			<h2>{{ t('grocerylist', 'Danger zone') }}</h2>
-			<NcButton type="error"
+			<NcButton
+				variant="error"
 				:disabled="deleting"
 				:aria-label="t('grocerylist', 'Delete list')"
 				@click="onDeleteList">
@@ -50,18 +52,17 @@ import { generateUrl } from '@nextcloud/router'
 import { NcButton, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import draggable from 'vuedraggable'
-import { useCategoryStore } from '../store/categoryStore.ts'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconTagOff from 'vue-material-design-icons/TagOff.vue'
-
 import ListCategory from '../components/ListCategory.vue'
 import ListCategoryNew from '../components/ListCategoryNew.vue'
+import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListSettings',
 
 	components: {
-		draggable,
+		Draggable: draggable,
 		IconDelete,
 		IconTagOff,
 		ListCategory,
@@ -248,6 +249,7 @@ export default {
 	},
 }
 </script>
+
 <style lang="scss" scoped>
 .settings-wrapper {
 	width: 100%;

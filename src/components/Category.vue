@@ -7,12 +7,13 @@
 		</ul>
 
 		<div class="new-category__wrapper">
-			<NcTextField v-model="newCategoryName"
+			<NcTextField
+				v-model="newCategoryName"
 				:disabled="updating"
 				:label="t('grocerylist', 'Category name')"
-				:show-trailing-button="newCategoryName !== ''"
-				trailing-button-icon="close"
-				@trailing-button-click="newCategoryName = ''" />
+				:showTrailingButton="newCategoryName !== ''"
+				trailingButtonIcon="close"
+				@trailingButtonClick="newCategoryName = ''" />
 
 			<NcButton :aria-label="t('Add category {category}', { category: newCategoryName })">
 				<template #icon>
@@ -30,10 +31,9 @@ import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { NcButton, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
-import { useCategoryStore } from '../store/categoryStore.ts'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
-
 import ListCategory from '../components/ListCategory.vue'
+import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListSettings',
@@ -50,6 +50,7 @@ export default {
 			type: String,
 			default: '',
 		},
+
 		categories: {
 			type: Array,
 			default: () => [],
@@ -74,6 +75,7 @@ export default {
 			this.newCategoryId = category.id
 			this.category = category.name
 		},
+
 		async onSaveCategory() {
 			if (this.newCategoryId === -1) {
 				this.addCategory()
@@ -96,15 +98,14 @@ export default {
 			}
 			this.updating = false
 		},
+
 		async updateCategory(listId) {
 			this.updating = true
 			try {
-				const response = await axios.post(generateUrl('/apps/grocerylist/api/category/update'),
-					{
-						id: this.newCategoryId,
-						newName: this.category,
-					},
-				)
+				const response = await axios.post(generateUrl('/apps/grocerylist/api/category/update'), {
+					id: this.newCategoryId,
+					newName: this.category,
+				})
 
 				this.categories = response.data
 				this.category = ''
@@ -117,6 +118,7 @@ export default {
 	},
 }
 </script>
+
 <style lang="scss" scoped>
 .page-wrapper {
 	max-width: 900px;

@@ -1,30 +1,35 @@
 <template>
 	<li class="list-category">
-		<span class="list-category__drag-handle"
+		<span
+			class="list-category__drag-handle"
 			:aria-label="t('grocerylist', 'Drag to reorder')"
 			:title="t('grocerylist', 'Drag to reorder')">
 			<IconDrag :size="20" />
 		</span>
-		<NcColorPicker v-model="categoryColor"
+		<NcColorPicker
+			v-model="categoryColor"
 			:aria-label="t('grocerylist', 'Category color')"
-			@update:model-value="updateColor">
-			<NcButton type="tertiary"
+			@update:modelValue="updateColor">
+			<NcButton
+				variant="tertiary"
 				:aria-label="t('grocerylist', 'Pick color')">
 				<template #icon>
-					<Circle :size="24" :fill-color="categoryColor || '#aaa'" />
+					<Circle :size="24" :fillColor="categoryColor || '#aaa'" />
 				</template>
 			</NcButton>
 		</NcColorPicker>
-		<NcTextField v-if="isEditing"
+		<NcTextField
+			v-if="isEditing"
 			ref="input"
+			v-model="newCategoryName"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
-			:loading="loading"
-			v-model="newCategoryName" />
+			:loading="loading" />
 		<span v-else class="list-category__name">
 			{{ category.name }}
 		</span>
-		<NcButton type="tertiary"
+		<NcButton
+			variant="tertiary"
 			:aria-label="isEditing ? t('grocerylist', 'Save changed category') : t('grocerylist', 'Edit category')"
 			@click="toggleEditMode">
 			<template #icon>
@@ -32,7 +37,8 @@
 				<IconPencil v-else :size="20" />
 			</template>
 		</NcButton>
-		<NcButton type="tertiary"
+		<NcButton
+			variant="tertiary"
 			:aria-label="t('grocerylist', 'Delete category')"
 			:disabled="deleting"
 			@click="onDelete">
@@ -47,13 +53,12 @@
 import { getDialogBuilder, showError } from '@nextcloud/dialogs'
 import { NcButton, NcColorPicker, NcTextField } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
-import { useCategoryStore } from '../store/categoryStore.ts'
-
-import Circle from 'vue-material-design-icons/Circle.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import Circle from 'vue-material-design-icons/Circle.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconDrag from 'vue-material-design-icons/Drag.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListCategory',
@@ -130,14 +135,12 @@ export default {
 		confirmDeletion(itemCount) {
 			return new Promise((resolve) => {
 				const dialog = getDialogBuilder(t('grocerylist', 'Delete category'))
-					.setText(
-						n(
-							'grocerylist',
-							'This category contains %n item. Deleting the category will also delete this item. Continue?',
-							'This category contains %n items. Deleting the category will also delete these items. Continue?',
-							itemCount,
-						),
-					)
+					.setText(n(
+						'grocerylist',
+						'This category contains %n item. Deleting the category will also delete this item. Continue?',
+						'This category contains %n items. Deleting the category will also delete these items. Continue?',
+						itemCount,
+					))
 					.setSeverity('warning')
 					.setButtons([
 						{

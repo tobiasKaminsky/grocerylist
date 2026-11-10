@@ -1,6 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { generateUrl } from '@nextcloud/router'
-
+import { createRouter, createWebHistory } from 'vue-router'
 import GroceryList from './views/GroceryList.vue'
 import ListSettings from './views/ListSettings.vue'
 

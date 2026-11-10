@@ -1,29 +1,32 @@
 {
   "name": "grocerylist",
-  "description": "Grocery list for Nextcloud",
   "version": "0.0.2",
-  "author": "Tobias Kaminsky <tobias@kaminsky.me>",
-  "contributors": [],
+  "private": true,
+  "description": "Grocery list for Nextcloud",
+  "homepage": "https://github.com/tobiasKaminsky/GroceryList",
   "bugs": {
     "url": "https://github.com/tobiasKaminsky/GroceryList/issues"
   },
   "repository": {
-    "url": "https://github.com/tobiasKaminsky/GroceryList",
-    "type": "git"
+    "type": "git",
+    "url": "https://github.com/tobiasKaminsky/GroceryList"
   },
-  "homepage": "https://github.com/tobiasKaminsky/GroceryList",
   "license": "agpl",
-  "private": true,
+  "author": "Tobias Kaminsky <tobias@kaminsky.me>",
+  "contributors": [],
   "type": "module",
   "scripts": {
     "build": "vite --mode production build",
     "dev": "vite --mode development build",
-    "watch": "vite --mode development build --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "stylelint": "stylelint **/*.css **/*.scss **/*.vue",
-    "stylelint:fix": "stylelint **/*.css **/*.scss **/*.vue --fix"
+    "stylelint:fix": "stylelint **/*.css **/*.scss **/*.vue --fix",
+    "watch": "vite --mode development build --watch"
   },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
   "dependencies": {
     "@nextcloud/axios": "^2.5.1",
     "@nextcloud/dialogs": "^7.0.0",
@@ -47,8 +50,5 @@
   "engines": {
     "node": "^20.19.0 || >=22.12.0",
     "npm": ">=10.0.0"
-  },
-  "browserslist": [
-    "extends @nextcloud/browserslist-config"
-  ]
+  }
 }

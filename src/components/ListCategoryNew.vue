@@ -1,14 +1,16 @@
 <template>
 	<div class="new-category">
-		<NcTextField class="new-category__input"
+		<NcTextField
 			v-model="newCategoryName"
+			class="new-category__input"
 			:disabled="updating"
 			:label="t('grocerylist', 'Category name')"
-			:show-trailing-button="newCategoryName !== ''"
-			trailing-button-icon="close"
-			@trailing-button-click="newCategoryName = ''" />
+			:showTrailingButton="newCategoryName !== ''"
+			trailingButtonIcon="close"
+			@trailingButtonClick="newCategoryName = ''" />
 
-		<NcButton type="tertiary"
+		<NcButton
+			variant="tertiary"
 			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })"
 			@click="addCategory">
 			<template #icon>
@@ -20,14 +22,13 @@
 
 <script>
 import { showError } from '@nextcloud/dialogs'
-import { mapStores } from 'pinia'
-import { useCategoryStore } from '../store/categoryStore.ts'
 import {
 	NcButton,
 	NcTextField,
 } from '@nextcloud/vue'
-
+import { mapStores } from 'pinia'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import { useCategoryStore } from '../store/categoryStore.ts'
 
 export default {
 	name: 'ListCategoryNew',
@@ -66,7 +67,7 @@ export default {
 		/**
 		 * Handle adding a new category
 		 */
-		 async addCategory() {
+		async addCategory() {
 			this.updating = true
 			try {
 				await this.categoryStore.createCategory(this.listId, this.newCategoryName)
