@@ -1,11 +1,13 @@
 <template>
-	<nav class="alphabet-index"
+	<nav
+		class="alphabet-index"
 		:aria-label="t('grocerylist', 'Jump to letter')"
 		@pointerdown="onPointerDown"
 		@pointermove="onPointerMove"
 		@pointerup="onPointerUp"
 		@pointercancel="onPointerUp">
-		<button v-for="letter in letters"
+		<button
+			v-for="letter in letters"
 			:key="letter"
 			type="button"
 			class="alphabet-index__letter"
@@ -62,8 +64,8 @@ export default {
 		select(letter) {
 			// Jump to the closest following letter that has items, else the closest preceding one
 			const index = this.letters.indexOf(letter)
-			const target = this.letters.slice(index).find(l => this.available.includes(l))
-				?? this.letters.slice(0, index).reverse().find(l => this.available.includes(l))
+			const target = this.letters.slice(index).find((l) => this.available.includes(l))
+				?? this.letters.slice(0, index).reverse().find((l) => this.available.includes(l))
 			if (target) {
 				this.$emit('select', target)
 			}

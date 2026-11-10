@@ -1,12 +1,14 @@
 <template>
-	<li :class="{'snoozed': isSnoozed}" class="list-item">
+	<li :class="{snoozed: isSnoozed}" class="list-item">
 		<span class="drag-handle" :style="categoryColor ? { color: categoryColor } : {}">
 			<DragVerticalVariant :size="20" />
 		</span>
-		<NcCheckboxRadioSwitch :model-value="item.checked === true"
-			@update:model-value="checkItem(item)" />
-		<NcButton :aria-label="t('grocerylist', 'Snooze')"
-			type="tertiary"
+		<NcCheckboxRadioSwitch
+			:modelValue="item.checked === true"
+			@update:modelValue="checkItem(item)" />
+		<NcButton
+			:aria-label="t('grocerylist', 'Snooze')"
+			variant="tertiary"
 			@click="hideItem(item)">
 			<template #icon>
 				<AlarmSnooze :size="20" />
@@ -20,18 +22,19 @@
 		</span>
 	</li>
 </template>
+
 <script>
 import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+import {
+	NcButton,
+	NcCheckboxRadioSwitch,
+} from '@nextcloud/vue'
 import AlarmSnooze from 'vue-material-design-icons/AlarmSnooze.vue'
 import DragVerticalVariant from 'vue-material-design-icons/DragVerticalVariant.vue'
-
-import {
-	NcCheckboxRadioSwitch,
-	NcButton,
-} from '@nextcloud/vue'
+import logger from '../logger.js'
 export default {
 	name: 'ListItem',
 	components: {
@@ -40,21 +43,27 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcButton,
 	},
+
 	props: {
 		item: {
 			type: Object,
 			required: true,
 		},
+
 		categoryColor: {
 			type: String,
 			default: null,
 		},
 	},
+
+	emits: ['edit', 'update'],
+
 	computed: {
 		isSnoozed() {
 			return this.item?.hidden > (Math.floor(Date.now() / 1000) - (15 * 60))
 		},
 	},
+
 	methods: {
 		async checkItem(item) {
 			if (item.checked === true) {
@@ -63,33 +72,31 @@ export default {
 				item.checked = true
 			}
 			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/item/check'),
-					{ id: item.id, checked: item.checked },
-				)
+				await axios.post(generateUrl('/apps/grocerylist/api/item/check'), { id: item.id, checked: item.checked })
 				emit('grocerylist:item-checked-changed', {
 					listId: item.list,
 					checked: item.checked,
 				})
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not check item', { error: e })
 				showError(t('grocerylist', 'Could not check item'))
 			}
 		},
+
 		async hideItem(item) {
 			try {
-				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'),
-					{ id: item.id },
-				)
+				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'), { id: item.id })
 
 				this.$emit('update')
 			} catch (e) {
-				console.error(e)
+				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
 	},
 }
 </script>
+
 <style scoped lang="scss">
 .list-item {
 	display: flex;

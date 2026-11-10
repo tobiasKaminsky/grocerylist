@@ -1,5 +1,4 @@
 import axios from '@nextcloud/axios'
-
 import { generateUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 
@@ -27,6 +26,7 @@ export const useCategoryStore = defineStore('category', {
 		 *
 		 * @param listId List to create the category for
 		 * @param name Name of the category
+		 * @param color Optional color of the category
 		 */
 		async createCategory(listId: number, name: string, color?: string | null) {
 			const response = await axios.post<ICategory[]>(
@@ -41,6 +41,7 @@ export const useCategoryStore = defineStore('category', {
 
 		/**
 		 * Edit an existing category
+		 *
 		 * @param category The edited category (id must exist)
 		 */
 		async editCategory(category: ICategory) {
@@ -67,9 +68,7 @@ export const useCategoryStore = defineStore('category', {
 		},
 
 		async loadCategories(listId: number) {
-			const response = await axios.get<ICategory[]>(
-				generateUrl(`/apps/grocerylist/api/all_categories/${listId}`),
-			)
+			const response = await axios.get<ICategory[]>(generateUrl(`/apps/grocerylist/api/all_categories/${listId}`))
 			this.categories[listId] = response.data
 		},
 
@@ -81,9 +80,7 @@ export const useCategoryStore = defineStore('category', {
 		 * @param category The category to delete.
 		 */
 		async deleteCategory(category: ICategory) {
-			const { data } = await axios.delete<ICategory[]>(
-				generateUrl(`/apps/grocerylist/api/category/${category.id}`),
-			)
+			const { data } = await axios.delete<ICategory[]>(generateUrl(`/apps/grocerylist/api/category/${category.id}`))
 			this.categories = { ...this.categories, [category.grocery_list]: data }
 		},
 
