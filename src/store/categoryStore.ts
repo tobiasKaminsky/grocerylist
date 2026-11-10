@@ -7,6 +7,7 @@ export interface ICategory {
 	id: number
 	order: number
 	name: string
+	color: string | null
 	grocery_list: number
 	itemCount: number
 }
@@ -27,11 +28,12 @@ export const useCategoryStore = defineStore('category', {
 		 * @param listId List to create the category for
 		 * @param name Name of the category
 		 */
-		async createCategory(listId: number, name: string) {
+		async createCategory(listId: number, name: string, color?: string | null) {
 			const response = await axios.post<ICategory[]>(
 				generateUrl(`/apps/grocerylist/api/category/${listId}/add`),
 				{
 					name,
+					color: color ?? null,
 				},
 			)
 			this.categories = { ...this.categories, [listId]: response.data }
@@ -47,9 +49,21 @@ export const useCategoryStore = defineStore('category', {
 				{
 					id: category.id,
 					newName: category.name,
+					color: category.color,
 				},
 			)
 			this.categories = { ...this.categories, [category.grocery_list]: data }
+		},
+
+		async updateCategoryColor(categoryId: number, color: string, listId: number) {
+			const { data } = await axios.post<ICategory[]>(
+				generateUrl('/apps/grocerylist/api/category/color'),
+				{
+					id: categoryId,
+					color,
+				},
+			)
+			this.categories = { ...this.categories, [listId]: data }
 		},
 
 		async loadCategories(listId: number) {

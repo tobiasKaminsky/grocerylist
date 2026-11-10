@@ -1,7 +1,7 @@
 <template>
 	<div class="new-category">
 		<NcTextField class="new-category__input"
-			:value.sync="newCategoryName"
+			v-model="newCategoryName"
 			:disabled="updating"
 			:label="t('grocerylist', 'Category name')"
 			:show-trailing-button="newCategoryName !== ''"
@@ -88,9 +88,7 @@ export default {
 	gap: 12px;
 
 	&__input {
-		width: fit-content!important;
-		// prevent resize on type (because of "clear"-button)
-		min-width: 245px;
+		flex: 1;
 	}
 }
 </style>

@@ -19,23 +19,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router.js'
-import { createPinia, PiniaVuePlugin } from 'pinia'
 
-Vue.config.devtools = true
-Vue.prototype.t = t
-Vue.prototype.n = n
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-Vue.use(PiniaVuePlugin)
-
+const app = createApp(App)
 const pinia = createPinia()
 
-export default new Vue({
-	el: '#content',
-	router,
-	pinia,
-	render: h => h(App),
-})
+app.config.globalProperties.t = window.t
+app.config.globalProperties.n = window.n
+app.config.globalProperties.OC = window.OC
+app.config.globalProperties.OCA = window.OCA
+
+app.use(router)
+app.use(pinia)
+
+app.mount('#content')

@@ -49,6 +49,8 @@ export default {
 		},
 	},
 
+	emits: ['select'],
+
 	data() {
 		return {
 			letters: LETTERS,
@@ -105,14 +107,14 @@ export default {
 
 <style scoped lang="scss">
 .alphabet-index {
-	position: fixed;
+	position: absolute;
 	top: 50%;
 	right: 4px;
 	transform: translateY(-50%);
 	z-index: 10;
 	display: flex;
 	flex-direction: column;
-	max-height: calc(100vh - 200px);
+	max-height: calc(100% - 32px);
 	padding: 4px 0;
 	border-radius: var(--border-radius-pill);
 	background-color: var(--color-main-background);
