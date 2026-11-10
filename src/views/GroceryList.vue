@@ -1,121 +1,149 @@
 <template>
 	<div class="page-wrapper">
-		<div>
-			<NcButton aria-label="Show add/edit modal"
+		<div class="page-header">
+			<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
+			<NcButton type="primary"
+				:aria-label="t('grocerylist', 'Add item')"
 				@click="showAddModal">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-				Add
+				{{ t('grocerylist', 'Add') }}
 			</NcButton>
 		</div>
-		<h1>{{ groceryList?.title ?? t('grocerylist', 'Grocery list') }}</h1>
-		<div style="display: flex; flex-wrap: wrap;">
-			<NcCheckboxRadioSwitch :checked="!!groceryList?.showOnlyUnchecked" type="switch" @update:checked="toggleVisibility">
-				{{ t('grocerylist', 'Show only unchecked') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-if="!groceryList?.showOnlyUnchecked"
-				type="switch"
-				:checked.sync="hideCategory">
-				{{ t('grocerylist', 'Hide category') }}
-			</NcCheckboxRadioSwitch>
-			<NcModal v-if="modal"
-				ref="modalRef"
-				:name="t('grocerylist', 'Add item')"
-				@close="closeModal">
-				<form class="modal__content"
-					@submit.prevent="onSaveItem()">
-					<p class="quantityRow">
-						<NcTextField :value.sync="newItemQuantity"
-							label="Quantity…"
-							@keyup.up="increaseQuantity()"
-							@keyup.down="decreaseQuantity()" />
-						<NcButton aria-label="Increase quantity"
-							style="display:inline-block;"
-							type="tertiary"
-							@click="increaseQuantity()">
-							<template #icon>
-								<Plus :size="20" />
-							</template>
-						</NcButton>
-						<NcButton aria-label="Decrease quantity"
-							style="display:inline-block;"
-							type="tertiary"
-							@click="decreaseQuantity()">
-							<template #icon>
-								<Minus :size="20" />
-							</template>
-						</NcButton>
-					</p>
-					<p>
-						<NcTextField :value.sync="newItemName"
-							label="Item…"
-							@keyup.enter="onSaveItem()" />
-					</p>
-					<p>
-						<NcSelect id="dropdown"
-							v-model="newItemCategory"
-							:options="allCategories"
-							label="name"
-							:value="object"
-							:close-on-outside-click="true"
-							@updateOption="updateNewItemCategory" />
-					</p>
-					<p class="button-list">
-						<NcButton type="primary" native-type="submit" aria-label="Add item">
-							<template #icon>
-								<Plus :size="20" />
-							</template>
-							{{ t('grocerylist', 'Add item') }}
-						</NcButton>
-						<NcButton v-if="showDeleteButton"
-							id="deleteButton"
-							type="error"
-							aria-label="Delete item"
-							:hidden="newItemId === -1"
-							@click="deleteItem()">
-							<template #icon>
-								<Delete :size="20" />
-							</template>
-							{{ t('grocerylist', 'Delete item') }}
-						</NcButton>
-					</p>
-				</form>
-			</NcModal>
-		</div>
-		<div>
+		<div class="page-items">
 			<div v-if="hideCategory">
-				<ul class="list-item">
-					<ListItem v-for="item in sortedItems"
-						:key="item.id"
-						:item="item"
-						@edit="() => editItem(item)"
-						@update="loadItems(listId)" />
-				</ul>
+				<draggable v-model="sortedItemsList"
+					tag="ul"
+					class="item-list"
+					item-key="id"
+					handle=".drag-handle"
+					:animation="200">
+					<template #item="{ element }">
+						<ListItem :item="element"
+							:category-color="categoryColorForItem(element)"
+							@edit="() => editItem(element)"
+							@update="loadItems(listId)" />
+					</template>
+				</draggable>
 			</div>
 			<div v-else>
-				<span v-for="category in filteredCategories" :key="category.id">
-					<h2 style="font-size: larger; text-transform: uppercase;">
+				<div v-if="uncategorizedItems.length > 0">
+					<h2 class="category-heading" @click="toggleCollapsed('uncategorized')">
+						<ChevronDown v-if="!collapsedCategories['uncategorized']" :size="20" />
+						<ChevronRight v-else :size="20" />
+						{{ t('grocerylist', 'Uncategorized') }}
+					</h2>
+					<draggable v-show="!collapsedCategories['uncategorized']"
+						:model-value="uncategorizedItems"
+						tag="ul"
+						class="item-list"
+						item-key="id"
+						group="items"
+						handle=".drag-handle"
+						:animation="200"
+						@change="(evt) => onDragChange(evt, 0)">
+						<template #item="{ element }">
+							<ListItem :item="element"
+								@edit="() => editItem(element)"
+								@update="loadItems(listId)" />
+						</template>
+					</draggable>
+				</div>
+				<div v-for="category in filteredCategories" :key="category.id">
+					<h2 class="category-heading" @click="toggleCollapsed(category.id)">
+						<ChevronDown v-if="!collapsedCategories[category.id]" :size="20" :style="category.color ? { color: category.color } : {}" />
+						<ChevronRight v-else :size="20" :style="category.color ? { color: category.color } : {}" />
 						{{ category.name }}
 					</h2>
-					<ul class="item-list">
-						<ListItem v-for="item in filteredItems(category.id)"
-							:key="item.id"
-							:item="item"
-							@edit="() => editItem(item)"
-							@update="loadItems(listId)" />
-					</ul>
-				</span>
+					<draggable v-show="!collapsedCategories[category.id]"
+						:model-value="filteredItems(category.id)"
+						tag="ul"
+						class="item-list"
+						item-key="id"
+						group="items"
+						handle=".drag-handle"
+						:animation="200"
+						@change="(evt) => onDragChange(evt, category.id)">
+						<template #item="{ element }">
+							<ListItem :item="element"
+								:category-color="category.color"
+								@edit="() => editItem(element)"
+								@update="loadItems(listId)" />
+						</template>
+					</draggable>
+				</div>
 			</div>
 		</div>
-		<div class="fixed">
-			<NcButton aria-label="Show add/edit modal"
-				@click="showAddModal">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-			</NcButton>
+		<div class="page-options">
+			<NcCheckboxRadioSwitch :model-value="!!groceryList?.showOnlyUnchecked" type="switch" @update:model-value="toggleVisibility">
+				{{ t('grocerylist', 'Show only unchecked') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-model="hideCategory"
+				type="switch">
+				{{ t('grocerylist', 'Hide category') }}
+			</NcCheckboxRadioSwitch>
 		</div>
+		<NcModal v-if="modal"
+			ref="modalRef"
+			:name="newItemId === -1 ? t('grocerylist', 'Add item') : t('grocerylist', 'Edit item')"
+			@close="closeModal">
+			<form class="modal__content"
+				@submit.prevent="onSaveItem()">
+				<NcTextField v-model="newItemName"
+					:label="t('grocerylist', 'Item name')"
+					:placeholder="t('grocerylist', 'e.g. Milk, Bread, Eggs…')"
+					@keyup.enter="onSaveItem()" />
+				<div class="quantityRow">
+					<NcTextField v-model="newItemQuantity"
+						:label="t('grocerylist', 'Quantity')"
+						:placeholder="t('grocerylist', '1')"
+						@keyup.up="increaseQuantity()"
+						@keyup.down="decreaseQuantity()" />
+					<NcButton :aria-label="t('grocerylist', 'Increase quantity')"
+						type="tertiary"
+						@click="increaseQuantity()">
+						<template #icon>
+							<Plus :size="20" />
+						</template>
+					</NcButton>
+					<NcButton :aria-label="t('grocerylist', 'Decrease quantity')"
+						type="tertiary"
+						@click="decreaseQuantity()">
+						<template #icon>
+							<Minus :size="20" />
+						</template>
+					</NcButton>
+				</div>
+				<NcSelect id="dropdown"
+					v-model="newItemCategory"
+					:options="allCategories"
+					label="name"
+					:placeholder="t('grocerylist', 'Select or create a category…')"
+					:taggable="true"
+					:create-option="(name) => ({ name, id: null })"
+					:close-on-outside-click="true" />
+				<div class="button-list">
+					<NcButton type="primary" native-type="submit" :aria-label="t('grocerylist', 'Add item')">
+						<template #icon>
+							<Plus :size="20" />
+						</template>
+						{{ t('grocerylist', 'Add item') }}
+					</NcButton>
+					<NcButton v-if="showDeleteButton"
+						id="deleteButton"
+						type="error"
+						:aria-label="t('grocerylist', 'Delete item')"
+						:hidden="newItemId === -1"
+						@click="deleteItem()">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+						{{ t('grocerylist', 'Delete item') }}
+					</NcButton>
+				</div>
+			</form>
+		</NcModal>
 	</div>
 </template>
 
@@ -130,10 +158,13 @@ import {
 	NcModal,
 	NcTextField,
 } from '@nextcloud/vue'
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { ref } from 'vue'
+import draggable from 'vuedraggable'
 import ListItem from './../components/ListItem.vue'
 
 export default {
@@ -144,11 +175,14 @@ export default {
 		NcSelect,
 		NcButton,
 		NcTextField,
+		ChevronDown,
+		ChevronRight,
 		Plus,
 		Minus,
 		Delete,
 		NcModal,
 		ListItem,
+		draggable,
 	},
 
 	props: {
@@ -176,12 +210,10 @@ export default {
 			newItemName: '',
 			newItemQuantity: '',
 			newItemCategory: null,
-			object: {
-				name: 'Select a category…',
-			},
 			showDeleteButton: false,
 			modal: false,
 			hideCategory: false,
+			collapsedCategories: {},
 		}
 	},
 	computed: {
@@ -197,11 +229,31 @@ export default {
 		allItems() {
 			return this.items
 		},
-    sortedItems() {
-      return this.items.sort((a, b) => {
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-      })
-    },
+		sortedItemsList: {
+			get() {
+				if (!this.items) return []
+				return [...this.items].sort((a, b) => {
+					return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+				})
+			},
+			set(value) {
+				this.items = value
+			},
+		},
+		uncategorizedItems() {
+			if (this.items == null) {
+				return []
+			}
+			return this.items.filter(item => {
+				if (item.category) {
+					return false
+				}
+				if (this.groceryList.showOnlyUnchecked) {
+					return item.checked === false && !this.isSnoozed(item)
+				}
+				return true
+			})
+		},
 		filteredCategories() {
 			if (this.categories == null) {
 				return
@@ -250,7 +302,9 @@ export default {
 		},
 	},
 	async mounted() {
-		console.warn('Mounted GroceryList ' + this.listId)
+		if (this.$route.query.hideCategory === '1') {
+			this.hideCategory = true
+		}
 		await this.loadGroceryList(this.listId)
 		await this.loadItems(this.listId)
 		await this.loadCategories(this.listId)
@@ -260,7 +314,8 @@ export default {
 		showAddModal() {
 			this.newItemId = -1
 			this.newItemName = ''
-			this.newItemQuantity = ''
+			this.newItemQuantity = 1
+			this.showDeleteButton = false
 			this.modal = true
 		},
 		closeModal() {
@@ -281,9 +336,6 @@ export default {
 				console.error(e)
 				showError(t('grocerylist', 'Could not update groceryList'))
 			}
-		},
-		updateNewItemCategory(category) {
-			this.newItemCategory = category
 		},
 		async loadGroceryList(id) {
 			try {
@@ -345,7 +397,6 @@ export default {
 			this.newItemId = item.id
 			this.newItemName = item.name
 			this.newItemQuantity = item.quantity
-			this.object.name = this.allCategories.find(i => i.id === item.category).name
 			this.newItemCategory = this.allCategories.find(i => i.id === item.category)
 			this.modal = true
 		},
@@ -391,13 +442,43 @@ export default {
 
 			this.closeModal()
 		},
+		toggleCollapsed(key) {
+			this.collapsedCategories = {
+				...this.collapsedCategories,
+				[key]: !this.collapsedCategories[key],
+			}
+		},
+		categoryColorForItem(item) {
+			if (!item.category || !this.allCategories) {
+				return null
+			}
+			const cat = this.allCategories.find(c => c.id === item.category)
+			return cat?.color || null
+		},
+		async ensureCategoryExists() {
+			if (!this.newItemCategory) {
+				return 0
+			}
+			if (this.newItemCategory.id !== null) {
+				return this.newItemCategory.id
+			}
+			const { data } = await axios.post(
+				generateUrl(`/apps/grocerylist/api/category/${this.listId}/add`),
+				{ name: this.newItemCategory.name },
+			)
+			this.allCategories = data
+			const created = data.find((c) => c.name === this.newItemCategory.name)
+			this.newItemCategory = created
+			return created.id
+		},
 		async addItem() {
 			try {
+				const categoryId = await this.ensureCategoryExists()
 				await axios.post(generateUrl('/apps/grocerylist/api/item/add'),
 					{
 						name: this.newItemName.trim(),
-						quantity: this.newItemQuantity,
-						category: this.newItemCategory.id,
+						quantity: this.newItemQuantity.toString(),
+						category: categoryId,
 						list: this.listId,
 					},
 				)
@@ -414,12 +495,13 @@ export default {
 		},
 		async updateItem() {
 			try {
+				const categoryId = await this.ensureCategoryExists()
 				await axios.post(generateUrl('/apps/grocerylist/api/item/update'),
 					{
 						id: this.newItemId,
 						name: this.newItemName.trim(),
 						quantity: this.newItemQuantity.toString(),
-						category: this.newItemCategory.id,
+						category: categoryId,
 					},
 				)
 
@@ -432,6 +514,27 @@ export default {
 				showError(t('grocerylist', 'Could not add item'))
 			}
 		},
+		async onDragChange(evt, categoryId) {
+			if (evt.added) {
+				const item = evt.added.element
+				if (item.category !== categoryId) {
+					item.category = categoryId
+					try {
+						await axios.post(generateUrl('/apps/grocerylist/api/item/update'), {
+							id: item.id,
+							name: item.name,
+							quantity: item.quantity?.toString() ?? '',
+							category: categoryId,
+						})
+						await this.loadItems(this.listId)
+						await this.loadCategories(this.listId)
+					} catch (e) {
+						console.error(e)
+						showError(t('grocerylist', 'Could not update item category'))
+					}
+				}
+			}
+		},
 		async deleteItem() {
 			try {
 				await axios.delete(generateUrl('/apps/grocerylist/api/item/' + this.newItemId))
@@ -440,7 +543,6 @@ export default {
 				this.newItemName = ''
 				this.newItemQuantity = ''
 				this.newItemCategory = null
-				this.object.name = 'Select a category…'
 			} catch (e) {
 				console.error(e)
 				showError(t('grocerylist', 'Could not delete item'))
@@ -456,38 +558,91 @@ export default {
 <style lang="scss">
 // Wrapper around all of the view content
 .page-wrapper {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 900px;
+  height: 100%;
+  overflow: hidden;
   // center
   margin-inline: auto;
-  margin-block: var(--app-navigation-padding);
   // ensure we do not conflict with App Navigation toggle
   padding-inline: calc(44px + 2 * var(--app-navigation-padding));
+
+  @media (max-width: 768px) {
+    padding-inline: calc(44px + var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
+  }
 }
 
-h1 {
-  color: var(--color-text-light);
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 30px;
-  text-align: center;
-  // to align with the toggle we need 44px (the toggle) - 30px (h2 line-height) / 2 + padding => 7px + padding
-  margin-block: calc(7px + var(--app-navigation-padding)) 12px;
+.page-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: calc(7px + var(--app-navigation-padding)) 12px;
+
+  h1 {
+    color: var(--color-text-light);
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 30px;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding-block: 8px;
+
+    h1 {
+      font-size: 20px;
+    }
+  }
+}
+
+
+.page-items {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  // improve touch scrolling
+  -webkit-overflow-scrolling: touch;
+}
+
+.page-options {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--default-grid-baseline) * 2);
+  padding-block: calc(var(--default-grid-baseline) * 2);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
 .modal__content {
-  margin: 50px;
+  padding: calc(var(--default-grid-baseline) * 4);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--default-grid-baseline) * 4);
 
-  p {
-    margin-bottom: calc(var(--default-grid-baseline) * 4);
+  .quantityRow {
+    display: flex;
+    align-items: end;
+    gap: calc(var(--default-grid-baseline) * 2);
 
-    &.quantityRow {
-      display: flex;
-
-      input {
-        flex-grow: 1;
-      }
+    .input-field {
+      flex-grow: 1;
     }
+  }
+
+  .v-select {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    padding: calc(var(--default-grid-baseline) * 3);
+    gap: calc(var(--default-grid-baseline) * 3);
   }
 }
 
@@ -496,18 +651,27 @@ h1 {
 	justify-content: end;
 }
 
-div.fixed {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-}
-
-.item-list li {
+.category-heading {
 	display: flex;
 	align-items: center;
+	gap: calc(var(--default-grid-baseline) * 1);
+	font-size: larger;
+	text-transform: uppercase;
+	cursor: pointer;
+	user-select: none;
+	min-height: 44px;
+}
+
+.item-list {
+	min-height: 10px;
 }
 
 .item-list li.snoozed {
 	opacity: 0.7;
+}
+
+.sortable-ghost {
+	opacity: 0.5;
+	background: var(--color-background-hover);
 }
 </style>
