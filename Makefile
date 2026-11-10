@@ -1,7 +1,5 @@
-# This file is licensed under the Affero General Public License version 3 or
-# later. See the COPYING file.
-# @author Bernhard Posselt <dev@bernhard-posselt.com>
-# @copyright Bernhard Posselt 2016
+# SPDX-FileCopyrightText: 2016 Bernhard Posselt <dev@bernhard-posselt.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Generic Makefile for building and packaging a Nextcloud app which uses npm and
 # Composer.
@@ -136,6 +134,13 @@ appstore:
 	--exclude="../$(app_name)/*.log" \
 	--exclude="../$(app_name)/phpunit*xml" \
 	--exclude="../$(app_name)/composer.*" \
+	--exclude="../$(app_name)/vendor" \
+	--exclude="../$(app_name)/src" \
+	--exclude="../$(app_name)/psalm.xml" \
+	--exclude="../$(app_name)/REUSE.toml" \
+	--exclude="../$(app_name)/*.config.js" \
+	--exclude="../$(app_name)/tsconfig.json" \
+	--exclude="../$(app_name)/package-lock.json" \
 	--exclude="../$(app_name)/js/node_modules" \
 	--exclude="../$(app_name)/js/tests" \
 	--exclude="../$(app_name)/js/test" \
