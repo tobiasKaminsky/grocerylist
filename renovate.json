@@ -1,0 +1,73 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		"helpers:pinGitHubActionDigests",
+		":dependencyDashboard",
+		":semanticCommits",
+		":gitSignOff"
+	],
+	"timezone": "Europe/Berlin",
+	"schedule": [
+		"before 5am on wednesday"
+	],
+	"labels": [
+		"dependencies"
+	],
+	"rangeStrategy": "bump",
+	"minimumReleaseAge": "7 days",
+	"rebaseWhen": "conflicted",
+	"ignoreUnstable": false,
+	"baseBranchPatterns": [
+		"master"
+	],
+	"enabledManagers": [
+		"composer",
+		"github-actions",
+		"npm"
+	],
+	"ignoreDeps": [
+		"node",
+		"npm",
+		"php",
+		"nextcloud/ocp"
+	],
+	"packageRules": [
+		{
+			"description": "Bump GitHub actions monthly",
+			"matchManagers": ["github-actions"],
+			"extends": ["schedule:monthly"]
+		},
+		{
+			"description": "Bump dev dependencies monthly",
+			"matchDepTypes": ["devDependencies", "require-dev"],
+			"extends": ["schedule:monthly"]
+		},
+		{
+			"description": "Automerge minor and patch updates of stable (>=1.0) packages once CI passes",
+			"matchUpdateTypes": ["minor", "patch"],
+			"matchCurrentVersion": "!/^0/",
+			"automerge": true,
+			"automergeType": "pr",
+			"platformAutomerge": true
+		},
+		{
+			"description": "Disable minimum release age checks for internal dependencies",
+			"matchPackageNames": ["@nextcloud/*", "nextcloud/*"],
+			"minimumReleaseAge": null
+		},
+		{
+			"description": "Only automerge packages that follow semver",
+			"matchPackageNames": ["@nextcloud/vue"],
+			"automerge": false
+		}
+	],
+	"vulnerabilityAlerts": {
+		"enabled": true,
+		"semanticCommitType": "fix",
+		"schedule": "before 7am every weekday",
+		"dependencyDashboardApproval": false,
+		"commitMessageSuffix": ""
+	},
+	"osvVulnerabilityAlerts": true
+}
