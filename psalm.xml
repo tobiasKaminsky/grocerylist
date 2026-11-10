@@ -7,6 +7,7 @@
 	errorLevel="4"
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
+	findUnusedIssueHandlerSuppression="false"
 	resolveFromConfigFile="true"
 	phpVersion="8.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23,11 +24,9 @@
 		<directory name="vendor" />
 	</extraFiles>
 	<issueHandlers>
+		<!-- Only needed with older nextcloud/ocp versions, CI runs psalm against the latest one -->
 		<UndefinedDocblockClass>
 			<errorLevel type="suppress">
-				<referencedClass name="Doctrine\DBAL\Schema\Schema" />
-				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
-				<referencedClass name="Doctrine\DBAL\Driver\Statement" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 			</errorLevel>
 		</UndefinedDocblockClass>
