@@ -1,26 +1,8 @@
-module.exports = {
-	extends: 'stylelint-config-recommended-scss',
-	rules: {
-		indentation: 'tab',
-		'selector-type-no-unknown': null,
-		'number-leading-zero': null,
-		'rule-empty-line-before': [
-			'always',
-			{
-				ignore: ['after-comment', 'inside-block'],
-			},
-		],
-		'declaration-empty-line-before': [
-			'never',
-			{
-				ignore: ['after-declaration'],
-			},
-		],
-		'comment-empty-line-before': null,
-		'selector-type-case': null,
-		'selector-list-comma-newline-after': null,
-		'no-descending-specificity': null,
-		'string-quotes': 'single',
-	},
-	plugins: ['stylelint-scss'],
+/**
+ * SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+export default {
+	extends: '@nextcloud/stylelint-config',
 }

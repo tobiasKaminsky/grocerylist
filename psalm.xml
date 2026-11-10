@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<psalm
+	errorLevel="4"
+	findUnusedBaselineEntry="true"
+	findUnusedCode="false"
+	findUnusedIssueHandlerSuppression="false"
+	resolveFromConfigFile="true"
+	phpVersion="8.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://getpsalm.org/schema/config"
+	xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+	<projectFiles>
+		<directory name="lib" />
+		<ignoreFiles>
+			<directory name="vendor" />
+		</ignoreFiles>
+	</projectFiles>
+	<extraFiles>
+		<directory name="vendor" />
+	</extraFiles>
+	<issueHandlers>
+		<!-- Only needed with older nextcloud/ocp versions, CI runs psalm against the latest one -->
+		<UndefinedDocblockClass>
+			<errorLevel type="suppress">
+				<referencedClass name="Doctrine\DBAL\Schema\Table" />
+			</errorLevel>
+		</UndefinedDocblockClass>
+	</issueHandlers>
+</psalm>

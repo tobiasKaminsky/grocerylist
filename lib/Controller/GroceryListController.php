@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Controller;
 
 use OCA\GroceryList\Db\Category;
@@ -9,15 +14,14 @@ use OCA\GroceryList\Db\GroceryListMapper;
 use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
-use OCP\IRequest;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IRequest;
 
-class GroceryListController extends Controller
-{
+class GroceryListController extends Controller {
 
 	private GroceryListMapper $groceryListMapper;
 	private ItemMapper $itemMapper;
@@ -26,13 +30,12 @@ class GroceryListController extends Controller
 	private $userId;
 
 	public function __construct($AppName,
-								IRequest $request,
-								GroceryListMapper $groceryListMapper,
-								ItemMapper $itemMapper,
-								CategoryMapper $categoryMapper,
-								ShareeGroceryListMapper $shareeMapper,
-		$UserId)
-	{
+		IRequest $request,
+		GroceryListMapper $groceryListMapper,
+		ItemMapper $itemMapper,
+		CategoryMapper $categoryMapper,
+		ShareeGroceryListMapper $shareeMapper,
+		$UserId) {
 		parent::__construct($AppName, $request);
 		$this->groceryListMapper = $groceryListMapper;
 		$this->itemMapper = $itemMapper;
@@ -43,8 +46,7 @@ class GroceryListController extends Controller
 
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function index()
-	{
+	public function index() {
 		// Register all scripts and styles we use on the frontend
 		\OCP\Util::addScript($this->appName, $this->appName . '-main'); // adding `js/grocerylist-main.mjs` generated from JS source
 		\OCP\Util::addStyle($this->appName, $this->appName . '-main'); // adding `css/grocerylist-style.css` generated from JS source
@@ -54,28 +56,25 @@ class GroceryListController extends Controller
 
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function showGroceryList($id)
-	{
+	public function showGroceryList($id) {
 		return $this->index();
 	}
 
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function showGroceryListSettings($id)
-	{
+	public function showGroceryListSettings($id) {
 		return $this->index();
 	}
 
 	#[NoAdminRequired]
-	public function lists()
-	{
+	public function lists() {
 		$lists = $this->groceryListMapper->findAll();
 
-        foreach ($lists as $list) {
-            $list->setUncheckedCount($this->itemMapper->findAllUnchecked($list->getId()));
-        }
+		foreach ($lists as $list) {
+			$list->setUncheckedCount($this->itemMapper->findAllUnchecked($list->getId()));
+		}
 
-        return new DataResponse($lists);
+		return new DataResponse($lists);
 	}
 
 	/**
@@ -83,8 +82,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function saveList(string $title)
-	{
+	public function saveList(string $title) {
 		$groceryList = new GroceryList();
 		$groceryList->setTitle($title);
 		$groceryList->setUserId($this->userId);
@@ -97,8 +95,7 @@ class GroceryListController extends Controller
 	 * @return \OCP\AppFramework\Db\Entity
 	 */
 	#[NoAdminRequired]
-	public function deleteList(int $id)
-	{
+	public function deleteList(int $id) {
 		$groceryList = $this->groceryListMapper->find($id);
 		$this->groceryListMapper->delete($groceryList);
 
@@ -108,28 +105,11 @@ class GroceryListController extends Controller
 	/**
 	 * @param int $id
 	 * @param string $title
-	 * @param string $showOnlyUnchecked
+	 * @param int $showOnlyUnchecked
 	 */
 	#[NoAdminRequired]
-	public function renameList(int $id, string $title)
-	{
+	public function renameList(int $id, string $title) {
 		$list = $this->groceryListMapper->find($id);
-		$list->setTitle($title);
-
-		$this->groceryListMapper->update($list);
-	}
-
-
-	/**
-	 * @param int $id
-	 * @param string $title
-	 * @param string $showOnlyUnchecked
-	 */
-	#[NoAdminRequired]
-	public function updateList(int $id, string $title, int $showOnlyUnchecked = 0)
-	{
-		$list = $this->groceryListMapper->find($id);
-		$list->setShowOnlyUnchecked($showOnlyUnchecked);
 		$list->setTitle($title);
 
 		$this->groceryListMapper->update($list);
@@ -138,13 +118,26 @@ class GroceryListController extends Controller
 	/**
 	 * @param int $id
 	 * @param string $title
-	 * @param string $showOnlyUnchecked
+	 * @param int $showOnlyUnchecked
 	 */
 	#[NoAdminRequired]
-	public function updateListVisibility(int $id, int $showOnlyUnchecked = 0)
-	{
+	public function updateList(int $id, string $title, int $showOnlyUnchecked = 0) {
 		$list = $this->groceryListMapper->find($id);
-		$list->setShowOnlyUnchecked($showOnlyUnchecked);
+		$list->setShowOnlyUnchecked($showOnlyUnchecked !== 0);
+		$list->setTitle($title);
+
+		$this->groceryListMapper->update($list);
+	}
+
+	/**
+	 * @param int $id
+	 * @param string $title
+	 * @param int $showOnlyUnchecked
+	 */
+	#[NoAdminRequired]
+	public function updateListVisibility(int $id, int $showOnlyUnchecked = 0) {
+		$list = $this->groceryListMapper->find($id);
+		$list->setShowOnlyUnchecked($showOnlyUnchecked !== 0);
 
 		$this->groceryListMapper->update($list);
 	}
@@ -154,8 +147,7 @@ class GroceryListController extends Controller
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function showList(int $id)
-	{
+	public function showList(int $id) {
 		return new DataResponse($this->groceryListMapper->find($id));
 	}
 
@@ -164,20 +156,18 @@ class GroceryListController extends Controller
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function listItems(int $id)
-	{
+	public function listItems(int $id) {
 		return new DataResponse($this->itemMapper->findAll($id));
 	}
 
-    /**
-     * @param int $id
-     */
-    #[NoAdminRequired]
-    #[NoCSRFRequired]
-    public function countUnckedItems(int $id)
-    {
-        return new DataResponse($this->itemMapper->findAllUnchecked($id));
-    }
+	/**
+	 * @param int $id
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function countUnckedItems(int $id) {
+		return new DataResponse($this->itemMapper->findAllUnchecked($id));
+	}
 
 	/**
 	 * @param int $id
@@ -192,8 +182,7 @@ class GroceryListController extends Controller
 	 * @param int $id
 	 */
 	#[NoAdminRequired]
-	public function listCategories(int $id)
-	{
+	public function listCategories(int $id) {
 		$returnList = [];
 		$categories = $this->categoryMapper->findAll($id);
 
@@ -210,8 +199,7 @@ class GroceryListController extends Controller
 	 * @param int $id
 	 */
 	#[NoAdminRequired]
-	public function listAllCategories(int $id)
-	{
+	public function listAllCategories(int $id) {
 		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
 	}
 
@@ -222,8 +210,7 @@ class GroceryListController extends Controller
 	 * @param Category[] $categories
 	 * @return Category[]
 	 */
-	private function enrichWithItemCount(array $categories): array
-	{
+	private function enrichWithItemCount(array $categories): array {
 		foreach ($categories as $category) {
 			$category->setItemCount(count($this->itemMapper->findByCategory($category->getId())));
 		}
@@ -239,8 +226,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function addItem(string $name, string $quantity, int $list, int $category = 0)
-	{
+	public function addItem(string $name, string $quantity, int $list, int $category = 0) {
 		$item = new Item();
 		$item->setName($name);
 		$item->setQuantity($quantity);
@@ -258,8 +244,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function updateItem(int $id, string $name, string $quantity, int $category)
-	{
+	public function updateItem(int $id, string $name, string $quantity, int $category) {
 		$item = $this->itemMapper->find($id);
 		$item->setName(trim($name));
 		$item->setQuantity(trim($quantity));
@@ -269,8 +254,7 @@ class GroceryListController extends Controller
 	}
 
 	#[NoAdminRequired]
-	public function hideItem(int $id)
-	{
+	public function hideItem(int $id) {
 		$item = $this->itemMapper->find($id);
 		$item->setHidden(time());
 
@@ -278,13 +262,12 @@ class GroceryListController extends Controller
 	}
 
 	/**
-	 * @param string $id
+	 * @param int $id
 	 * @param bool $checked
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function checkItem(int $id, bool $checked)
-	{
+	public function checkItem(int $id, bool $checked) {
 		$item = $this->itemMapper->find($id);
 		$item->setChecked($checked);
 
@@ -297,8 +280,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function addCategory(int $id, string $name, ?string $color = null)
-	{
+	public function addCategory(int $id, string $name, ?string $color = null) {
 		$category = new Category();
 		$category->setList($id);
 		$category->setName($name);
@@ -316,8 +298,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function updateCategory(int $id, string $newName, ?string $color = null)
-	{
+	public function updateCategory(int $id, string $newName, ?string $color = null) {
 		$category = $this->categoryMapper->find($id);
 		$category->setName($newName);
 		if ($color !== null) {
@@ -335,8 +316,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function updateCategoryColor(int $id, string $color)
-	{
+	public function updateCategoryColor(int $id, string $color) {
 		$category = $this->categoryMapper->find($id);
 		$category->setColor($color);
 
@@ -354,8 +334,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function deleteCategory(int $id)
-	{
+	public function deleteCategory(int $id) {
 		$category = $this->categoryMapper->find($id);
 		$listId = $category->getList();
 
@@ -374,8 +353,7 @@ class GroceryListController extends Controller
 	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function reorderCategories(int $id, array $orderedCategoryIds)
-	{
+	public function reorderCategories(int $id, array $orderedCategoryIds) {
 		$this->categoryMapper->reorder($id, $orderedCategoryIds);
 
 		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
@@ -385,8 +363,7 @@ class GroceryListController extends Controller
 	 * @param int $id
 	 */
 	#[NoAdminRequired]
-	public function sharees(int $id): DataResponse
-	{
+	public function sharees(int $id): DataResponse {
 		return new DataResponse($this->shareeMapper->findSharees($id));
 	}
 }

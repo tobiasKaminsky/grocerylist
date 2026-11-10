@@ -1,18 +1,22 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Db;
 
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
 /**
- * @template-implements QBMapper<Item>
+ * @template-extends QBMapper<Item>
  */
 class ItemMapper extends QBMapper {
 
-	const OFFSET = 15 * 60;
+	public const OFFSET = 15 * 60;
 
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'grocerylist_items', Item::class);
@@ -31,9 +35,9 @@ class ItemMapper extends QBMapper {
 	}
 
 	/**
-	 * @return GroceryList[]
-     * @throws Exception
-     */
+	 * @return Item[]
+	 * @throws Exception
+	 */
 	public function findAll(int $id): array {
 		$qb = $this->db->getQueryBuilder();
 
@@ -44,19 +48,19 @@ class ItemMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-    /**
-     * @throws Exception
-     */
-    public function findAllUnchecked(int $id): int {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @throws Exception
+	 */
+	public function findAllUnchecked(int $id): int {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
-            ->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0)));
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
+			->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0)));
 
-        return sizeof($this->findEntities($qb));
-    }
+		return sizeof($this->findEntities($qb));
+	}
 
 	public function categoryUsed(int $id): bool {
 		$qb = $this->db->getQueryBuilder();

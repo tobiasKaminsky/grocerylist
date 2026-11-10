@@ -1,13 +1,18 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2020 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\GroceryList\Db;
 
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
 /**
- * @template-implements QBMapper<Sharee>
+ * @template-extends QBMapper<Sharee>
  */
 class ShareeGroceryListMapper extends QBMapper {
 	private $userId;
@@ -30,6 +35,7 @@ class ShareeGroceryListMapper extends QBMapper {
 	}
 
 	/**
+	 * @return Sharee[]
 	 * @throws Exception
 	 */
 	public function findSharees(int $id) : array {
@@ -43,6 +49,7 @@ class ShareeGroceryListMapper extends QBMapper {
 	}
 
 	/**
+	 * @return Sharee[]
 	 * @throws Exception
 	 */
 	public function findAll(): array {

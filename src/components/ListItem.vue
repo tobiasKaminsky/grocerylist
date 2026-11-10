@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2024 Tobias Kaminsky <tobias@kaminsky.me>
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<li :class="{snoozed: isSnoozed}" class="list-item">
 		<span class="drag-handle" :style="categoryColor ? { color: categoryColor } : {}">

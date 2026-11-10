@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2023 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'

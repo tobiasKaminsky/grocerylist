@@ -1,3 +1,8 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
 	<nav
 		class="alphabet-index"
@@ -111,7 +116,7 @@ export default {
 .alphabet-index {
 	position: absolute;
 	top: 50%;
-	right: 4px;
+	inset-inline-end: 4px;
 	transform: translateY(-50%);
 	z-index: 10;
 	display: flex;
@@ -154,7 +159,7 @@ export default {
 	&__bubble {
 		position: absolute;
 		top: 50%;
-		right: 40px;
+		inset-inline-end: 40px;
 		transform: translateY(-50%);
 		width: 56px;
 		height: 56px;
