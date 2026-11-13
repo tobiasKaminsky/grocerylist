@@ -221,7 +221,7 @@ class GroceryListControllerTest extends TestCase {
 
 	private function sharee(int $list, string $userId): Sharee {
 		$sharee = new Sharee();
-		$sharee->setList($list);
+		$sharee->setListId($list);
 		$sharee->setUserId($userId);
 		return $sharee;
 	}

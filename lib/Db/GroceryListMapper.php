@@ -38,7 +38,7 @@ class GroceryListMapper extends QBMapper {
 			return $result[0];
 		} else {
 			$sharedList = $this->shareeMapper->find($id);
-			return $this->findById($sharedList->list);
+			return $this->findById($sharedList->getListId());
 		}
 	}
 
@@ -67,7 +67,7 @@ class GroceryListMapper extends QBMapper {
 		$shareeList = $this->shareeMapper->findAll();
 
 		foreach ($shareeList as $sharee) {
-			$returnList[] = $this->findById($sharee->list);
+			$returnList[] = $this->findById($sharee->getListId());
 		}
 
 		return $returnList;

@@ -43,7 +43,7 @@ class EntityTest extends TestCase {
 			'name' => 'Milk',
 			'quantity' => '2 l',
 			'category' => 5,
-			'list' => 7,
+			'listId' => 7,
 			'checked' => true,
 			'hidden' => 0,
 		], $item->jsonSerialize());
@@ -109,12 +109,12 @@ class EntityTest extends TestCase {
 
 	public function testShareeJsonSerialize(): void {
 		$sharee = new Sharee();
-		$sharee->setList(7);
+		$sharee->setListId(7);
 		$sharee->setUserId('bob');
 
 		$this->assertSame([
 			'id' => null,
-			'list' => 7,
+			'listId' => 7,
 			'userId' => 'bob',
 		], $sharee->jsonSerialize());
 	}

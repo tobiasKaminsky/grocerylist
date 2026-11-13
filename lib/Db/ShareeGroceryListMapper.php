@@ -20,7 +20,7 @@ class ShareeGroceryListMapper extends QBMapper {
 	private $userId;
 
 	public function __construct(IDBConnection $db, $userId) {
-		parent::__construct($db, 'grocerylist_sharee', Sharee::class);
+		parent::__construct($db, 'grocerylist_shares', Sharee::class);
 
 		$this->userId = $userId;
 	}
@@ -33,7 +33,7 @@ class ShareeGroceryListMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
 
 		return $this->findEntity($qb);
@@ -48,7 +48,7 @@ class ShareeGroceryListMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntities($qb);
 	}
@@ -72,7 +72,7 @@ class ShareeGroceryListMapper extends QBMapper {
 
 		$qb->select('user_id')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->setMaxResults(1);
 
@@ -84,19 +84,22 @@ class ShareeGroceryListMapper extends QBMapper {
 	}
 
 	/**
-	 * The sharee table has no id column, so insert directly instead of via QBMapper::insert()
+	 * Share a list with a user. Sharing it again with the same user is a no-op.
 	 *
 	 * @throws Exception
 	 */
 	public function share(int $list, string $userId): void {
-		$qb = $this->db->getQueryBuilder();
+		$sharee = new Sharee();
+		$sharee->setListId($list);
+		$sharee->setUserId($userId);
 
-		$qb->insert($this->getTableName())
-			->values([
-				'list' => $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT),
-				'user_id' => $qb->createNamedParameter($userId),
-			])
-			->executeStatement();
+		try {
+			$this->insert($sharee);
+		} catch (Exception $e) {
+			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				throw $e;
+			}
+		}
 	}
 
 	/**
@@ -106,7 +109,7 @@ class ShareeGroceryListMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->executeStatement();
 	}
@@ -118,7 +121,7 @@ class ShareeGroceryListMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
 			->executeStatement();
 	}
 }
