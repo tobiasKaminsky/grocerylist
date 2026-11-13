@@ -204,8 +204,8 @@ import {
 } from '@nextcloud/vue'
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
-import IconCart from 'vue-material-design-icons/CartOutline.vue'
 import IconCartCheck from 'vue-material-design-icons/CartCheck.vue'
+import IconCart from 'vue-material-design-icons/CartOutline.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
@@ -424,7 +424,7 @@ export default {
 		restoreHideCategory() {
 			try {
 				this.hideCategory = localStorage.getItem(this.hideCategoryStorageKey()) === '1'
-			} catch (e) {
+			} catch {
 				this.hideCategory = false
 			}
 		},
