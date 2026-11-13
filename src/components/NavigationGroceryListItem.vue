@@ -13,6 +13,12 @@
 		@click="openGroceryList(groceryList)"
 		@update:name="onRename">
 		<template #actions>
+			<NcActionButton v-if="isOwner" @click="openSharing(groceryList)">
+				<template #icon>
+					<ShareVariant :size="20" />
+				</template>
+				{{ t('grocerylist', 'Share list') }}
+			</NcActionButton>
 			<NcActionButton @click="openSettings(groceryList)">
 				<template #icon>
 					<Cog :size="20" />
@@ -27,6 +33,7 @@
 </template>
 
 <script>
+import { getCurrentUser } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import {
 	NcActionButton,
@@ -34,6 +41,7 @@ import {
 	NcCounterBubble,
 } from '@nextcloud/vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
+import ShareVariant from 'vue-material-design-icons/ShareVariant.vue'
 
 export default {
 	name: 'NavigationGroceryListItem',
@@ -42,6 +50,7 @@ export default {
 		NcAppNavigationItem,
 		NcCounterBubble,
 		Cog,
+		ShareVariant,
 	},
 
 	props: {
@@ -61,6 +70,10 @@ export default {
 	computed: {
 		icon() {
 			return 'icon-toggle-filelist'
+		},
+
+		isOwner() {
+			return this.groceryList.userId === getCurrentUser()?.uid
 		},
 
 		rename() {
@@ -91,6 +104,16 @@ export default {
 				params: {
 					listId: groceryList.id,
 				},
+			})
+		},
+
+		openSharing(groceryList) {
+			this.$router.push({
+				name: 'settings',
+				params: {
+					listId: groceryList.id,
+				},
+				hash: '#sharing',
 			})
 		},
 

@@ -36,5 +36,8 @@ return [
 		['name' => 'GroceryList#reorderCategories', 'url' => '/api/categories/{id}/reorder', 'verb' => 'POST'],
 
 		['name' => 'GroceryList#sharees', 'url' => '/api/sharees/{id}', 'verb' => 'GET'],
+		['name' => 'GroceryList#shareList', 'url' => '/api/sharees/{id}', 'verb' => 'POST'],
+		['name' => 'GroceryList#searchSharees', 'url' => '/api/sharees/{id}/search', 'verb' => 'GET'],
+		['name' => 'GroceryList#unshareList', 'url' => '/api/sharees/{id}/{userId}', 'verb' => 'DELETE'],
 	]
 ];

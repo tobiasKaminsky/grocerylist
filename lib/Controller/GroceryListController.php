@@ -15,11 +15,16 @@ use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\Collaboration\Collaborators\ISearch;
 use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\Share\IShare;
 
 class GroceryListController extends Controller {
 
@@ -27,6 +32,8 @@ class GroceryListController extends Controller {
 	private ItemMapper $itemMapper;
 	private CategoryMapper $categoryMapper;
 	private ShareeGroceryListMapper $shareeMapper;
+	private IUserManager $userManager;
+	private ISearch $collaboratorSearch;
 	private $userId;
 
 	public function __construct($AppName,
@@ -35,12 +42,16 @@ class GroceryListController extends Controller {
 		ItemMapper $itemMapper,
 		CategoryMapper $categoryMapper,
 		ShareeGroceryListMapper $shareeMapper,
+		IUserManager $userManager,
+		ISearch $collaboratorSearch,
 		$UserId) {
 		parent::__construct($AppName, $request);
 		$this->groceryListMapper = $groceryListMapper;
 		$this->itemMapper = $itemMapper;
 		$this->categoryMapper = $categoryMapper;
 		$this->shareeMapper = $shareeMapper;
+		$this->userManager = $userManager;
+		$this->collaboratorSearch = $collaboratorSearch;
 		$this->userId = $UserId;
 	}
 
@@ -91,15 +102,22 @@ class GroceryListController extends Controller {
 	}
 
 	/**
+	 * Delete a list. Only the owner may delete it, sharees can leave it via unshareList().
+	 *
 	 * @param int $id
-	 * @return \OCP\AppFramework\Db\Entity
+	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
 	public function deleteList(int $id) {
 		$groceryList = $this->groceryListMapper->find($id);
+		if ($groceryList->getUserId() !== $this->userId) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->shareeMapper->unshareAll($id);
 		$this->groceryListMapper->delete($groceryList);
 
-		return $groceryList;
+		return new DataResponse($groceryList);
 	}
 
 	/**
@@ -364,6 +382,118 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function sharees(int $id): DataResponse {
-		return new DataResponse($this->shareeMapper->findSharees($id));
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($this->formatSharees($list));
+	}
+
+	/**
+	 * Share a list with another user. Only the owner of a list may share it.
+	 */
+	#[NoAdminRequired]
+	public function shareList(int $id, string $userId): DataResponse {
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if ($list->getUserId() !== $this->userId) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+		if ($userId === $this->userId || !$this->userManager->userExists($userId)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->shareeMapper->isSharedWith($id, $userId)) {
+			$this->shareeMapper->share($id, $userId);
+		}
+
+		return new DataResponse($this->formatSharees($list));
+	}
+
+	/**
+	 * Remove a sharee from a list. The owner may remove anyone, a sharee may
+	 * only remove themselves (leave the list).
+	 */
+	#[NoAdminRequired]
+	public function unshareList(int $id, string $userId): DataResponse {
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if ($list->getUserId() !== $this->userId && $userId !== $this->userId) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->shareeMapper->unshare($id, $userId);
+
+		return new DataResponse($this->formatSharees($list));
+	}
+
+	/**
+	 * Search for users the list can be shared with, honoring the instance's
+	 * sharing settings (e.g. restricting sharing to group members).
+	 */
+	#[NoAdminRequired]
+	public function searchSharees(int $id, string $search = ''): DataResponse {
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if ($list->getUserId() !== $this->userId) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		[$result] = $this->collaboratorSearch->search($search, [IShare::TYPE_USER], false, 25, 0);
+
+		$excluded = [$list->getUserId() => true];
+		foreach ($this->shareeMapper->findSharees($id) as $sharee) {
+			$excluded[$sharee->getUserId()] = true;
+		}
+
+		$users = [];
+		foreach (array_merge($result['exact']['users'] ?? [], $result['users'] ?? []) as $match) {
+			$userId = (string)($match['value']['shareWith'] ?? '');
+			if ($userId === '' || isset($excluded[$userId])) {
+				continue;
+			}
+			$excluded[$userId] = true;
+			$users[] = [
+				'userId' => $userId,
+				'displayName' => (string)($match['label'] ?? $userId),
+				'subname' => (string)($match['shareWithDisplayNameUnique'] ?? ''),
+			];
+		}
+
+		return new DataResponse($users);
+	}
+
+	private function findAccessibleList(int $id): ?GroceryList {
+		try {
+			return $this->groceryListMapper->find($id);
+		} catch (DoesNotExistException) {
+			return null;
+		}
+	}
+
+	private function formatSharees(GroceryList $list): array {
+		$sharees = array_map(
+			fn ($sharee) => $this->formatUser($sharee->getUserId()),
+			$this->shareeMapper->findSharees($list->getId()),
+		);
+
+		return [
+			'owner' => $this->formatUser($list->getUserId()),
+			'sharees' => $sharees,
+		];
+	}
+
+	private function formatUser(string $userId): array {
+		return [
+			'userId' => $userId,
+			'displayName' => $this->userManager->getDisplayName($userId) ?? $userId,
+		];
 	}
 }

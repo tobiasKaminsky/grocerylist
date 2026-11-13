@@ -197,4 +197,27 @@ class MapperTest extends TestCase {
 
 		$this->assertSame(['alice', 'carol'], $users);
 	}
+
+	public function testShareAndUnshare(): void {
+		$list = $this->createList('bob', 'Bob')->getId();
+		$mapper = $this->shareeMapper('bob');
+
+		$mapper->share($list, 'alice');
+		$mapper->share($list, 'carol');
+		$this->assertTrue($mapper->isSharedWith($list, 'alice'));
+
+		$mapper->unshare($list, 'alice');
+		$this->assertFalse($mapper->isSharedWith($list, 'alice'));
+		$this->assertTrue($mapper->isSharedWith($list, 'carol'));
+
+		$mapper->unshareAll($list);
+		$this->assertSame([], $mapper->findSharees($list));
+	}
+
+	public function testFindUnsharedListThrows(): void {
+		$list = $this->createList('bob', 'Bob')->getId();
+
+		$this->expectException(DoesNotExistException::class);
+		$this->listMapper('alice')->find($list);
+	}
 }
