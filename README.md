@@ -25,6 +25,14 @@ The make command will install or update Composer dependencies if a composer.json
 }
 ```
 
+## Demo data
+
+To fill a test instance with some example lists (Supermarket, Discount Store, Drugstore, Farmers' Market) with categories and items, run:
+
+    scripts/create-demo-data.py --url http://localhost/nc --user grocery --password grocery
+
+The user has to exist already. Lists of that user with the same titles are replaced, other lists are kept. The screenshots in **screenshots/** show this data.
+
 ## Publish to App Store
 
 First get an account for the [App Store](http://apps.nextcloud.com/) then run:
