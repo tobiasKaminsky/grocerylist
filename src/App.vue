@@ -46,6 +46,7 @@
 					{{ t('grocerylist', 'Show only unchecked') }}
 				</NcCheckboxRadioSwitch>
 				<NcCheckboxRadioSwitch
+					v-if="!newListShowOnlyUnchecked"
 					v-model="newListHideCategory"
 					type="switch">
 					{{ t('grocerylist', 'Hide category') }}
@@ -271,7 +272,7 @@ export default {
 				this.$router.push({
 					name: 'list',
 					params: { listId: data.id.toString() },
-					query: this.newListHideCategory ? { hideCategory: '1' } : {},
+					query: this.newListHideCategory && !this.newListShowOnlyUnchecked ? { hideCategory: '1' } : {},
 				})
 			} catch (e) {
 				logger.error('Could not create groceryList', { error: e })
