@@ -328,6 +328,12 @@ export default {
 	flex-direction: column;
 	gap: calc(var(--default-grid-baseline) * 3);
 
+	// With a fixed height the sections would otherwise shrink to fit instead of overflowing,
+	// e.g. the category list down to its min-height with its items drawn over the following sections
+	> * {
+		flex-shrink: 0;
+	}
+
 	@media (max-width: 768px) {
 		padding-inline: var(--default-grid-baseline, 4px);
 	}
