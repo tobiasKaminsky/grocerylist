@@ -18,7 +18,7 @@
 			</NcButton>
 		</div>
 		<div class="page-items">
-			<div v-if="hideCategory" ref="flatList">
+			<div v-if="hideCategory && !groceryList?.showOnlyUnchecked" ref="flatList">
 				<Draggable
 					v-model="sortedItemsList"
 					tag="ul"
@@ -96,6 +96,7 @@
 				{{ t('grocerylist', 'Show only unchecked') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
+				v-if="!groceryList?.showOnlyUnchecked"
 				v-model="hideCategory"
 				type="switch">
 				{{ t('grocerylist', 'Hide category') }}
