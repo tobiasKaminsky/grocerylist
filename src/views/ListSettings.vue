@@ -334,8 +334,9 @@ export default {
 		flex-shrink: 0;
 	}
 
+	// Same as the list view: keep clear of the app navigation toggle
 	@media (max-width: 768px) {
-		padding-inline: var(--default-grid-baseline, 4px);
+		padding-inline: calc(44px + var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
 	}
 }
 
