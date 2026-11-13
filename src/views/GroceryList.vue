@@ -149,23 +149,23 @@
 					:createOption="(name) => ({ name, id: null })"
 					:closeOnOutsideClick="true" />
 				<div class="button-list">
-					<NcButton variant="primary" type="submit" :aria-label="t('grocerylist', 'Add item')">
+					<NcButton variant="primary" type="submit">
 						<template #icon>
-							<Plus :size="20" />
+							<Plus v-if="newItemId === -1" :size="20" />
+							<Check v-else :size="20" />
 						</template>
-						{{ t('grocerylist', 'Add item') }}
+						{{ newItemId === -1 ? t('grocerylist', 'Add') : t('grocerylist', 'Save') }}
 					</NcButton>
 					<NcButton
 						v-if="showDeleteButton"
 						id="deleteButton"
 						variant="error"
-						:aria-label="t('grocerylist', 'Delete item')"
 						:hidden="newItemId === -1"
 						@click="deleteItem()">
 						<template #icon>
 							<Delete :size="20" />
 						</template>
-						{{ t('grocerylist', 'Delete item') }}
+						{{ t('grocerylist', 'Delete') }}
 					</NcButton>
 				</div>
 			</form>
@@ -187,6 +187,7 @@ import {
 } from '@nextcloud/vue'
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
+import Check from 'vue-material-design-icons/Check.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -204,6 +205,7 @@ export default {
 		NcSelect,
 		NcButton,
 		NcTextField,
+		Check,
 		ChevronDown,
 		ChevronRight,
 		Plus,
