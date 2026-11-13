@@ -29,7 +29,9 @@
 			v-model="newCategoryName"
 			class="list-category__input"
 			:label="t('grocerylist', 'Category name')"
-			:loading="loading" />
+			:loading="loading"
+			@keydown.enter.prevent="toggleEditMode"
+			@keydown.esc.stop.prevent="cancelEdit" />
 		<span v-else class="list-category__name">
 			{{ category.name }}
 		</span>
@@ -167,6 +169,10 @@ export default {
 			})
 		},
 
+		cancelEdit() {
+			this.isEditing = false
+		},
+
 		async toggleEditMode() {
 			if (!this.isEditing) {
 				this.newCategoryName = this.category.name
@@ -175,13 +181,24 @@ export default {
 						this.$refs.input?.$el?.querySelector('input')?.focus()
 					})
 				})
-			} else if (this.newCategoryName !== this.category.name) {
+			} else if (this.newCategoryName.trim() !== this.category.name) {
+				const name = this.newCategoryName.trim()
+				if (name === '') {
+					showError(t('grocerylist', 'Category name must not be empty'))
+					return
+				}
 				this.loading = true
 				try {
-					this.categoryStore.editCategory({ ...this.category, name: this.newCategoryName })
+					await this.categoryStore.editCategory({ ...this.category, name })
 				} catch (e) {
 					logger.error('Could not rename category', { error: e })
-					showError(t('grocerylist', 'Could not rename category'))
+					if (e?.response?.status === 409) {
+						showError(t('grocerylist', 'A category named "{category}" already exists', { category: name }))
+					} else {
+						showError(t('grocerylist', 'Could not rename category'))
+					}
+					this.loading = false
+					return
 				}
 				this.loading = false
 			}

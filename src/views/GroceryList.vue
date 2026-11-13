@@ -18,7 +18,23 @@
 			</NcButton>
 		</div>
 		<div class="page-items">
-			<div v-if="hideCategory && !groceryList?.showOnlyUnchecked" ref="flatList">
+			<NcEmptyContent
+				v-if="items !== null && items.length === 0"
+				:name="t('grocerylist', 'No items, yet')"
+				:description="t('grocerylist', 'Add the first item with the Add button.')">
+				<template #icon>
+					<IconCart :size="64" />
+				</template>
+			</NcEmptyContent>
+			<NcEmptyContent
+				v-else-if="items !== null && groceryList?.showOnlyUnchecked && filteredItems().length === 0"
+				:name="t('grocerylist', 'All done')"
+				:description="t('grocerylist', 'Every item is checked or snoozed.')">
+				<template #icon>
+					<IconCartCheck :size="64" />
+				</template>
+			</NcEmptyContent>
+			<div v-else-if="hideCategory && !groceryList?.showOnlyUnchecked" ref="flatList">
 				<Draggable
 					v-model="sortedItemsList"
 					tag="ul"
@@ -109,12 +125,12 @@
 			@close="closeModal">
 			<form
 				class="modal__content"
-				@submit.prevent="onSaveItem()">
+				@submit.prevent="onSaveItem()"
+				@keydown.esc="onModalEscape">
 				<NcTextField
 					v-model="newItemName"
 					:label="t('grocerylist', 'Item name')"
-					:placeholder="t('grocerylist', 'e.g. Milk, Bread, Eggs…')"
-					@keyup.enter="onSaveItem()" />
+					:placeholder="t('grocerylist', 'e.g. Milk, Bread, Eggs…')" />
 				<div class="quantityRow">
 					<NcTextField
 						v-model="newItemQuantity"
@@ -146,7 +162,7 @@
 					label="name"
 					:placeholder="t('grocerylist', 'Select or create a category…')"
 					:taggable="true"
-					:createOption="(name) => ({ name, id: null })"
+					:createOption="createCategoryOption"
 					:closeOnOutsideClick="true" />
 				<div class="button-list">
 					<NcButton variant="primary" type="submit">
@@ -176,17 +192,20 @@
 <script>
 import axios from '@nextcloud/axios'
 import { showError, showInfo } from '@nextcloud/dialogs'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcButton,
 	NcCheckboxRadioSwitch,
+	NcEmptyContent,
 	NcModal,
 	NcSelect,
 	NcTextField,
 } from '@nextcloud/vue'
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
+import IconCart from 'vue-material-design-icons/CartOutline.vue'
+import IconCartCheck from 'vue-material-design-icons/CartCheck.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
@@ -201,7 +220,10 @@ export default {
 	name: 'GroceryList',
 
 	components: {
+		IconCart,
+		IconCartCheck,
 		NcCheckboxRadioSwitch,
+		NcEmptyContent,
 		NcSelect,
 		NcButton,
 		NcTextField,
@@ -350,16 +372,31 @@ export default {
 			if (to.name !== from.name || to.params.listId !== from.params.listId) {
 				logger.debug('Route: ' + to.params.listId)
 				// this.listId = to.params.listId
+				this.restoreHideCategory()
 				this.loadGroceryList(this.listId)
 				this.loadItems(this.listId)
 				this.loadCategories(this.listId)
 				this.loadAllCategories(this.listId)
 			}
 		},
+
+		hideCategory(value) {
+			try {
+				if (value) {
+					localStorage.setItem(this.hideCategoryStorageKey(), '1')
+				} else {
+					localStorage.removeItem(this.hideCategoryStorageKey())
+				}
+			} catch (e) {
+				logger.debug('Could not store hide category setting', { error: e })
+			}
+		},
 	},
 
 	async mounted() {
 		subscribe('grocerylist:snooze-ended', this.onSnoozeEnded)
+		subscribe('grocerylist:list-renamed', this.onListRenamed)
+		this.restoreHideCategory()
 		if (this.$route.query.hideCategory === '1') {
 			this.hideCategory = true
 		}
@@ -371,16 +408,38 @@ export default {
 
 	beforeUnmount() {
 		unsubscribe('grocerylist:snooze-ended', this.onSnoozeEnded)
+		unsubscribe('grocerylist:list-renamed', this.onListRenamed)
 	},
 
 	methods: {
 		indexLetter,
+
+		hideCategoryStorageKey() {
+			return `grocerylist:hideCategory:${this.listId}`
+		},
+
+		/**
+		 * "Hide category" is a view preference of this browser, remembered per list.
+		 */
+		restoreHideCategory() {
+			try {
+				this.hideCategory = localStorage.getItem(this.hideCategoryStorageKey()) === '1'
+			} catch (e) {
+				this.hideCategory = false
+			}
+		},
 
 		/**
 		 * Reload the items so that items whose snooze is over show up again.
 		 */
 		onSnoozeEnded() {
 			this.loadItems(this.listId)
+		},
+
+		onListRenamed({ listId, title }) {
+			if (this.groceryList && listId === this.listId) {
+				this.groceryList.title = title
+			}
 		},
 
 		scrollToLetter(letter) {
@@ -393,6 +452,7 @@ export default {
 			this.newItemId = -1
 			this.newItemName = ''
 			this.newItemQuantity = 1
+			this.newItemCategory = null
 			this.showDeleteButton = false
 			this.modal = true
 		},
@@ -401,10 +461,22 @@ export default {
 			this.modal = false
 		},
 
+		/**
+		 * NcModal ignores Escape while a text field is focused, which is always the
+		 * case in this dialog. An open category dropdown handles Escape itself.
+		 *
+		 * @param {KeyboardEvent} event The key event.
+		 */
+		onModalEscape(event) {
+			if (event.target.closest('.v-select.vs--open')) {
+				return
+			}
+			this.closeModal()
+		},
+
 		toggleVisibility() {
 			this.groceryList.showOnlyUnchecked = !this.groceryList.showOnlyUnchecked ? 1 : 0
 			this.updateGroceryList(this.listId, this.groceryList.showOnlyUnchecked)
-			this.hideCategory = !this.groceryList.showOnlyUnchecked
 		},
 
 		async updateGroceryList(id, value) {
@@ -444,7 +516,6 @@ export default {
 			try {
 				const response = await axios.get(generateUrl('/apps/grocerylist/api/all_categories/' + id))
 				this.allCategories = response.data
-				this.newItemCategory = this.allCategories[0]
 			} catch (e) {
 				logger.error('Could not fetch all categories for groceryList ' + id, { error: e })
 				showError(t('grocerylist', ('Could not fetch all categories for groceryList ' + id)))
@@ -516,6 +587,16 @@ export default {
 			}
 		},
 
+		/**
+		 * Reload items and the categories in use after items were added, changed or
+		 * deleted, and let the navigation update the unchecked count.
+		 */
+		async onItemsChanged() {
+			await this.loadItems(this.listId)
+			await this.loadCategories(this.listId)
+			emit('grocerylist:items-changed', { listId: this.listId })
+		},
+
 		async onSaveItem() {
 			if (this.newItemName === '') {
 				showInfo('Cannot add empty item!')
@@ -546,6 +627,21 @@ export default {
 			return cat?.color || null
 		},
 
+		findCategoryByName(categories, name) {
+			const wanted = name.trim().toLowerCase()
+			return categories.find((c) => c.name.toLowerCase() === wanted)
+		},
+
+		/**
+		 * Typing the name of an existing category selects it instead of creating a duplicate.
+		 *
+		 * @param {string} name The typed name.
+		 * @return {object}
+		 */
+		createCategoryOption(name) {
+			return this.findCategoryByName(this.allCategories, name) ?? { name: name.trim(), id: null }
+		},
+
 		async ensureCategoryExists() {
 			if (!this.newItemCategory) {
 				return 0
@@ -558,7 +654,7 @@ export default {
 				{ name: this.newItemCategory.name },
 			)
 			this.allCategories = data
-			const created = data.find((c) => c.name === this.newItemCategory.name)
+			const created = this.findCategoryByName(data, this.newItemCategory.name)
 			this.newItemCategory = created
 			return created.id
 		},
@@ -573,8 +669,7 @@ export default {
 					list: this.listId,
 				})
 
-				await this.loadItems(this.listId)
-				await this.loadCategories(this.listId)
+				await this.onItemsChanged()
 
 				this.newItemName = ''
 				this.newItemQuantity = ''
@@ -594,7 +689,7 @@ export default {
 					category: categoryId,
 				})
 
-				await this.loadItems(this.listId)
+				await this.onItemsChanged()
 				this.newItemName = ''
 				this.newItemQuantity = ''
 				this.newItemCategory = null
@@ -630,7 +725,7 @@ export default {
 			try {
 				await axios.delete(generateUrl('/apps/grocerylist/api/item/' + this.newItemId))
 
-				await this.loadItems(this.listId)
+				await this.onItemsChanged()
 				this.newItemName = ''
 				this.newItemQuantity = ''
 				this.newItemCategory = null
@@ -759,6 +854,11 @@ export default {
 
 .item-list li.snoozed {
 	opacity: 0.7;
+}
+
+.item-list li.checked .list-item__label {
+	color: var(--color-text-maxcontrast);
+	text-decoration: line-through;
 }
 
 .sortable-ghost {

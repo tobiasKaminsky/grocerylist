@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<div class="new-category">
+	<form class="new-category" @submit.prevent="addCategory">
 		<NcTextField
 			v-model="newCategoryName"
 			class="new-category__input"
@@ -16,13 +16,14 @@
 
 		<NcButton
 			variant="tertiary"
-			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })"
-			@click="addCategory">
+			type="submit"
+			:disabled="updating || newCategoryName.trim() === ''"
+			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })">
 			<template #icon>
 				<IconPlus :size="20" />
 			</template>
 		</NcButton>
-	</div>
+	</form>
 </template>
 
 <script>
@@ -61,6 +62,7 @@ export default {
 			 * Name of the new category
 			 */
 			newCategoryName: '',
+			updating: false,
 		}
 	},
 
@@ -74,9 +76,18 @@ export default {
 		 * Handle adding a new category
 		 */
 		async addCategory() {
+			const name = this.newCategoryName.trim()
+			if (name === '') {
+				return
+			}
+			if (this.categoryStore.categories[this.listId]?.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+				showError(t('grocerylist', 'A category named "{category}" already exists', { category: name }))
+				return
+			}
+
 			this.updating = true
 			try {
-				await this.categoryStore.createCategory(this.listId, this.newCategoryName)
+				await this.categoryStore.createCategory(this.listId, name)
 				this.newCategoryName = ''
 			} catch (e) {
 				logger.error(`Could not add category to list ${this.listId}`, { error: e })

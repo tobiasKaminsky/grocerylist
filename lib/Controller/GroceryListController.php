@@ -315,15 +315,43 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function addCategory(int $id, string $name, ?string $color = null) {
-		$category = new Category();
-		$category->setList($id);
-		$category->setName($name);
-		$category->setOrder(0);
-		$category->setColor($color);
+		$name = trim($name);
+		if ($name === '') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
-		$this->categoryMapper->insert($category);
+		$categories = $this->categoryMapper->findAll($id);
 
-		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
+		// A category with the same name is reused instead of creating a duplicate
+		if ($this->findCategoryByName($categories, $name) === null) {
+			$order = 0;
+			foreach ($categories as $existing) {
+				$order = max($order, $existing->getOrder() + 1);
+			}
+
+			$category = new Category();
+			$category->setList($id);
+			$category->setName($name);
+			$category->setOrder($order);
+			$category->setColor($color);
+
+			$this->categoryMapper->insert($category);
+			$categories = $this->categoryMapper->findAll($id);
+		}
+
+		return new DataResponse($this->enrichWithItemCount($categories));
+	}
+
+	/**
+	 * @param Category[] $categories
+	 */
+	private function findCategoryByName(array $categories, string $name): ?Category {
+		foreach ($categories as $category) {
+			if (mb_strtolower($category->getName()) === mb_strtolower($name)) {
+				return $category;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -333,7 +361,17 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function updateCategory(int $id, string $newName, ?string $color = null) {
+		$newName = trim($newName);
+		if ($newName === '') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$category = $this->categoryMapper->find($id);
+		$sameName = $this->findCategoryByName($this->categoryMapper->findAll($category->getList()), $newName);
+		if ($sameName !== null && $sameName->getId() !== $category->getId()) {
+			return new DataResponse([], Http::STATUS_CONFLICT);
+		}
+
 		$category->setName($newName);
 		if ($color !== null) {
 			$category->setColor($color);
