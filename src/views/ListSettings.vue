@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
+import axios from '@nextcloud/axios'
 import { getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'

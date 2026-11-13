@@ -43,7 +43,7 @@ class EntityTest extends TestCase {
 			'name' => 'Milk',
 			'quantity' => '2 l',
 			'category' => 5,
-			'listId' => 7,
+			'list' => 7,
 			'checked' => true,
 			'hidden' => 0,
 		], $item->jsonSerialize());

@@ -11,7 +11,7 @@
 			:options="searchResults"
 			:loading="searching"
 			:inputLabel="t('grocerylist', 'Share with')"
-			:placeholder="t('grocerylist', 'Search for users …')"
+			:placeholder="t('grocerylist', 'Search for users …')"
 			@search="onSearch"
 			@update:modelValue="onShare" />
 
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
 import { getCurrentUser } from '@nextcloud/auth'
+import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { NcAvatar, NcButton, NcLoadingIcon, NcSelectUsers } from '@nextcloud/vue'
