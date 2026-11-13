@@ -23,8 +23,11 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Collaboration\Collaborators\ISearch;
+use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -36,6 +39,8 @@ class GroceryListControllerTest extends TestCase {
 	private IUserManager&MockObject $userManager;
 	private ISearch&MockObject $collaboratorSearch;
 	private ListService&MockObject $listService;
+	private IShareManager&MockObject $shareManager;
+	private IGroupManager&MockObject $groupManager;
 	private GroceryListController $controller;
 
 	protected function setUp(): void {
@@ -49,6 +54,17 @@ class GroceryListControllerTest extends TestCase {
 		$this->userManager->method('getDisplayName')->willReturnCallback(fn (string $uid) => ucfirst($uid));
 		$this->collaboratorSearch = $this->createMock(ISearch::class);
 		$this->listService = $this->createMock(ListService::class);
+		$this->shareManager = $this->createMock(IShareManager::class);
+		$this->shareManager->method('shareApiEnabled')->willReturn(true);
+		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->userManager->method('get')->willReturnCallback(function (string $uid) {
+			if ($uid === 'nobody') {
+				return null;
+			}
+			$user = $this->createMock(IUser::class);
+			$user->method('getUID')->willReturn($uid);
+			return $user;
+		});
 
 		$this->controller = new GroceryListController(
 			'grocerylist',
@@ -60,8 +76,29 @@ class GroceryListControllerTest extends TestCase {
 			$this->userManager,
 			$this->collaboratorSearch,
 			$this->listService,
+			$this->shareManager,
+			$this->groupManager,
 			'alice',
 		);
+	}
+
+	/**
+	 * Let the current user access the given lists, all other lists are not found.
+	 */
+	private function accessibleLists(int ...$ids): void {
+		$this->groceryListMapper->method('find')->willReturnCallback(function (int $id) use ($ids) {
+			if (!in_array($id, $ids, true)) {
+				throw new DoesNotExistException('');
+			}
+			return $this->list($id, 'alice');
+		});
+	}
+
+	private function item(int $id, int $list): Item {
+		$item = new Item();
+		$item->setId($id);
+		$item->setList($list);
+		return $item;
 	}
 
 	private function category(int $id, int $list): Category {
@@ -129,6 +166,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testListCategoriesOnlyReturnsUsedCategories(): void {
+		$this->accessibleLists(7);
 		$used = $this->category(1, 7);
 		$unused = $this->category(2, 7);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([$used, $unused]);
@@ -141,6 +179,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testListAllCategoriesAddsItemCount(): void {
+		$this->accessibleLists(7);
 		$category = $this->category(1, 7);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([$category]);
 		$this->itemMapper->method('findByCategory')->with(1)->willReturn([new Item(), new Item()]);
@@ -151,6 +190,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testAddItemDefaultsToNoCategory(): void {
+		$this->accessibleLists(7);
 		$this->itemMapper->expects($this->once())
 			->method('insert')
 			->willReturnArgument(0);
@@ -163,9 +203,10 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testUpdateItemTrimsInput(): void {
-		$item = new Item();
-		$item->setId(3);
+		$this->accessibleLists(7);
+		$item = $this->item(3, 7);
 		$this->itemMapper->method('find')->with(3)->willReturn($item);
+		$this->categoryMapper->method('find')->with(5)->willReturn($this->category(5, 7));
 		$this->itemMapper->method('update')->willReturnArgument(0);
 
 		$this->controller->updateItem(3, '  Milk ', ' 2 l ', 5);
@@ -176,8 +217,8 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testCheckItem(): void {
-		$item = new Item();
-		$item->setId(3);
+		$this->accessibleLists(7);
+		$item = $this->item(3, 7);
 		$this->itemMapper->method('find')->with(3)->willReturn($item);
 		$this->itemMapper->expects($this->once())->method('update')->with($item)->willReturnArgument(0);
 
@@ -187,8 +228,8 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testUnhideItemEndsSnooze(): void {
-		$item = new Item();
-		$item->setId(3);
+		$this->accessibleLists(7);
+		$item = $this->item(3, 7);
 		$item->setHidden(1700000000);
 		$this->itemMapper->method('find')->with(3)->willReturn($item);
 		$this->itemMapper->expects($this->once())->method('update')->with($item)->willReturnArgument(0);
@@ -199,6 +240,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testDeleteCategoryAlsoDeletesItsItems(): void {
+		$this->accessibleLists(7);
 		$category = $this->category(1, 7);
 		$itemA = new Item();
 		$itemB = new Item();
@@ -222,6 +264,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testAddCategoryAppendsAtEnd(): void {
+		$this->accessibleLists(7);
 		$existing = $this->category(1, 7);
 		$existing->setOrder(4);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([$existing]);
@@ -234,6 +277,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testAddCategoryReusesSameName(): void {
+		$this->accessibleLists(7);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([$this->category(1, 7)]);
 		$this->categoryMapper->expects($this->never())->method('insert');
 
@@ -247,6 +291,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testUpdateCategoryRejectsDuplicateName(): void {
+		$this->accessibleLists(7);
 		$category = $this->category(1, 7);
 		$this->categoryMapper->method('find')->with(1)->willReturn($category);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([$category, $this->category(2, 7)]);
@@ -257,6 +302,7 @@ class GroceryListControllerTest extends TestCase {
 	}
 
 	public function testReorderCategoriesDelegatesToMapper(): void {
+		$this->accessibleLists(7);
 		$this->categoryMapper->expects($this->once())->method('reorder')->with(7, [3, 1, 2]);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([]);
 
@@ -295,7 +341,6 @@ class GroceryListControllerTest extends TestCase {
 
 	public function testOwnerCanShareList(): void {
 		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
-		$this->userManager->method('userExists')->with('bob')->willReturn(true);
 		$this->shareeMapper->method('isSharedWith')->willReturn(false);
 		$this->shareeMapper->expects($this->once())->method('share')->with(7, 'bob');
 
@@ -304,7 +349,6 @@ class GroceryListControllerTest extends TestCase {
 
 	public function testShareIsNotDuplicated(): void {
 		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
-		$this->userManager->method('userExists')->willReturn(true);
 		$this->shareeMapper->method('isSharedWith')->willReturn(true);
 		$this->shareeMapper->expects($this->never())->method('share');
 
@@ -320,7 +364,6 @@ class GroceryListControllerTest extends TestCase {
 
 	public function testCannotShareWithSelfOrUnknownUser(): void {
 		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
-		$this->userManager->method('userExists')->willReturnMap([['nobody', [], false]]);
 		$this->shareeMapper->expects($this->never())->method('share');
 
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->shareList(7, 'alice')->getStatus());
@@ -351,6 +394,130 @@ class GroceryListControllerTest extends TestCase {
 		$this->listService->expects($this->once())->method('delete')->with($list);
 
 		$this->controller->deleteList(7);
+	}
+
+	public static function dataInaccessible(): array {
+		return [
+			'list items' => [fn (GroceryListController $c) => $c->listItems(9)],
+			'used categories' => [fn (GroceryListController $c) => $c->listCategories(9)],
+			'all categories' => [fn (GroceryListController $c) => $c->listAllCategories(9)],
+			'show list' => [fn (GroceryListController $c) => $c->showList(9)],
+			'rename list' => [fn (GroceryListController $c) => $c->renameList(9, 'x')],
+			'update list' => [fn (GroceryListController $c) => $c->updateList(9, 'x', 1)],
+			'list visibility' => [fn (GroceryListController $c) => $c->updateListVisibility(9, 1)],
+			'delete list' => [fn (GroceryListController $c) => $c->deleteList(9)],
+			'add item' => [fn (GroceryListController $c) => $c->addItem('x', '', 9)],
+			'update item' => [fn (GroceryListController $c) => $c->updateItem(3, 'x', '', 0)],
+			'check item' => [fn (GroceryListController $c) => $c->checkItem(3, true)],
+			'snooze item' => [fn (GroceryListController $c) => $c->hideItem(3)],
+			'unsnooze item' => [fn (GroceryListController $c) => $c->unhideItem(3)],
+			'delete item' => [fn (GroceryListController $c) => $c->deleteItem(3)],
+			'add category' => [fn (GroceryListController $c) => $c->addCategory(9, 'x')],
+			'update category' => [fn (GroceryListController $c) => $c->updateCategory(4, 'x')],
+			'category color' => [fn (GroceryListController $c) => $c->updateCategoryColor(4, '#ffffff')],
+			'delete category' => [fn (GroceryListController $c) => $c->deleteCategory(4)],
+			'reorder categories' => [fn (GroceryListController $c) => $c->reorderCategories(9, [4])],
+		];
+	}
+
+	/**
+	 * Lists, items and categories of lists the user neither owns nor has been
+	 * shared are not found, and nothing is changed.
+	 */
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataInaccessible')]
+	public function testInaccessibleListIsNotFound(\Closure $call): void {
+		$this->accessibleLists(7);
+		$this->itemMapper->method('find')->with(3)->willReturn($this->item(3, 9));
+		$this->categoryMapper->method('find')->with(4)->willReturn($this->category(4, 9));
+		foreach (['insert', 'update', 'delete'] as $method) {
+			$this->itemMapper->expects($this->never())->method($method);
+			$this->categoryMapper->expects($this->never())->method($method);
+			$this->groceryListMapper->expects($this->never())->method($method);
+		}
+		$this->categoryMapper->expects($this->never())->method('reorder');
+		$this->listService->expects($this->never())->method('delete');
+
+		$this->assertSame(Http::STATUS_NOT_FOUND, $call($this->controller)->getStatus());
+	}
+
+	public function testItemCanNotUseCategoryOfOtherList(): void {
+		$this->accessibleLists(7, 8);
+		$this->itemMapper->method('find')->with(3)->willReturn($this->item(3, 7));
+		$this->categoryMapper->method('find')->with(4)->willReturn($this->category(4, 8));
+		$this->itemMapper->expects($this->never())->method('insert');
+		$this->itemMapper->expects($this->never())->method('update');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->addItem('x', '', 7, 4)->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->updateItem(3, 'x', '', 4)->getStatus());
+	}
+
+	public static function dataInvalidInput(): array {
+		$long = str_repeat('a', 201);
+		return [
+			'empty list title' => [fn (GroceryListController $c) => $c->saveList(' ')],
+			'long list title' => [fn (GroceryListController $c) => $c->saveList($long)],
+			'long rename' => [fn (GroceryListController $c) => $c->renameList(7, $long)],
+			'empty item name' => [fn (GroceryListController $c) => $c->addItem('', '1', 7)],
+			'long item name' => [fn (GroceryListController $c) => $c->addItem($long, '1', 7)],
+			'long quantity' => [fn (GroceryListController $c) => $c->addItem('x', $long, 7)],
+			'long item update' => [fn (GroceryListController $c) => $c->updateItem(3, $long, '', 0)],
+			'long category name' => [fn (GroceryListController $c) => $c->addCategory(7, $long)],
+			'invalid color on add' => [fn (GroceryListController $c) => $c->addCategory(7, 'x', 'red;x')],
+			'invalid color' => [fn (GroceryListController $c) => $c->updateCategoryColor(4, 'url(x)')],
+			'short hex color' => [fn (GroceryListController $c) => $c->updateCategoryColor(4, '#fff')],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataInvalidInput')]
+	public function testInvalidInputIsRejected(\Closure $call): void {
+		$this->accessibleLists(7);
+		$this->itemMapper->method('find')->willReturn($this->item(3, 7));
+		$this->categoryMapper->method('find')->willReturn($this->category(4, 7));
+		$this->itemMapper->expects($this->never())->method('insert');
+		$this->itemMapper->expects($this->never())->method('update');
+		$this->categoryMapper->expects($this->never())->method('insert');
+		$this->categoryMapper->expects($this->never())->method('update');
+		$this->groceryListMapper->expects($this->never())->method('insert');
+		$this->groceryListMapper->expects($this->never())->method('update');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $call($this->controller)->getStatus());
+	}
+
+	public function testCategoryColorAcceptsHex(): void {
+		$this->accessibleLists(7);
+		$category = $this->category(4, 7);
+		$this->categoryMapper->method('find')->willReturn($category);
+		$this->categoryMapper->method('findAll')->willReturn([$category]);
+
+		$this->assertSame(Http::STATUS_OK, $this->controller->updateCategoryColor(4, '#A5b872')->getStatus());
+		$this->assertSame('#A5b872', $category->getColor());
+	}
+
+	public function testCannotShareWhenSharingIsDisabledForUser(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->shareManager->method('sharingDisabledForUser')->with('alice')->willReturn(true);
+		$this->shareeMapper->expects($this->never())->method('share');
+		$this->collaboratorSearch->expects($this->never())->method('search');
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $this->controller->shareList(7, 'bob')->getStatus());
+		$this->assertSame(Http::STATUS_FORBIDDEN, $this->controller->searchSharees(7, 'b')->getStatus());
+	}
+
+	public function testShareWithGroupMembersOnly(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->shareManager->method('shareWithGroupMembersOnly')->willReturn(true);
+		$this->shareManager->method('shareWithGroupMembersOnlyExcludeGroupsList')->willReturn(['everyone']);
+		$this->groupManager->method('getUserGroupIds')->willReturnCallback(fn (IUser $user) => match ($user->getUID()) {
+			'alice' => ['family', 'everyone'],
+			'bob' => ['family'],
+			default => ['everyone'],
+		});
+		$this->shareeMapper->method('isSharedWith')->willReturn(false);
+		$this->shareeMapper->expects($this->once())->method('share')->with(7, 'bob');
+
+		$this->assertSame(Http::STATUS_OK, $this->controller->shareList(7, 'bob')->getStatus());
+		// only an excluded group in common
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->shareList(7, 'mallory')->getStatus());
 	}
 
 	public function testSearchShareesSkipsOwnerAndExistingSharees(): void {
