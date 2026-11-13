@@ -124,4 +124,17 @@ class ShareeGroceryListMapper extends QBMapper {
 			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
 			->executeStatement();
 	}
+
+	/**
+	 * Remove every share with the given user, e.g. after the user was deleted.
+	 *
+	 * @throws Exception
+	 */
+	public function unshareAllForUser(string $userId): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+			->executeStatement();
+	}
 }
