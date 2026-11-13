@@ -9,20 +9,20 @@ declare(strict_types=1);
 
 namespace OCA\GroceryList\Listener;
 
-use OCA\GroceryList\Db\ShareeGroceryListMapper;
+use OCA\GroceryList\Service\ListService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
 
 /**
- * Remove all shares with a user once the user is deleted.
+ * Remove the lists of a deleted user and all shares with them.
  *
  * @template-implements IEventListener<UserDeletedEvent>
  */
 class UserDeletedListener implements IEventListener {
 
 	public function __construct(
-		private ShareeGroceryListMapper $shareeMapper,
+		private ListService $listService,
 	) {
 	}
 
@@ -32,6 +32,6 @@ class UserDeletedListener implements IEventListener {
 			return;
 		}
 
-		$this->shareeMapper->unshareAllForUser($event->getUid());
+		$this->listService->deleteUserData($event->getUid());
 	}
 }

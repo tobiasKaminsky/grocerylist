@@ -14,6 +14,7 @@ use OCA\GroceryList\Db\GroceryListMapper;
 use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
+use OCA\GroceryList\Service\ListService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -34,6 +35,7 @@ class GroceryListController extends Controller {
 	private ShareeGroceryListMapper $shareeMapper;
 	private IUserManager $userManager;
 	private ISearch $collaboratorSearch;
+	private ListService $listService;
 	private $userId;
 
 	public function __construct($AppName,
@@ -44,6 +46,7 @@ class GroceryListController extends Controller {
 		ShareeGroceryListMapper $shareeMapper,
 		IUserManager $userManager,
 		ISearch $collaboratorSearch,
+		ListService $listService,
 		$UserId) {
 		parent::__construct($AppName, $request);
 		$this->groceryListMapper = $groceryListMapper;
@@ -52,6 +55,7 @@ class GroceryListController extends Controller {
 		$this->shareeMapper = $shareeMapper;
 		$this->userManager = $userManager;
 		$this->collaboratorSearch = $collaboratorSearch;
+		$this->listService = $listService;
 		$this->userId = $UserId;
 	}
 
@@ -114,8 +118,7 @@ class GroceryListController extends Controller {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->shareeMapper->unshareAll($id);
-		$this->groceryListMapper->delete($groceryList);
+		$this->listService->delete($groceryList);
 
 		return new DataResponse($groceryList);
 	}

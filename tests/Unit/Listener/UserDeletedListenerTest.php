@@ -9,28 +9,28 @@ declare(strict_types=1);
 
 namespace OCA\GroceryList\Tests\Unit\Listener;
 
-use OCA\GroceryList\Db\ShareeGroceryListMapper;
 use OCA\GroceryList\Listener\UserDeletedListener;
+use OCA\GroceryList\Service\ListService;
 use OCP\EventDispatcher\Event;
 use OCP\IUser;
 use OCP\User\Events\UserDeletedEvent;
 use Test\TestCase;
 
 class UserDeletedListenerTest extends TestCase {
-	public function testRemovesSharesOfDeletedUser(): void {
+	public function testRemovesDataOfDeletedUser(): void {
 		$user = $this->createMock(IUser::class);
 		$user->method('getUID')->willReturn('alice');
 
-		$mapper = $this->createMock(ShareeGroceryListMapper::class);
-		$mapper->expects($this->once())->method('unshareAllForUser')->with('alice');
+		$service = $this->createMock(ListService::class);
+		$service->expects($this->once())->method('deleteUserData')->with('alice');
 
-		(new UserDeletedListener($mapper))->handle(new UserDeletedEvent($user));
+		(new UserDeletedListener($service))->handle(new UserDeletedEvent($user));
 	}
 
 	public function testIgnoresOtherEvents(): void {
-		$mapper = $this->createMock(ShareeGroceryListMapper::class);
-		$mapper->expects($this->never())->method('unshareAllForUser');
+		$service = $this->createMock(ListService::class);
+		$service->expects($this->never())->method('deleteUserData');
 
-		(new UserDeletedListener($mapper))->handle(new Event());
+		(new UserDeletedListener($service))->handle(new Event());
 	}
 }

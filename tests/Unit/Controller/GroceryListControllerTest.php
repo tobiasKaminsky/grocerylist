@@ -18,6 +18,7 @@ use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\Sharee;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
+use OCA\GroceryList\Service\ListService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -34,6 +35,7 @@ class GroceryListControllerTest extends TestCase {
 	private ShareeGroceryListMapper&MockObject $shareeMapper;
 	private IUserManager&MockObject $userManager;
 	private ISearch&MockObject $collaboratorSearch;
+	private ListService&MockObject $listService;
 	private GroceryListController $controller;
 
 	protected function setUp(): void {
@@ -46,6 +48,7 @@ class GroceryListControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->userManager->method('getDisplayName')->willReturnCallback(fn (string $uid) => ucfirst($uid));
 		$this->collaboratorSearch = $this->createMock(ISearch::class);
+		$this->listService = $this->createMock(ListService::class);
 
 		$this->controller = new GroceryListController(
 			'grocerylist',
@@ -56,6 +59,7 @@ class GroceryListControllerTest extends TestCase {
 			$this->shareeMapper,
 			$this->userManager,
 			$this->collaboratorSearch,
+			$this->listService,
 			'alice',
 		);
 	}
@@ -286,7 +290,7 @@ class GroceryListControllerTest extends TestCase {
 
 	public function testOnlyOwnerCanDeleteList(): void {
 		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'bob'));
-		$this->groceryListMapper->expects($this->never())->method('delete');
+		$this->listService->expects($this->never())->method('delete');
 
 		$response = $this->controller->deleteList(7);
 
@@ -294,11 +298,10 @@ class GroceryListControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
 	}
 
-	public function testDeleteListRemovesShares(): void {
+	public function testOwnerCanDeleteList(): void {
 		$list = $this->list(7, 'alice');
 		$this->groceryListMapper->method('find')->willReturn($list);
-		$this->shareeMapper->expects($this->once())->method('unshareAll')->with(7);
-		$this->groceryListMapper->expects($this->once())->method('delete')->with($list);
+		$this->listService->expects($this->once())->method('delete')->with($list);
 
 		$this->controller->deleteList(7);
 	}

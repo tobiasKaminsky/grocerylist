@@ -72,4 +72,19 @@ class GroceryListMapper extends QBMapper {
 
 		return $returnList;
 	}
+
+	/**
+	 * Lists owned by the given user, without the lists shared with them.
+	 *
+	 * @return GroceryList[]
+	 */
+	public function findOwnedBy(string $userId): array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)));
+
+		return $this->findEntities($qb);
+	}
 }
