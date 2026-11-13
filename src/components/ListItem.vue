@@ -12,14 +12,15 @@
 			:modelValue="item.checked === true"
 			@update:modelValue="checkItem(item)" />
 		<NcButton
-			:aria-label="t('grocerylist', 'Snooze')"
+			:aria-label="isSnoozed ? t('grocerylist', 'Unsnooze') : t('grocerylist', 'Snooze')"
+			:title="isSnoozed ? t('grocerylist', 'Unsnooze') : t('grocerylist', 'Snooze')"
 			variant="tertiary"
-			@click="hideItem(item)">
+			@click="toggleSnooze(item)">
 			<template #icon>
 				<AlarmSnooze :size="20" />
 			</template>
 		</NcButton>
-		<span class="list-item__label" @click="onLabelClick">
+		<span class="list-item__label" @click="$emit('edit')">
 			<span v-if="item.quantity !== ''">
 				{{ item.quantity }}
 			</span>
@@ -71,13 +72,15 @@ export default {
 
 	methods: {
 		/**
-		 * Clicking a snoozed item ends its snooze, otherwise it opens the edit dialog.
+		 * The snooze button snoozes an item, or ends the snooze of a snoozed one.
+		 *
+		 * @param {object} item The item.
 		 */
-		onLabelClick() {
+		toggleSnooze(item) {
 			if (this.isSnoozed) {
-				this.unhideItem(this.item)
+				this.unhideItem(item)
 			} else {
-				this.$emit('edit')
+				this.hideItem(item)
 			}
 		},
 
