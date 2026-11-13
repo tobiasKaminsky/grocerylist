@@ -23,11 +23,16 @@ use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Collaboration\Collaborators\ISearch;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
 class GroceryListController extends Controller {
+
+	/** Maximum length of titles, names and quantities, as defined by the database columns */
+	private const MAX_LENGTH = 200;
 
 	private GroceryListMapper $groceryListMapper;
 	private ItemMapper $itemMapper;
@@ -36,6 +41,8 @@ class GroceryListController extends Controller {
 	private IUserManager $userManager;
 	private ISearch $collaboratorSearch;
 	private ListService $listService;
+	private IShareManager $shareManager;
+	private IGroupManager $groupManager;
 	private $userId;
 
 	public function __construct($AppName,
@@ -47,6 +54,8 @@ class GroceryListController extends Controller {
 		IUserManager $userManager,
 		ISearch $collaboratorSearch,
 		ListService $listService,
+		IShareManager $shareManager,
+		IGroupManager $groupManager,
 		$UserId) {
 		parent::__construct($AppName, $request);
 		$this->groceryListMapper = $groceryListMapper;
@@ -56,6 +65,8 @@ class GroceryListController extends Controller {
 		$this->userManager = $userManager;
 		$this->collaboratorSearch = $collaboratorSearch;
 		$this->listService = $listService;
+		$this->shareManager = $shareManager;
+		$this->groupManager = $groupManager;
 		$this->userId = $UserId;
 	}
 
@@ -100,6 +111,11 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function saveList(string $title) {
+		$title = trim($title);
+		if (!$this->isValidText($title)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$groceryList = new GroceryList();
 		$groceryList->setTitle($title);
 		$groceryList->setUserId($this->userId);
@@ -115,7 +131,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function deleteList(int $id) {
-		$groceryList = $this->groceryListMapper->find($id);
+		$groceryList = $this->findAccessibleList($id);
+		if ($groceryList === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		if ($groceryList->getUserId() !== $this->userId) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -128,41 +147,49 @@ class GroceryListController extends Controller {
 	/**
 	 * @param int $id
 	 * @param string $title
-	 * @param int $showOnlyUnchecked
 	 */
 	#[NoAdminRequired]
 	public function renameList(int $id, string $title) {
-		$list = $this->groceryListMapper->find($id);
-		$list->setTitle($title);
-
-		$this->groceryListMapper->update($list);
+		return $this->updateList($id, $title, null);
 	}
 
 	/**
 	 * @param int $id
 	 * @param string $title
-	 * @param int $showOnlyUnchecked
+	 * @param int|null $showOnlyUnchecked
 	 */
 	#[NoAdminRequired]
-	public function updateList(int $id, string $title, int $showOnlyUnchecked = 0) {
-		$list = $this->groceryListMapper->find($id);
-		$list->setShowOnlyUnchecked($showOnlyUnchecked !== 0);
+	public function updateList(int $id, string $title, ?int $showOnlyUnchecked = 0) {
+		$title = trim($title);
+		if (!$this->isValidText($title)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if ($showOnlyUnchecked !== null) {
+			$list->setShowOnlyUnchecked($showOnlyUnchecked !== 0);
+		}
 		$list->setTitle($title);
 
-		$this->groceryListMapper->update($list);
+		return new DataResponse($this->groceryListMapper->update($list));
 	}
 
 	/**
 	 * @param int $id
-	 * @param string $title
 	 * @param int $showOnlyUnchecked
 	 */
 	#[NoAdminRequired]
 	public function updateListVisibility(int $id, int $showOnlyUnchecked = 0) {
-		$list = $this->groceryListMapper->find($id);
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$list->setShowOnlyUnchecked($showOnlyUnchecked !== 0);
 
-		$this->groceryListMapper->update($list);
+		return new DataResponse($this->groceryListMapper->update($list));
 	}
 
 	/**
@@ -171,7 +198,12 @@ class GroceryListController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function showList(int $id) {
-		return new DataResponse($this->groceryListMapper->find($id));
+		$list = $this->findAccessibleList($id);
+		if ($list === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($list);
 	}
 
 	/**
@@ -180,6 +212,10 @@ class GroceryListController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function listItems(int $id) {
+		if ($this->findAccessibleList($id) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		return new DataResponse($this->itemMapper->findAll($id));
 	}
 
@@ -187,18 +223,15 @@ class GroceryListController extends Controller {
 	 * @param int $id
 	 */
 	#[NoAdminRequired]
-	#[NoCSRFRequired]
-	public function countUnckedItems(int $id) {
-		return new DataResponse($this->itemMapper->findAllUnchecked($id));
-	}
-
-	/**
-	 * @param int $id
-	 */
-	#[NoAdminRequired]
 	public function deleteItem(int $id) {
-		$item = $this->itemMapper->find($id);
+		$item = $this->findAccessibleItem($id);
+		if ($item === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$this->itemMapper->delete($item);
+
+		return new DataResponse([]);
 	}
 
 	/**
@@ -206,6 +239,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function listCategories(int $id) {
+		if ($this->findAccessibleList($id) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$returnList = [];
 		$categories = $this->categoryMapper->findAll($id);
 
@@ -223,6 +260,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function listAllCategories(int $id) {
+		if ($this->findAccessibleList($id) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
 	}
 
@@ -250,6 +291,18 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function addItem(string $name, string $quantity, int $list, int $category = 0) {
+		$name = trim($name);
+		$quantity = trim($quantity);
+		if (!$this->isValidText($name) || !$this->isValidText($quantity, true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+		if ($this->findAccessibleList($list) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if (!$this->isCategoryOfList($category, $list)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$item = new Item();
 		$item->setName($name);
 		$item->setQuantity($quantity);
@@ -268,9 +321,22 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function updateItem(int $id, string $name, string $quantity, int $category) {
-		$item = $this->itemMapper->find($id);
-		$item->setName(trim($name));
-		$item->setQuantity(trim($quantity));
+		$name = trim($name);
+		$quantity = trim($quantity);
+		if (!$this->isValidText($name) || !$this->isValidText($quantity, true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$item = $this->findAccessibleItem($id);
+		if ($item === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		if (!$this->isCategoryOfList($category, $item->getList())) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$item->setName($name);
+		$item->setQuantity($quantity);
 		$item->setCategory($category);
 
 		return new DataResponse($this->itemMapper->update($item));
@@ -278,7 +344,10 @@ class GroceryListController extends Controller {
 
 	#[NoAdminRequired]
 	public function hideItem(int $id) {
-		$item = $this->itemMapper->find($id);
+		$item = $this->findAccessibleItem($id);
+		if ($item === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$item->setHidden(time());
 
 		return new DataResponse($this->itemMapper->update($item));
@@ -289,7 +358,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function unhideItem(int $id) {
-		$item = $this->itemMapper->find($id);
+		$item = $this->findAccessibleItem($id);
+		if ($item === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$item->setHidden(0);
 
 		return new DataResponse($this->itemMapper->update($item));
@@ -302,7 +374,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function checkItem(int $id, bool $checked) {
-		$item = $this->itemMapper->find($id);
+		$item = $this->findAccessibleItem($id);
+		if ($item === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$item->setChecked($checked);
 
 		return new DataResponse($this->itemMapper->update($item));
@@ -316,8 +391,11 @@ class GroceryListController extends Controller {
 	#[NoAdminRequired]
 	public function addCategory(int $id, string $name, ?string $color = null) {
 		$name = trim($name);
-		if ($name === '') {
+		if (!$this->isValidText($name) || !$this->isValidColor($color)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+		if ($this->findAccessibleList($id) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$categories = $this->categoryMapper->findAll($id);
@@ -333,7 +411,7 @@ class GroceryListController extends Controller {
 			$category->setList($id);
 			$category->setName($name);
 			$category->setOrder($order);
-			$category->setColor($color);
+			$category->setColor($color === '' ? null : $color);
 
 			$this->categoryMapper->insert($category);
 			$categories = $this->categoryMapper->findAll($id);
@@ -362,11 +440,14 @@ class GroceryListController extends Controller {
 	#[NoAdminRequired]
 	public function updateCategory(int $id, string $newName, ?string $color = null) {
 		$newName = trim($newName);
-		if ($newName === '') {
+		if (!$this->isValidText($newName) || !$this->isValidColor($color)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$category = $this->categoryMapper->find($id);
+		$category = $this->findAccessibleCategory($id);
+		if ($category === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$sameName = $this->findCategoryByName($this->categoryMapper->findAll($category->getList()), $newName);
 		if ($sameName !== null && $sameName->getId() !== $category->getId()) {
 			return new DataResponse([], Http::STATUS_CONFLICT);
@@ -374,7 +455,7 @@ class GroceryListController extends Controller {
 
 		$category->setName($newName);
 		if ($color !== null) {
-			$category->setColor($color);
+			$category->setColor($color === '' ? null : $color);
 		}
 
 		$this->categoryMapper->update($category);
@@ -389,8 +470,15 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function updateCategoryColor(int $id, string $color) {
-		$category = $this->categoryMapper->find($id);
-		$category->setColor($color);
+		if (!$this->isValidColor($color)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$category = $this->findAccessibleCategory($id);
+		if ($category === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		$category->setColor($color === '' ? null : $color);
 
 		$this->categoryMapper->update($category);
 
@@ -407,7 +495,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function deleteCategory(int $id) {
-		$category = $this->categoryMapper->find($id);
+		$category = $this->findAccessibleCategory($id);
+		if ($category === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 		$listId = $category->getList();
 
 		foreach ($this->itemMapper->findByCategory($id) as $item) {
@@ -426,6 +517,10 @@ class GroceryListController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function reorderCategories(int $id, array $orderedCategoryIds) {
+		if ($this->findAccessibleList($id) === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$this->categoryMapper->reorder($id, $orderedCategoryIds);
 
 		return new DataResponse($this->enrichWithItemCount($this->categoryMapper->findAll($id)));
@@ -445,7 +540,8 @@ class GroceryListController extends Controller {
 	}
 
 	/**
-	 * Share a list with another user. Only the owner of a list may share it.
+	 * Share a list with another user. Only the owner of a list may share it,
+	 * and only with users the instance's sharing settings allow.
 	 */
 	#[NoAdminRequired]
 	public function shareList(int $id, string $userId): DataResponse {
@@ -453,10 +549,12 @@ class GroceryListController extends Controller {
 		if ($list === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-		if ($list->getUserId() !== $this->userId) {
+		if ($list->getUserId() !== $this->userId || !$this->canShare()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
-		if ($userId === $this->userId || !$this->userManager->userExists($userId)) {
+		// Unknown users and users that may not be shared with get the same
+		// answer, so the endpoint can not be used to find out which users exist
+		if ($userId === $this->userId || !$this->canShareWith($userId)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -496,7 +594,7 @@ class GroceryListController extends Controller {
 		if ($list === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
-		if ($list->getUserId() !== $this->userId) {
+		if ($list->getUserId() !== $this->userId || !$this->canShare()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
@@ -524,12 +622,99 @@ class GroceryListController extends Controller {
 		return new DataResponse($users);
 	}
 
+	/**
+	 * Whether the current user may share at all.
+	 */
+	private function canShare(): bool {
+		return $this->shareManager->shareApiEnabled()
+			&& !$this->shareManager->sharingDisabledForUser($this->userId);
+	}
+
+	/**
+	 * Whether the current user may share with the given user. Follows the
+	 * "restrict users to only share with users in their groups" setting.
+	 */
+	private function canShareWith(string $userId): bool {
+		$sharee = $this->userManager->get($userId);
+		if ($sharee === null) {
+			return false;
+		}
+		if (!$this->shareManager->shareWithGroupMembersOnly()) {
+			return true;
+		}
+
+		$owner = $this->userManager->get($this->userId);
+		if ($owner === null) {
+			return false;
+		}
+		$excludedGroups = $this->shareManager->shareWithGroupMembersOnlyExcludeGroupsList();
+		$ownerGroups = array_diff($this->groupManager->getUserGroupIds($owner), $excludedGroups);
+		$shareeGroups = $this->groupManager->getUserGroupIds($sharee);
+
+		return array_intersect($ownerGroups, $shareeGroups) !== [];
+	}
+
+	/**
+	 * The list if the current user owns it or it is shared with them.
+	 */
 	private function findAccessibleList(int $id): ?GroceryList {
 		try {
 			return $this->groceryListMapper->find($id);
 		} catch (DoesNotExistException) {
 			return null;
 		}
+	}
+
+	/**
+	 * The item if it belongs to a list the current user can access.
+	 */
+	private function findAccessibleItem(int $id): ?Item {
+		try {
+			$item = $this->itemMapper->find($id);
+		} catch (DoesNotExistException) {
+			return null;
+		}
+
+		return $this->findAccessibleList($item->getList()) === null ? null : $item;
+	}
+
+	/**
+	 * The category if it belongs to a list the current user can access.
+	 */
+	private function findAccessibleCategory(int $id): ?Category {
+		try {
+			$category = $this->categoryMapper->find($id);
+		} catch (DoesNotExistException) {
+			return null;
+		}
+
+		return $this->findAccessibleList($category->getList()) === null ? null : $category;
+	}
+
+	/**
+	 * Category 0 means "no category", any other category must belong to the list.
+	 */
+	private function isCategoryOfList(int $categoryId, int $listId): bool {
+		if ($categoryId === 0) {
+			return true;
+		}
+
+		try {
+			return $this->categoryMapper->find($categoryId)->getList() === $listId;
+		} catch (DoesNotExistException) {
+			return false;
+		}
+	}
+
+	private function isValidText(string $text, bool $allowEmpty = false): bool {
+		return ($allowEmpty || $text !== '') && mb_strlen($text) <= self::MAX_LENGTH;
+	}
+
+	/**
+	 * Colors are stored as "#rrggbb"; null or an empty string means no color.
+	 */
+	private function isValidColor(?string $color): bool {
+		return $color === null || $color === '' || preg_match('/^#[0-9a-fA-F]{6}$/', $color) === 1;
 	}
 
 	private function formatSharees(GroceryList $list): array {
