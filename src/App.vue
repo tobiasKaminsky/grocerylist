@@ -29,13 +29,29 @@
 			</template>
 		</NcAppNavigation>
 		<NcAppContent>
-			<router-view />
+			<router-view v-if="$route.name" />
+			<NcEmptyContent
+				v-else-if="!loading"
+				:name="groceryLists.length === 0 ? t('grocerylist', 'No grocery lists, yet') : t('grocerylist', 'No list selected')"
+				:description="groceryLists.length === 0 ? t('grocerylist', 'Create a list to start adding items.') : t('grocerylist', 'Select a list in the navigation.')">
+				<template #icon>
+					<IconCart :size="64" />
+				</template>
+				<template v-if="groceryLists.length === 0" #action>
+					<NcButton variant="primary" @click="showNewListModal">
+						<template #icon>
+							<IconPlus :size="20" />
+						</template>
+						{{ t('grocerylist', 'New list') }}
+					</NcButton>
+				</template>
+			</NcEmptyContent>
 		</NcAppContent>
 		<NcModal
 			v-if="newListModal"
 			:name="t('grocerylist', 'New list')"
 			@close="closeNewListModal">
-			<form class="new-list-modal__content" @submit.prevent="createNewList">
+			<form class="new-list-modal__content" @submit.prevent="createNewList" @keydown.esc="closeNewListModal">
 				<NcTextField
 					v-model="newListName"
 					:label="t('grocerylist', 'List name')"
@@ -80,9 +96,11 @@ import {
 	NcButton,
 	NcCheckboxRadioSwitch,
 	NcContent,
+	NcEmptyContent,
 	NcModal,
 	NcTextField,
 } from '@nextcloud/vue'
+import IconCart from 'vue-material-design-icons/CartOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import NavigationGroceryListItem from './components/NavigationGroceryListItem.vue'
 import logger from './logger.js'
@@ -90,6 +108,7 @@ import logger from './logger.js'
 export default {
 	name: 'App',
 	components: {
+		IconCart,
 		IconPlus,
 		NcButton,
 		NcCheckboxRadioSwitch,
@@ -98,6 +117,7 @@ export default {
 		NcAppNavigation,
 		NcAppNavigationItem,
 		NcAppNavigationNew,
+		NcEmptyContent,
 		NcModal,
 		NcTextField,
 		NavigationGroceryListItem,
@@ -162,6 +182,7 @@ export default {
 		subscribe('grocerylist:list-deleted', this.onListDeleted)
 		subscribe('grocerylist:item-checked-changed', this.refreshCounts)
 		subscribe('grocerylist:item-snooze-changed', this.refreshCounts)
+		subscribe('grocerylist:items-changed', this.refreshCounts)
 		try {
 			if (this.$route.name === 'lists') {
 				logger.debug('show single list' + this.$route.params)
@@ -182,6 +203,7 @@ export default {
 		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
 		unsubscribe('grocerylist:item-checked-changed', this.refreshCounts)
 		unsubscribe('grocerylist:item-snooze-changed', this.refreshCounts)
+		unsubscribe('grocerylist:items-changed', this.refreshCounts)
 		clearTimeout(this.snoozeTimeout)
 	},
 
@@ -193,7 +215,7 @@ export default {
 		},
 
 		restoreLastOpenedList() {
-			if (this.$route.name === 'list') {
+			if (this.$route.name === 'list' || this.$route.name === 'settings') {
 				return
 			}
 			const stored = localStorage.getItem(this.lastOpenedListStorageKey)
@@ -216,6 +238,7 @@ export default {
 			list.title = title
 			try {
 				await axios.post(generateUrl(`/apps/grocerylist/api/lists/${list.id}`), list)
+				emit('grocerylist:list-renamed', { listId: list.id, title })
 			} catch (e) {
 				list.title = previousTitle
 				logger.error('Could not rename groceryList', { error: e })

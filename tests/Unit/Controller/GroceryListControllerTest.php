@@ -221,6 +221,41 @@ class GroceryListControllerTest extends TestCase {
 		$this->assertSame([$itemA, $itemB], $deleted);
 	}
 
+	public function testAddCategoryAppendsAtEnd(): void {
+		$existing = $this->category(1, 7);
+		$existing->setOrder(4);
+		$this->categoryMapper->method('findAll')->with(7)->willReturn([$existing]);
+		$this->categoryMapper->expects($this->once())
+			->method('insert')
+			->with($this->callback(fn (Category $category) => $category->getName() === 'Bakery' && $category->getOrder() === 5))
+			->willReturnArgument(0);
+
+		$this->controller->addCategory(7, '  Bakery ');
+	}
+
+	public function testAddCategoryReusesSameName(): void {
+		$this->categoryMapper->method('findAll')->with(7)->willReturn([$this->category(1, 7)]);
+		$this->categoryMapper->expects($this->never())->method('insert');
+
+		$this->assertSame(Http::STATUS_OK, $this->controller->addCategory(7, 'category 1')->getStatus());
+	}
+
+	public function testAddCategoryRejectsEmptyName(): void {
+		$this->categoryMapper->expects($this->never())->method('insert');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->addCategory(7, '  ')->getStatus());
+	}
+
+	public function testUpdateCategoryRejectsDuplicateName(): void {
+		$category = $this->category(1, 7);
+		$this->categoryMapper->method('find')->with(1)->willReturn($category);
+		$this->categoryMapper->method('findAll')->with(7)->willReturn([$category, $this->category(2, 7)]);
+		$this->categoryMapper->expects($this->never())->method('update');
+
+		$this->assertSame(Http::STATUS_CONFLICT, $this->controller->updateCategory(1, 'Category 2')->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->updateCategory(1, '')->getStatus());
+	}
+
 	public function testReorderCategoriesDelegatesToMapper(): void {
 		$this->categoryMapper->expects($this->once())->method('reorder')->with(7, [3, 1, 2]);
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([]);

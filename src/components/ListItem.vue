@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<li :class="{snoozed: isSnoozed}" class="list-item">
+	<li :class="{ snoozed: isSnoozed, checked: item.checked === true }" class="list-item">
 		<span class="drag-handle" :style="categoryColor ? { color: categoryColor } : {}">
 			<DragVerticalVariant :size="20" />
 		</span>
@@ -124,8 +124,8 @@ export default {
 				this.$emit('update')
 				emit('grocerylist:item-snooze-changed', { listId: item.list })
 			} catch (e) {
-				logger.error('Could not add item', { error: e })
-				showError(t('grocerylist', 'Could not add item'))
+				logger.error('Could not snooze item', { error: e })
+				showError(t('grocerylist', 'Could not snooze item'))
 			}
 		},
 	},
