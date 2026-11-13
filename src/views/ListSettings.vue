@@ -316,10 +316,14 @@ export default {
 <style lang="scss" scoped>
 .settings-wrapper {
 	width: 100%;
-	max-width: 900px;
-	margin-inline: auto;
+	// The app content itself does not scroll (see App.vue), so the settings page is its own scroll container
+	height: 100%;
+	overflow-y: auto;
+	// improve touch scrolling
+	-webkit-overflow-scrolling: touch;
 	padding-block: var(--app-navigation-padding);
-	padding-inline: calc(44px + 2 * var(--app-navigation-padding));
+	// Center the content at 900px max like the list view, but keep the scrollbar at the edge of the app content
+	padding-inline: max(calc(44px + 2 * var(--app-navigation-padding)), calc((100% - 900px) / 2 + 44px + 2 * var(--app-navigation-padding)));
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--default-grid-baseline) * 3);
