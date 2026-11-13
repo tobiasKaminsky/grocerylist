@@ -7,8 +7,10 @@
 
 namespace OCA\GroceryList\Db;
 
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -18,20 +20,23 @@ class ShareeGroceryListMapper extends QBMapper {
 	private $userId;
 
 	public function __construct(IDBConnection $db, $userId) {
-		parent::__construct($db, 'grocerylist_sharee', Sharee::class);
+		parent::__construct($db, 'grocerylist_shares', Sharee::class);
 
 		$this->userId = $userId;
 	}
 
+	/**
+	 * @throws DoesNotExistException if the list is not shared with the current user
+	 */
 	public function find(int $id) : Sharee {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
 
-		return $this->findEntities($qb)[0];
+		return $this->findEntity($qb);
 	}
 
 	/**
@@ -43,7 +48,7 @@ class ShareeGroceryListMapper extends QBMapper {
 
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)));
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntities($qb);
 	}
@@ -60,5 +65,76 @@ class ShareeGroceryListMapper extends QBMapper {
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($this->userId)));
 
 		return $this->findEntities($qb);
+	}
+
+	public function isSharedWith(int $list, string $userId): bool {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('user_id')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+			->setMaxResults(1);
+
+		$result = $qb->executeQuery();
+		$shared = $result->fetch() !== false;
+		$result->closeCursor();
+
+		return $shared;
+	}
+
+	/**
+	 * Share a list with a user. Sharing it again with the same user is a no-op.
+	 *
+	 * @throws Exception
+	 */
+	public function share(int $list, string $userId): void {
+		$sharee = new Sharee();
+		$sharee->setListId($list);
+		$sharee->setUserId($userId);
+
+		try {
+			$this->insert($sharee);
+		} catch (Exception $e) {
+			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				throw $e;
+			}
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function unshare(int $list, string $userId): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+			->executeStatement();
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function unshareAll(int $list): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('list_id', $qb->createNamedParameter($list, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
+	}
+
+	/**
+	 * Remove every share with the given user, e.g. after the user was deleted.
+	 *
+	 * @throws Exception
+	 */
+	public function unshareAllForUser(string $userId): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+			->executeStatement();
 	}
 }

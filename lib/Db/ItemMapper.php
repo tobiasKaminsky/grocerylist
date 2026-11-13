@@ -9,6 +9,7 @@ namespace OCA\GroceryList\Db;
 
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -88,5 +89,16 @@ class ItemMapper extends QBMapper {
 			->where($qb->expr()->eq('category', $qb->createNamedParameter($categoryId)));
 
 		return $this->findEntities($qb);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function deleteByList(int $listId): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($listId, IQueryBuilder::PARAM_INT)))
+			->executeStatement();
 	}
 }

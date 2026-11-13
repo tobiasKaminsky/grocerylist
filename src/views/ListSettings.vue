@@ -33,9 +33,25 @@
 			</template>
 		</Draggable>
 
-		<div class="danger-zone">
+		<h2>{{ t('grocerylist', 'Sharing') }}</h2>
+
+		<ListSharing :listId="listId" @loaded="onSharingLoaded" />
+
+		<div v-if="isOwner !== null" class="danger-zone">
 			<h2>{{ t('grocerylist', 'Danger zone') }}</h2>
 			<NcButton
+				v-if="!isOwner"
+				variant="error"
+				:disabled="deleting"
+				:aria-label="t('grocerylist', 'Leave list')"
+				@click="onLeaveList">
+				<template #icon>
+					<IconLogout :size="20" />
+				</template>
+				{{ t('grocerylist', 'Leave list') }}
+			</NcButton>
+			<NcButton
+				v-else
 				variant="error"
 				:disabled="deleting"
 				:aria-label="t('grocerylist', 'Delete list')"
@@ -50,6 +66,7 @@
 </template>
 
 <script>
+import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -58,9 +75,11 @@ import { NcButton, NcEmptyContent, NcLoadingIcon } from '@nextcloud/vue'
 import { mapStores } from 'pinia'
 import draggable from 'vuedraggable'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
+import IconLogout from 'vue-material-design-icons/Logout.vue'
 import IconTagOff from 'vue-material-design-icons/TagOff.vue'
 import ListCategory from '../components/ListCategory.vue'
 import ListCategoryNew from '../components/ListCategoryNew.vue'
+import ListSharing from '../components/ListSharing.vue'
 import logger from '../logger.js'
 import { useCategoryStore } from '../store/categoryStore.ts'
 
@@ -70,9 +89,11 @@ export default {
 	components: {
 		Draggable: draggable,
 		IconDelete,
+		IconLogout,
 		IconTagOff,
 		ListCategory,
 		ListCategoryNew,
+		ListSharing,
 		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,
@@ -91,7 +112,7 @@ export default {
 			loadingCategories: true,
 			deleting: false,
 			groceryList: null,
-			sharees: null,
+			isOwner: null,
 		}
 	},
 
@@ -106,16 +127,15 @@ export default {
 
 	watch: {
 		listId() {
+			this.isOwner = null
 			this.loadGroceryList()
 			this.loadCategories()
-			this.loadSharees()
 		},
 	},
 
 	mounted() {
 		this.loadGroceryList()
 		this.loadCategories()
-		this.loadSharees()
 	},
 
 	methods: {
@@ -147,15 +167,8 @@ export default {
 			this.loadingCategories = false
 		},
 
-		async loadSharees() {
-			try {
-				const response = await axios.get(generateUrl(`/apps/grocerylist/api/sharees/${this.listId}`))
-				this.sharees = response.data
-			} catch (e) {
-				logger.error('Could not fetch sharees', { error: e })
-				showError(t('grocerylist', ('Could not fetch sharees')))
-			}
-			this.loading = false
+		onSharingLoaded({ isOwner }) {
+			this.isOwner = isOwner
 		},
 
 		/**
@@ -218,6 +231,36 @@ export default {
 		},
 
 		/**
+		 * Ask the user for confirmation and, if confirmed, remove the
+		 * current user from a list that was shared with them. The list
+		 * itself stays untouched for its owner and the other sharees.
+		 */
+		async onLeaveList() {
+			const title = this.groceryList?.title ?? ''
+			const confirmed = await this.confirm(
+				t('grocerylist', 'Leave list'),
+				t('grocerylist', 'Are you sure you want to leave the list "{title}"? You will no longer have access to it unless it is shared with you again.', { title }),
+				t('grocerylist', 'Leave'),
+			)
+			if (!confirmed) {
+				return
+			}
+
+			this.deleting = true
+			try {
+				const userId = encodeURIComponent(getCurrentUser()?.uid ?? '')
+				await axios.delete(generateUrl(`/apps/grocerylist/api/sharees/${this.listId}/${userId}`))
+				emit('grocerylist:list-deleted', { listId: this.listId })
+				showSuccess(t('grocerylist', 'You left the list'))
+				this.$router.replace('/')
+			} catch (e) {
+				logger.error('Could not leave list', { error: e })
+				showError(t('grocerylist', 'Could not leave list'))
+				this.deleting = false
+			}
+		},
+
+		/**
 		 * Build and show a confirmation dialog for deleting the list.
 		 *
 		 * @return {Promise<boolean>} Resolves to `true` when the user
@@ -230,8 +273,22 @@ export default {
 				? t('grocerylist', 'Are you sure you want to delete the list "{title}"? This will also remove all its items and categories.', { title })
 				: t('grocerylist', 'Are you sure you want to delete this list? This will also remove all its items and categories.')
 
+			return this.confirm(t('grocerylist', 'Delete list'), text, t('grocerylist', 'Delete'))
+		},
+
+		/**
+		 * Show a destructive confirmation dialog.
+		 *
+		 * @param {string} title The dialog title.
+		 * @param {string} text The dialog text.
+		 * @param {string} confirmLabel The label of the confirm button.
+		 * @return {Promise<boolean>} Resolves to `true` when the user
+		 * confirms, `false` otherwise (including when the dialog is
+		 * dismissed without a button click).
+		 */
+		confirm(title, text, confirmLabel) {
 			return new Promise((resolve) => {
-				const dialog = getDialogBuilder(t('grocerylist', 'Delete list'))
+				const dialog = getDialogBuilder(title)
 					.setText(text)
 					.setSeverity('warning')
 					.setButtons([
@@ -241,7 +298,7 @@ export default {
 							callback: () => resolve(false),
 						},
 						{
-							label: t('grocerylist', 'Delete'),
+							label: confirmLabel,
 							variant: 'error',
 							callback: () => resolve(true),
 						},

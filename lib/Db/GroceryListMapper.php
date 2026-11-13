@@ -38,7 +38,7 @@ class GroceryListMapper extends QBMapper {
 			return $result[0];
 		} else {
 			$sharedList = $this->shareeMapper->find($id);
-			return $this->findById($sharedList->list);
+			return $this->findById($sharedList->getListId());
 		}
 	}
 
@@ -67,9 +67,24 @@ class GroceryListMapper extends QBMapper {
 		$shareeList = $this->shareeMapper->findAll();
 
 		foreach ($shareeList as $sharee) {
-			$returnList[] = $this->findById($sharee->list);
+			$returnList[] = $this->findById($sharee->getListId());
 		}
 
 		return $returnList;
+	}
+
+	/**
+	 * Lists owned by the given user, without the lists shared with them.
+	 *
+	 * @return GroceryList[]
+	 */
+	public function findOwnedBy(string $userId): array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)));
+
+		return $this->findEntities($qb);
 	}
 }

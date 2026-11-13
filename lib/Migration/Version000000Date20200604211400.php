@@ -96,17 +96,6 @@ class Version000000Date20200604211400 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 		}
 
-		if (!$schema->hasTable('grocerylist_sharee')) {
-			$table = $schema->createTable('grocerylist_sharee');
-			$table->addColumn('list', 'integer', [
-				'notnull' => true,
-			]);
-			$table->addColumn('user_id', 'string', [
-				'notnull' => true,
-				'length' => 200
-			]);
-		}
-
 		return $schema;
 	}
 }

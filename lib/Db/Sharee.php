@@ -12,8 +12,8 @@ use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
 /**
- * @method int getList()
- * @method void setList(int $list)
+ * @method int getListId()
+ * @method void setListId(int $listId)
  * @method string getUserId()
  * @method void setUserId(string $userId)
  */
@@ -22,7 +22,7 @@ class Sharee extends Entity implements JsonSerializable {
 	/**
 	 * @var int
 	 */
-	public $list;
+	protected $listId;
 
 	/**
 	 * @var string
@@ -30,7 +30,7 @@ class Sharee extends Entity implements JsonSerializable {
 	protected $userId;
 
 	public function __construct() {
-		$this->addType('list', Types::INTEGER);
+		$this->addType('listId', Types::INTEGER);
 		$this->addType('userId', Types::STRING);
 	}
 
@@ -38,7 +38,7 @@ class Sharee extends Entity implements JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
-			'list' => $this->getList(),
+			'listId' => $this->getListId(),
 			'userId' => $this->getUserId(),
 		];
 	}

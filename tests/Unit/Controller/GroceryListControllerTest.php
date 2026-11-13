@@ -16,9 +16,15 @@ use OCA\GroceryList\Db\GroceryList;
 use OCA\GroceryList\Db\GroceryListMapper;
 use OCA\GroceryList\Db\Item;
 use OCA\GroceryList\Db\ItemMapper;
+use OCA\GroceryList\Db\Sharee;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
+use OCA\GroceryList\Service\ListService;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Collaboration\Collaborators\ISearch;
 use OCP\IRequest;
+use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -27,6 +33,9 @@ class GroceryListControllerTest extends TestCase {
 	private ItemMapper&MockObject $itemMapper;
 	private CategoryMapper&MockObject $categoryMapper;
 	private ShareeGroceryListMapper&MockObject $shareeMapper;
+	private IUserManager&MockObject $userManager;
+	private ISearch&MockObject $collaboratorSearch;
+	private ListService&MockObject $listService;
 	private GroceryListController $controller;
 
 	protected function setUp(): void {
@@ -36,6 +45,10 @@ class GroceryListControllerTest extends TestCase {
 		$this->itemMapper = $this->createMock(ItemMapper::class);
 		$this->categoryMapper = $this->createMock(CategoryMapper::class);
 		$this->shareeMapper = $this->createMock(ShareeGroceryListMapper::class);
+		$this->userManager = $this->createMock(IUserManager::class);
+		$this->userManager->method('getDisplayName')->willReturnCallback(fn (string $uid) => ucfirst($uid));
+		$this->collaboratorSearch = $this->createMock(ISearch::class);
+		$this->listService = $this->createMock(ListService::class);
 
 		$this->controller = new GroceryListController(
 			'grocerylist',
@@ -44,6 +57,9 @@ class GroceryListControllerTest extends TestCase {
 			$this->itemMapper,
 			$this->categoryMapper,
 			$this->shareeMapper,
+			$this->userManager,
+			$this->collaboratorSearch,
+			$this->listService,
 			'alice',
 		);
 	}
@@ -198,5 +214,116 @@ class GroceryListControllerTest extends TestCase {
 		$this->categoryMapper->method('findAll')->with(7)->willReturn([]);
 
 		$this->controller->reorderCategories(7, [3, 1, 2]);
+	}
+
+	private function list(int $id, string $owner): GroceryList {
+		$list = new GroceryList();
+		$list->setId($id);
+		$list->setUserId($owner);
+		return $list;
+	}
+
+	private function sharee(int $list, string $userId): Sharee {
+		$sharee = new Sharee();
+		$sharee->setListId($list);
+		$sharee->setUserId($userId);
+		return $sharee;
+	}
+
+	public function testShareesReturnsOwnerAndSharees(): void {
+		$this->groceryListMapper->method('find')->with(7)->willReturn($this->list(7, 'bob'));
+		$this->shareeMapper->method('findSharees')->with(7)->willReturn([$this->sharee(7, 'alice')]);
+
+		$data = $this->controller->sharees(7)->getData();
+
+		$this->assertSame(['userId' => 'bob', 'displayName' => 'Bob'], $data['owner']);
+		$this->assertSame([['userId' => 'alice', 'displayName' => 'Alice']], $data['sharees']);
+	}
+
+	public function testShareesOfInaccessibleListIsNotFound(): void {
+		$this->groceryListMapper->method('find')->willThrowException(new DoesNotExistException(''));
+
+		$this->assertSame(Http::STATUS_NOT_FOUND, $this->controller->sharees(7)->getStatus());
+	}
+
+	public function testOwnerCanShareList(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->userManager->method('userExists')->with('bob')->willReturn(true);
+		$this->shareeMapper->method('isSharedWith')->willReturn(false);
+		$this->shareeMapper->expects($this->once())->method('share')->with(7, 'bob');
+
+		$this->assertSame(Http::STATUS_OK, $this->controller->shareList(7, 'bob')->getStatus());
+	}
+
+	public function testShareIsNotDuplicated(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->userManager->method('userExists')->willReturn(true);
+		$this->shareeMapper->method('isSharedWith')->willReturn(true);
+		$this->shareeMapper->expects($this->never())->method('share');
+
+		$this->controller->shareList(7, 'bob');
+	}
+
+	public function testShareeCannotShareList(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'bob'));
+		$this->shareeMapper->expects($this->never())->method('share');
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $this->controller->shareList(7, 'carol')->getStatus());
+	}
+
+	public function testCannotShareWithSelfOrUnknownUser(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->userManager->method('userExists')->willReturnMap([['nobody', [], false]]);
+		$this->shareeMapper->expects($this->never())->method('share');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->shareList(7, 'alice')->getStatus());
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $this->controller->shareList(7, 'nobody')->getStatus());
+	}
+
+	public function testShareeCanLeaveButNotRemoveOthers(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'bob'));
+		$this->shareeMapper->expects($this->once())->method('unshare')->with(7, 'alice');
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $this->controller->unshareList(7, 'carol')->getStatus());
+		$this->assertSame(Http::STATUS_OK, $this->controller->unshareList(7, 'alice')->getStatus());
+	}
+
+	public function testOnlyOwnerCanDeleteList(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'bob'));
+		$this->listService->expects($this->never())->method('delete');
+
+		$response = $this->controller->deleteList(7);
+
+		$this->assertInstanceOf(DataResponse::class, $response);
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+	}
+
+	public function testOwnerCanDeleteList(): void {
+		$list = $this->list(7, 'alice');
+		$this->groceryListMapper->method('find')->willReturn($list);
+		$this->listService->expects($this->once())->method('delete')->with($list);
+
+		$this->controller->deleteList(7);
+	}
+
+	public function testSearchShareesSkipsOwnerAndExistingSharees(): void {
+		$this->groceryListMapper->method('find')->willReturn($this->list(7, 'alice'));
+		$this->shareeMapper->method('findSharees')->willReturn([$this->sharee(7, 'bob')]);
+		$this->collaboratorSearch->method('search')->willReturn([[
+			'exact' => ['users' => [['label' => 'Carol', 'value' => ['shareWith' => 'carol']]]],
+			'users' => [
+				['label' => 'Alice', 'value' => ['shareWith' => 'alice']],
+				['label' => 'Bob', 'value' => ['shareWith' => 'bob']],
+				['label' => 'Carol', 'value' => ['shareWith' => 'carol']],
+				['label' => 'Dave', 'shareWithDisplayNameUnique' => 'dave@example.com', 'value' => ['shareWith' => 'dave']],
+			],
+		], false]);
+
+		$data = $this->controller->searchSharees(7, 'a')->getData();
+
+		$this->assertSame([
+			['userId' => 'carol', 'displayName' => 'Carol', 'subname' => ''],
+			['userId' => 'dave', 'displayName' => 'Dave', 'subname' => 'dave@example.com'],
+		], $data);
 	}
 }

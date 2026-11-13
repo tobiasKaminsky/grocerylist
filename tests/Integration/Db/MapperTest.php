@@ -18,7 +18,6 @@ use OCA\GroceryList\Db\ItemMapper;
 use OCA\GroceryList\Db\Sharee;
 use OCA\GroceryList\Db\ShareeGroceryListMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Server;
 use PHPUnit\Framework\Attributes\Group;
@@ -45,7 +44,7 @@ class MapperTest extends TestCase {
 	}
 
 	private function cleanUp(): void {
-		foreach (['grocerylist', 'grocerylist_items', 'grocerylist_categories', 'grocerylist_sharee'] as $table) {
+		foreach (['grocerylist', 'grocerylist_items', 'grocerylist_categories', 'grocerylist_shares'] as $table) {
 			$qb = $this->db->getQueryBuilder();
 			$qb->delete($table)->executeStatement();
 		}
@@ -86,17 +85,8 @@ class MapperTest extends TestCase {
 		return $this->categoryMapper->insert($category);
 	}
 
-	/**
-	 * The sharee table has no id column, so insert directly instead of via QBMapper::insert()
-	 */
 	private function share(int $listId, string $userId): void {
-		$qb = $this->db->getQueryBuilder();
-		$qb->insert('grocerylist_sharee')
-			->values([
-				'list' => $qb->createNamedParameter($listId, IQueryBuilder::PARAM_INT),
-				'user_id' => $qb->createNamedParameter($userId),
-			])
-			->executeStatement();
+		$this->shareeMapper('bob')->share($listId, $userId);
 	}
 
 	public function testFindAllReturnsOwnAndSharedLists(): void {
@@ -196,5 +186,43 @@ class MapperTest extends TestCase {
 		sort($users);
 
 		$this->assertSame(['alice', 'carol'], $users);
+	}
+
+	public function testShareAndUnshare(): void {
+		$list = $this->createList('bob', 'Bob')->getId();
+		$mapper = $this->shareeMapper('bob');
+
+		$mapper->share($list, 'alice');
+		$mapper->share($list, 'alice');
+		$mapper->share($list, 'carol');
+		$this->assertTrue($mapper->isSharedWith($list, 'alice'));
+		$this->assertCount(2, $mapper->findSharees($list));
+
+		$mapper->unshare($list, 'alice');
+		$this->assertFalse($mapper->isSharedWith($list, 'alice'));
+		$this->assertTrue($mapper->isSharedWith($list, 'carol'));
+
+		$mapper->unshareAll($list);
+		$this->assertSame([], $mapper->findSharees($list));
+	}
+
+	public function testFindUnsharedListThrows(): void {
+		$list = $this->createList('bob', 'Bob')->getId();
+
+		$this->expectException(DoesNotExistException::class);
+		$this->listMapper('alice')->find($list);
+	}
+
+	public function testUnshareAllForUser(): void {
+		$first = $this->createList('bob', 'Bob')->getId();
+		$second = $this->createList('carol', 'Carol')->getId();
+		$this->share($first, 'alice');
+		$this->share($second, 'alice');
+		$this->share($first, 'dave');
+
+		$this->shareeMapper('bob')->unshareAllForUser('alice');
+
+		$this->assertSame([], $this->shareeMapper('alice')->findAll());
+		$this->assertTrue($this->shareeMapper('bob')->isSharedWith($first, 'dave'));
 	}
 }
