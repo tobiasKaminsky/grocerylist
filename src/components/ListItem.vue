@@ -12,9 +12,10 @@
 			:modelValue="item.checked === true"
 			@update:modelValue="checkItem(item)" />
 		<NcButton
-			:aria-label="t('grocerylist', 'Snooze')"
+			:aria-label="isSnoozed ? t('grocerylist', 'Unsnooze') : t('grocerylist', 'Snooze')"
+			:title="isSnoozed ? t('grocerylist', 'Unsnooze') : t('grocerylist', 'Snooze')"
 			variant="tertiary"
-			@click="hideItem(item)">
+			@click="toggleSnooze(item)">
 			<template #icon>
 				<AlarmSnooze :size="20" />
 			</template>
@@ -70,6 +71,34 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * The snooze button snoozes an item, or ends the snooze of a snoozed one.
+		 *
+		 * @param {object} item The item.
+		 */
+		toggleSnooze(item) {
+			if (this.isSnoozed) {
+				this.unhideItem(item)
+			} else {
+				this.hideItem(item)
+			}
+		},
+
+		async unhideItem(item) {
+			const hidden = item.hidden
+			item.hidden = 0
+			try {
+				await axios.post(generateUrl('/apps/grocerylist/api/item/unhide'), { id: item.id })
+
+				this.$emit('update')
+				emit('grocerylist:item-snooze-changed', { listId: item.list })
+			} catch (e) {
+				item.hidden = hidden
+				logger.error('Could not unsnooze item', { error: e })
+				showError(t('grocerylist', 'Could not unsnooze item'))
+			}
+		},
+
 		async checkItem(item) {
 			if (item.checked === true) {
 				item.checked = false
@@ -93,6 +122,7 @@ export default {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'), { id: item.id })
 
 				this.$emit('update')
+				emit('grocerylist:item-snooze-changed', { listId: item.list })
 			} catch (e) {
 				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))

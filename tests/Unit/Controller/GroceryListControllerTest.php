@@ -186,6 +186,18 @@ class GroceryListControllerTest extends TestCase {
 		$this->assertTrue($item->isChecked());
 	}
 
+	public function testUnhideItemEndsSnooze(): void {
+		$item = new Item();
+		$item->setId(3);
+		$item->setHidden(1700000000);
+		$this->itemMapper->method('find')->with(3)->willReturn($item);
+		$this->itemMapper->expects($this->once())->method('update')->with($item)->willReturnArgument(0);
+
+		$this->controller->unhideItem(3);
+
+		$this->assertSame(0, $item->getHidden());
+	}
+
 	public function testDeleteCategoryAlsoDeletesItsItems(): void {
 		$category = $this->category(1, 7);
 		$itemA = new Item();

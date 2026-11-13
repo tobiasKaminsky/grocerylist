@@ -85,8 +85,10 @@ class GroceryListController extends Controller {
 	public function lists() {
 		$lists = $this->groceryListMapper->findAll();
 
+		$now = time();
 		foreach ($lists as $list) {
-			$list->setUncheckedCount($this->itemMapper->findAllUnchecked($list->getId()));
+			$list->setUncheckedCount($this->itemMapper->findAllUnchecked($list->getId(), $now));
+			$list->setSnoozedUntil($this->itemMapper->findNextSnoozeEnd($list->getId(), $now));
 		}
 
 		return new DataResponse($lists);
@@ -278,6 +280,17 @@ class GroceryListController extends Controller {
 	public function hideItem(int $id) {
 		$item = $this->itemMapper->find($id);
 		$item->setHidden(time());
+
+		return new DataResponse($this->itemMapper->update($item));
+	}
+
+	/**
+	 * End the snooze of an item right away.
+	 */
+	#[NoAdminRequired]
+	public function unhideItem(int $id) {
+		$item = $this->itemMapper->find($id);
+		$item->setHidden(0);
 
 		return new DataResponse($this->itemMapper->update($item));
 	}

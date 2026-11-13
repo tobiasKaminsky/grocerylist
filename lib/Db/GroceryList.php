@@ -39,11 +39,19 @@ class GroceryList extends Entity implements JsonSerializable {
 	 */
 	protected $uncheckedCount;
 
+	/**
+	 * Unix timestamp at which the next snoozed item is counted again
+	 *
+	 * @var int|null
+	 */
+	protected $snoozedUntil;
+
 	public function __construct() {
 		$this->addType('title', Types::STRING);
 		$this->addType('userId', Types::STRING);
 		$this->addType('showOnlyUnchecked', Types::INTEGER);
 		$this->addType('uncheckedCount', Types::INTEGER);
+		$this->addType('snoozedUntil', Types::INTEGER);
 	}
 
 	public function getShowOnlyUnchecked(): bool {
@@ -58,6 +66,10 @@ class GroceryList extends Entity implements JsonSerializable {
 		$this->setter('uncheckedCount', [$count]);
 	}
 
+	public function setSnoozedUntil(?int $snoozedUntil): void {
+		$this->setter('snoozedUntil', [$snoozedUntil]);
+	}
+
 	#[\Override]
 	public function jsonSerialize(): array {
 		return [
@@ -66,6 +78,7 @@ class GroceryList extends Entity implements JsonSerializable {
 			'userId' => $this->getUserId(),
 			'showOnlyUnchecked' => $this->getShowOnlyUnchecked(),
 			'uncheckedCount' => $this->uncheckedCount,
+			'snoozedUntil' => $this->snoozedUntil,
 		];
 	}
 }

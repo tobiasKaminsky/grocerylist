@@ -70,7 +70,7 @@
 <script>
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcAppContent,
@@ -116,6 +116,7 @@ export default {
 			newListShowOnlyUnchecked: false,
 			newListHideCategory: false,
 			lastOpenedListStorageKey: 'grocerylist:lastOpenedListId',
+			snoozeTimeout: null,
 		}
 	},
 
@@ -159,7 +160,8 @@ export default {
 	 */
 	async mounted() {
 		subscribe('grocerylist:list-deleted', this.onListDeleted)
-		subscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
+		subscribe('grocerylist:item-checked-changed', this.refreshCounts)
+		subscribe('grocerylist:item-snooze-changed', this.refreshCounts)
 		try {
 			if (this.$route.name === 'lists') {
 				logger.debug('show single list' + this.$route.params)
@@ -167,6 +169,7 @@ export default {
 
 			const { data } = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
 			this.groceryLists = data
+			this.scheduleSnoozeEnd()
 			this.restoreLastOpenedList()
 		} catch (e) {
 			logger.error('Could not fetch groceryLists', { error: e })
@@ -177,7 +180,9 @@ export default {
 
 	beforeUnmount() {
 		unsubscribe('grocerylist:list-deleted', this.onListDeleted)
-		unsubscribe('grocerylist:item-checked-changed', this.onItemCheckedChanged)
+		unsubscribe('grocerylist:item-checked-changed', this.refreshCounts)
+		unsubscribe('grocerylist:item-snooze-changed', this.refreshCounts)
+		clearTimeout(this.snoozeTimeout)
 	},
 
 	methods: {
@@ -218,15 +223,44 @@ export default {
 			}
 		},
 
-		onItemCheckedChanged({ listId, checked }) {
-			const list = this.groceryLists.find(({ id }) => id === listId)
-			if (!list) {
+		/**
+		 * Reload the unchecked counts of all lists. The server leaves snoozed
+		 * items out, so this is also needed after (un)checking a snoozed item.
+		 */
+		async refreshCounts() {
+			try {
+				const { data } = await axios.get(generateUrl('/apps/grocerylist/api/lists'))
+				for (const { id, uncheckedCount, snoozedUntil } of data) {
+					const list = this.groceryLists.find((groceryList) => groceryList.id === id)
+					if (list) {
+						list.uncheckedCount = uncheckedCount
+						list.snoozedUntil = snoozedUntil
+					}
+				}
+			} catch (e) {
+				logger.error('Could not fetch groceryLists', { error: e })
+			}
+			this.scheduleSnoozeEnd()
+		},
+
+		/**
+		 * Snoozed items are not counted, so refresh the counts (and let the
+		 * open list show the item again) once the next snooze is over.
+		 */
+		scheduleSnoozeEnd() {
+			clearTimeout(this.snoozeTimeout)
+			const ends = this.groceryLists
+				.map(({ snoozedUntil }) => snoozedUntil)
+				.filter((snoozedUntil) => snoozedUntil)
+			if (ends.length === 0) {
 				return
 			}
-			const current = list.uncheckedCount ?? 0
-			list.uncheckedCount = checked
-				? Math.max(0, current - 1)
-				: current + 1
+			// One extra second so the server already considers the snooze over
+			const delay = Math.max(0, Math.min(...ends) * 1000 - Date.now()) + 1000
+			this.snoozeTimeout = setTimeout(async () => {
+				await this.refreshCounts()
+				emit('grocerylist:snooze-ended')
+			}, delay)
 		},
 
 		deleteGroceryList(list) {
