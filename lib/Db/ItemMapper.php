@@ -50,17 +50,46 @@ class ItemMapper extends QBMapper {
 	}
 
 	/**
+	 * Count the unchecked items of a list, without the currently snoozed ones.
+	 *
 	 * @throws Exception
 	 */
-	public function findAllUnchecked(int $id): int {
+	public function findAllUnchecked(int $id, ?int $now = null): int {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select('*')
+		$qb->select($qb->func()->count('*', 'count'))
 			->from($this->getTableName())
-			->where($qb->expr()->eq('list', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0)));
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->lte('hidden', $qb->createNamedParameter(($now ?? time()) - self::OFFSET, IQueryBuilder::PARAM_INT)));
 
-		return sizeof($this->findEntities($qb));
+		$result = $qb->executeQuery();
+		$count = (int)$result->fetchOne();
+		$result->closeCursor();
+
+		return $count;
+	}
+
+	/**
+	 * Unix timestamp at which the next currently snoozed, unchecked item of a
+	 * list is no longer snoozed, or null if none is snoozed.
+	 *
+	 * @throws Exception
+	 */
+	public function findNextSnoozeEnd(int $id, ?int $now = null): ?int {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select($qb->func()->min('hidden'))
+			->from($this->getTableName())
+			->where($qb->expr()->eq('list', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('checked', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->gt('hidden', $qb->createNamedParameter(($now ?? time()) - self::OFFSET, IQueryBuilder::PARAM_INT)));
+
+		$result = $qb->executeQuery();
+		$hidden = $result->fetchOne();
+		$result->closeCursor();
+
+		return $hidden === null || $hidden === false ? null : (int)$hidden + self::OFFSET;
 	}
 
 	public function categoryUsed(int $id): bool {

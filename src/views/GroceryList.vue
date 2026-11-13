@@ -176,6 +176,7 @@
 <script>
 import axios from '@nextcloud/axios'
 import { showError, showInfo } from '@nextcloud/dialogs'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcButton,
@@ -356,6 +357,7 @@ export default {
 	},
 
 	async mounted() {
+		subscribe('grocerylist:snooze-ended', this.onSnoozeEnded)
 		if (this.$route.query.hideCategory === '1') {
 			this.hideCategory = true
 		}
@@ -365,8 +367,20 @@ export default {
 		await this.loadAllCategories(this.listId)
 	},
 
+	beforeUnmount() {
+		unsubscribe('grocerylist:snooze-ended', this.onSnoozeEnded)
+	},
+
 	methods: {
 		indexLetter,
+
+		/**
+		 * Reload the items so that items whose snooze is over show up again.
+		 */
+		onSnoozeEnded() {
+			this.loadItems(this.listId)
+		},
+
 		scrollToLetter(letter) {
 			this.$refs.flatList
 				?.querySelector(`[data-index-letter="${letter}"]`)

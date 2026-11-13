@@ -66,6 +66,7 @@ class EntityTest extends TestCase {
 		$list->setUserId('alice');
 		$list->setShowOnlyUnchecked(true);
 		$list->setUncheckedCount(4);
+		$list->setSnoozedUntil(1700000900);
 
 		$this->assertSame([
 			'id' => 1,
@@ -73,6 +74,7 @@ class EntityTest extends TestCase {
 			'userId' => 'alice',
 			'showOnlyUnchecked' => true,
 			'uncheckedCount' => 4,
+			'snoozedUntil' => 1700000900,
 		], $list->jsonSerialize());
 	}
 

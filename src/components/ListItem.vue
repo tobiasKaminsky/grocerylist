@@ -19,7 +19,7 @@
 				<AlarmSnooze :size="20" />
 			</template>
 		</NcButton>
-		<span class="list-item__label" @click="$emit('edit')">
+		<span class="list-item__label" @click="onLabelClick">
 			<span v-if="item.quantity !== ''">
 				{{ item.quantity }}
 			</span>
@@ -70,6 +70,32 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * Clicking a snoozed item ends its snooze, otherwise it opens the edit dialog.
+		 */
+		onLabelClick() {
+			if (this.isSnoozed) {
+				this.unhideItem(this.item)
+			} else {
+				this.$emit('edit')
+			}
+		},
+
+		async unhideItem(item) {
+			const hidden = item.hidden
+			item.hidden = 0
+			try {
+				await axios.post(generateUrl('/apps/grocerylist/api/item/unhide'), { id: item.id })
+
+				this.$emit('update')
+				emit('grocerylist:item-snooze-changed', { listId: item.list })
+			} catch (e) {
+				item.hidden = hidden
+				logger.error('Could not unsnooze item', { error: e })
+				showError(t('grocerylist', 'Could not unsnooze item'))
+			}
+		},
+
 		async checkItem(item) {
 			if (item.checked === true) {
 				item.checked = false
@@ -93,6 +119,7 @@ export default {
 				await axios.post(generateUrl('/apps/grocerylist/api/item/hide'), { id: item.id })
 
 				this.$emit('update')
+				emit('grocerylist:item-snooze-changed', { listId: item.list })
 			} catch (e) {
 				logger.error('Could not add item', { error: e })
 				showError(t('grocerylist', 'Could not add item'))

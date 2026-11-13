@@ -66,14 +66,14 @@ class MapperTest extends TestCase {
 		return $this->listMapper($userId)->insert($list);
 	}
 
-	private function createItem(int $listId, string $name, int $category = 0, bool $checked = false): Item {
+	private function createItem(int $listId, string $name, int $category = 0, bool $checked = false, int $hidden = 0): Item {
 		$item = new Item();
 		$item->setName($name);
 		$item->setQuantity('');
 		$item->setList($listId);
 		$item->setCategory($category);
 		$item->setChecked($checked);
-		$item->setHidden(0);
+		$item->setHidden($hidden);
 		return $this->itemMapper->insert($item);
 	}
 
@@ -224,5 +224,27 @@ class MapperTest extends TestCase {
 
 		$this->assertSame([], $this->shareeMapper('alice')->findAll());
 		$this->assertTrue($this->shareeMapper('bob')->isSharedWith($first, 'dave'));
+	}
+
+	public function testSnoozedItemsAreNotCountedUntilSnoozeEnds(): void {
+		$now = 1700000000;
+		$list = $this->createList('alice', 'Alice')->getId();
+		$this->createItem($list, 'Milk');
+		$this->createItem($list, 'Bread', hidden: $now - 60);
+		$this->createItem($list, 'Eggs', hidden: $now - 300);
+		$this->createItem($list, 'Butter', hidden: $now - ItemMapper::OFFSET - 1);
+		$this->createItem($list, 'Cheese', checked: true, hidden: $now - 10);
+
+		// Bread and Eggs are snoozed, the snooze of Butter is over, Cheese is checked
+		$this->assertSame(2, $this->itemMapper->findAllUnchecked($list, $now));
+		$this->assertSame($now - 300 + ItemMapper::OFFSET, $this->itemMapper->findNextSnoozeEnd($list, $now));
+
+		// Once the snooze of Eggs ended it is counted again, Bread is still snoozed
+		$later = $now - 300 + ItemMapper::OFFSET;
+		$this->assertSame(3, $this->itemMapper->findAllUnchecked($list, $later));
+		$this->assertSame($now - 60 + ItemMapper::OFFSET, $this->itemMapper->findNextSnoozeEnd($list, $later));
+
+		$this->assertSame(4, $this->itemMapper->findAllUnchecked($list, $now + ItemMapper::OFFSET));
+		$this->assertNull($this->itemMapper->findNextSnoozeEnd($list, $now + ItemMapper::OFFSET));
 	}
 }
