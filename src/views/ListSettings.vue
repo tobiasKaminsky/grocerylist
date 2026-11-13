@@ -33,9 +33,7 @@
 			</template>
 		</Draggable>
 
-		<h2 id="sharing">
-			{{ t('grocerylist', 'Sharing') }}
-		</h2>
+		<h2>{{ t('grocerylist', 'Sharing') }}</h2>
 
 		<ListSharing :listId="listId" @loaded="onSharingLoaded" />
 
@@ -171,9 +169,6 @@ export default {
 
 		onSharingLoaded({ isOwner }) {
 			this.isOwner = isOwner
-			if (this.$route.hash === '#sharing') {
-				this.$nextTick(() => document.getElementById('sharing')?.scrollIntoView({ block: 'start' }))
-			}
 		},
 
 		/**
