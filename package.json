@@ -46,7 +46,7 @@
     "@nextcloud/stylelint-config": "^3.2.2",
     "@nextcloud/vite-config": "^2.5.4",
     "eslint": "^10.14.0",
-    "sass": "^1.107.1",
+    "sass": "^1.108.0",
     "stylelint": "^17.16.0",
     "stylelint-config-recommended-scss": "^17.0.1",
     "stylelint-config-recommended-vue": "^1.6.1",
