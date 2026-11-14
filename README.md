@@ -35,11 +35,25 @@ The user has to exist already. Lists of that user with the same titles are repla
 
 ## Publish to App Store
 
-First get an account for the [App Store](http://apps.nextcloud.com/) then run:
+Releases are built, signed and uploaded by the **appstore-build-publish** workflow when a GitHub release is published.
 
-    make && make appstore
+One-time setup:
+1. Create a key and certificate request, keep `grocerylist.key` secret:
 
-The archive is located in build/artifacts/appstore and can then be uploaded to the App Store.
+       openssl req -nodes -newkey rsa:4096 -keyout grocerylist.key -out grocerylist.csr -subj "/CN=grocerylist"
+
+2. Open a pull request with `grocerylist.csr` at [nextcloud/app-certificate-requests](https://github.com/nextcloud/app-certificate-requests). The workflow downloads the signed `grocerylist.crt` from there.
+3. Register the app on the [App Store](https://apps.nextcloud.com/developer/apps/new) with the certificate and the signature of the app id:
+
+       echo -n "grocerylist" | openssl dgst -sha512 -sign grocerylist.key | openssl base64
+
+4. Add the repository secrets `APP_PRIVATE_KEY` (content of `grocerylist.key`) and `APPSTORE_TOKEN` (from the App Store account settings).
+
+For a release:
+1. Set the new version in **appinfo/info.xml** and **package.json** and add it to **CHANGELOG.md**
+2. Publish a GitHub release with the tag `v<version>`, e.g. `v0.1.0`
+
+To only build the archive locally, run `make appstore`. It is written to **build/artifacts/grocerylist.tar.gz**.
 
 ## Running tests
 You can use the provided Makefile to run all tests by using:

@@ -41,7 +41,8 @@ app_name=$(notdir $(CURDIR))
 build_tools_directory=$(CURDIR)/build/tools
 source_build_directory=$(CURDIR)/build/artifacts/source
 source_package_name=$(source_build_directory)/$(app_name)
-appstore_build_directory=$(CURDIR)/build/artifacts/appstore
+# The release workflow (appstore-build-publish.yml) expects build/artifacts/<app>.tar.gz
+appstore_build_directory=$(CURDIR)/build/artifacts
 appstore_package_name=$(appstore_build_directory)/$(app_name)
 npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
@@ -124,7 +125,7 @@ source:
 .PHONY: appstore
 appstore:
 	make npm
-	rm -rf $(appstore_build_directory)
+	rm -f $(appstore_package_name).tar.gz
 	mkdir -p $(appstore_build_directory)
 	tar cvzf $(appstore_package_name).tar.gz \
 	--exclude-vcs \

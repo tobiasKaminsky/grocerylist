@@ -8,21 +8,35 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>grocerylist</id>
     <name>Grocery List</name>
-    <summary>Grocery list for Nextcloud</summary>
-    <description><![CDATA[Grocery list with customizable categories]]></description>
-    <version>0.0.8</version>
+    <summary>Shared grocery lists, sorted the way you walk through the store</summary>
+    <description><![CDATA[Keep your grocery lists in Nextcloud and shop together.
+
+- **Categories in store order**: group items into categories, give them colors and drag them into the order you walk through your store
+- **Check off and snooze**: check items off while shopping, or snooze an item for 15 minutes when you cannot find it right now
+- **Focus on what is left**: show only unchecked items, or switch to an A–Z list with a letter index
+- **Share lists**: share a list with other users of your Nextcloud so everyone can add and check off items
+- **Mobile friendly**: works well on the phone in the store
+]]></description>
+    <version>0.1.0</version>
     <licence>agpl</licence>
     <author mail="tobias@kaminsky.me" >Tobias Kaminsky</author>
     <namespace>GroceryList</namespace>
     <category>organization</category>
     <category>tools</category>
-    <bugs>https://github.com/tobiasKaminsky/GroceryList/issues</bugs>
+    <website>https://github.com/tobiasKaminsky/grocerylist</website>
+    <bugs>https://github.com/tobiasKaminsky/grocerylist/issues</bugs>
+    <repository type="git">https://github.com/tobiasKaminsky/grocerylist.git</repository>
+    <screenshot>https://raw.githubusercontent.com/tobiasKaminsky/grocerylist/master/screenshots/01-list.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/tobiasKaminsky/grocerylist/master/screenshots/02-without-categories.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/tobiasKaminsky/grocerylist/master/screenshots/03-edit-item.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/tobiasKaminsky/grocerylist/master/screenshots/04-settings.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/tobiasKaminsky/grocerylist/master/screenshots/05-mobile.png</screenshot>
     <dependencies>
         <nextcloud min-version="33" max-version="35"/>
     </dependencies>
     <navigations>
         <navigation>
-            <name>Grocerylist</name>
+            <name>Grocery List</name>
             <route>grocerylist.GroceryList.index</route>
         </navigation>
     </navigations>
