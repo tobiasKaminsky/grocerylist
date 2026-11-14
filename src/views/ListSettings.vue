@@ -149,7 +149,7 @@ export default {
 				this.groceryList = response.data
 			} catch (e) {
 				logger.error('Could not fetch list ' + this.listId, { error: e })
-				showError(t('grocerylist', 'Could not fetch list {id}', { id: this.listId }))
+				showError(t('grocerylist', 'Could not load the list'))
 			}
 		},
 
@@ -162,7 +162,7 @@ export default {
 				await this.categoryStore.loadCategories(this.listId)
 			} catch (e) {
 				logger.error('Could not fetch categories', { error: e })
-				showError(t('grocerylist', ('Could not fetch categories')))
+				showError(t('grocerylist', 'Could not load the categories'))
 			}
 			this.loadingCategories = false
 		},

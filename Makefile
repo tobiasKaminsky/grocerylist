@@ -133,6 +133,7 @@ appstore:
 	--exclude="../$(app_name)/tests" \
 	--exclude="../$(app_name)/scripts" \
 	--exclude="../$(app_name)/screenshots" \
+	--exclude="../$(app_name)/translationfiles" \
 	--exclude="../$(app_name)/Makefile" \
 	--exclude="../$(app_name)/*.log" \
 	--exclude="../$(app_name)/phpunit*xml" \

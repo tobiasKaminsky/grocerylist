@@ -55,6 +55,12 @@ For a release:
 
 To only build the archive locally, run `make appstore`. It is written to **build/artifacts/grocerylist.tar.gz**.
 
+## Translations
+
+Translations are done by the Nextcloud community on [Transifex](https://app.transifex.com/nextcloud/nextcloud/) and synced nightly by `nextcloud-bot` into **l10n/**, see **.tx/config**. Do not edit the files in **l10n/**, they are overwritten by the sync.
+
+**translationfiles/de/grocerylist.po** holds a German translation for the initial upload to Transifex.
+
 ## Running tests
 You can use the provided Makefile to run all tests by using:
 

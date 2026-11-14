@@ -194,7 +194,7 @@ export default {
 			this.restoreLastOpenedList()
 		} catch (e) {
 			logger.error('Could not fetch groceryLists', { error: e })
-			showError(t('grocerylist', 'Could not fetch groceryLists'))
+			showError(t('grocerylist', 'Could not load the lists'))
 		}
 		this.loading = false
 	},
@@ -242,7 +242,7 @@ export default {
 			} catch (e) {
 				list.title = previousTitle
 				logger.error('Could not rename groceryList', { error: e })
-				showError(t('grocerylist', 'Could not rename groceryList'))
+				showError(t('grocerylist', 'Could not rename the list'))
 			}
 		},
 
@@ -333,7 +333,7 @@ export default {
 				})
 			} catch (e) {
 				logger.error('Could not create groceryList', { error: e })
-				showError(t('grocerylist', 'Could not create groceryList'))
+				showError(t('grocerylist', 'Could not create the list'))
 			}
 		},
 	},
