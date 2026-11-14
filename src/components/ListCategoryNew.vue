@@ -18,7 +18,7 @@
 			variant="tertiary"
 			type="submit"
 			:disabled="updating || newCategoryName.trim() === ''"
-			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName })">
+			:aria-label="t('grocerylist', 'Add category {category}', { category: newCategoryName }, undefined, { escape: false })">
 			<template #icon>
 				<IconPlus :size="20" />
 			</template>
@@ -91,7 +91,7 @@ export default {
 				this.newCategoryName = ''
 			} catch (e) {
 				logger.error(`Could not add category to list ${this.listId}`, { error: e })
-				showError(t('grocerylist', `Could not add category to list ${this.listId}`))
+				showError(t('grocerylist', 'Could not add category'))
 			}
 			this.updating = false
 		},

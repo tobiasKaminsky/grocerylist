@@ -64,7 +64,8 @@ export default {
 		},
 
 		rename() {
-			return 'Rename ' + this.groceryList.title
+			// Vue escapes the label, so the list name must not be escaped by t() as well
+			return t('grocerylist', 'Rename {list}', { list: this.groceryList.title }, undefined, { escape: false })
 		},
 
 		title() {

@@ -486,7 +486,7 @@ export default {
 				})
 			} catch (e) {
 				logger.error('Could not update groceryList', { error: e })
-				showError(t('grocerylist', 'Could not update groceryList'))
+				showError(t('grocerylist', 'Could not update the list'))
 			}
 		},
 
@@ -496,7 +496,7 @@ export default {
 				this.groceryList = response.data
 			} catch (e) {
 				logger.error('Could not fetch list ' + id, { error: e })
-				showError(t('grocerylist', ('Could not fetch list ' + id)))
+				showError(t('grocerylist', 'Could not load the list'))
 			}
 			this.loading = false
 		},
@@ -507,7 +507,7 @@ export default {
 				this.categories = response.data
 			} catch (e) {
 				logger.error('Could not fetch categories for groceryList ' + id, { error: e })
-				showError(t('grocerylist', ('Could not fetch categories for groceryList ' + id)))
+				showError(t('grocerylist', 'Could not load the categories'))
 			}
 			this.loading = false
 		},
@@ -518,7 +518,7 @@ export default {
 				this.allCategories = response.data
 			} catch (e) {
 				logger.error('Could not fetch all categories for groceryList ' + id, { error: e })
-				showError(t('grocerylist', ('Could not fetch all categories for groceryList ' + id)))
+				showError(t('grocerylist', 'Could not load the categories'))
 			}
 			this.loading = false
 		},
@@ -543,7 +543,7 @@ export default {
 				})
 			} catch (e) {
 				logger.error('Could not fetch items for groceryList ' + id, { error: e })
-				showError(t('grocerylist', ('Could not fetch items for groceryList ' + id)))
+				showError(t('grocerylist', 'Could not load the items'))
 			}
 			this.loading = false
 		},
@@ -599,7 +599,7 @@ export default {
 
 		async onSaveItem() {
 			if (this.newItemName === '') {
-				showInfo('Cannot add empty item!')
+				showInfo(t('grocerylist', 'Please enter a name for the item'))
 				return
 			}
 
