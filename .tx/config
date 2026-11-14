@@ -7,4 +7,3 @@ file_filter = translationfiles/<lang>/grocerylist.po
 source_file = translationfiles/templates/grocerylist.pot
 source_lang = en
 type        = PO
-trans.de    = translationfiles/de/grocerylist.po
