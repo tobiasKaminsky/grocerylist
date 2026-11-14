@@ -1,6 +1,6 @@
 {
   "name": "grocerylist",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "private": true,
   "description": "Grocery list for Nextcloud",
   "homepage": "https://github.com/tobiasKaminsky/GroceryList",
