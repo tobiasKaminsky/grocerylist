@@ -858,7 +858,6 @@ export default {
 
 .item-list li.checked .list-item__label {
 	color: var(--color-text-maxcontrast);
-	text-decoration: line-through;
 }
 
 .sortable-ghost {
