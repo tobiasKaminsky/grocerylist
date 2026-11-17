@@ -451,7 +451,7 @@ export default {
 		showAddModal() {
 			this.newItemId = -1
 			this.newItemName = ''
-			this.newItemQuantity = 1
+			this.newItemQuantity = ''
 			this.newItemCategory = null
 			this.showDeleteButton = false
 			this.modal = true
