@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-17
+
+### Added
+- German translation; translations are now synced from Transifex
+
+### Changed
+- Checked items are greyed out instead of struck through
+- The quantity of a new item is empty instead of 1
+
 ## [0.1.0] - 2026-11-14
 
 First release in the Nextcloud app store.
@@ -23,4 +32,5 @@ First release in the Nextcloud app store.
 - Unchecked item counter per list in the navigation
 - Support for Nextcloud 33 to 35
 
+[0.1.1]: https://github.com/tobiasKaminsky/grocerylist/releases/tag/v0.1.1
 [0.1.0]: https://github.com/tobiasKaminsky/grocerylist/releases/tag/v0.1.0
