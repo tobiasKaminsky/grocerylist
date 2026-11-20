@@ -1,0 +1,294 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Finnish\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "New list"
+msgstr "Uusi lista"
+
+msgid "Loading lists…"
+msgstr "Ladataan listoja…"
+
+msgid "No grocery lists, yet"
+msgstr "Ei vielä ostoslistoja"
+
+msgid "No list selected"
+msgstr "Listaa ei ole valittu"
+
+msgid "Create a list to start adding items."
+msgstr "Luo lista aloittaaksesi tuotteiden lisäämisen."
+
+msgid "Select a list in the navigation."
+msgstr "Valitse lista navigaatiosta."
+
+msgid "List name"
+msgstr "Listan nimi"
+
+msgid "My grocery list"
+msgstr "Oma ostoslistani"
+
+msgid "Show only unchecked"
+msgstr "Näytä vain merkitsemättömät"
+
+msgid "Hide category"
+msgstr "Piilota luokat"
+
+msgid "Create list"
+msgstr "Luo lista"
+
+msgid "Could not load the lists"
+msgstr "Listojen lataaminen epäonnistui"
+
+msgid "Could not rename the list"
+msgstr "Listan nimeäminen uudelleen epäonnistui"
+
+msgid "Could not create the list"
+msgstr "Listan luominen epäonnistui"
+
+msgid "Jump to letter"
+msgstr "Siirry kirjaimeen"
+
+msgid "Jump to {letter}"
+msgstr "Siirry kirjaimeen {letter}"
+
+msgid "Drag to reorder"
+msgstr "Järjestä vetämällä"
+
+msgid "Category color"
+msgstr "Luokan väri"
+
+msgid "Pick color"
+msgstr "Valitse väri"
+
+msgid "Category name"
+msgstr "Luokan nimi"
+
+msgid "Save changed category"
+msgstr "Tallenna muutettu luokka"
+
+msgid "Edit category"
+msgstr "Muokkaa luokkaa"
+
+msgid "Delete category"
+msgstr "Poista luokka"
+
+msgid "Could not update category color"
+msgstr "Luokan värin päivittäminen epäonnistui"
+
+msgid "Could not delete category"
+msgstr "Luokan poistaminen epäonnistui"
+
+msgid "Cancel"
+msgstr "Peruuta"
+
+msgid "Delete"
+msgstr "Poista"
+
+msgid "Category name must not be empty"
+msgstr "Luokan nimi ei voi olla tyhjä"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "Luokka nimeltä ”{category}” on jo olemassa"
+
+msgid "Could not rename category"
+msgstr "Luokan nimeäminen uudelleen epäonnistui"
+
+msgid "Add category {category}"
+msgstr "Lisää luokka {category}"
+
+msgid "Could not add category"
+msgstr "Luokan lisääminen epäonnistui"
+
+msgid "Unsnooze"
+msgstr "Peru lykkäys"
+
+msgid "Snooze"
+msgstr "Lykkää"
+
+msgid "Could not unsnooze item"
+msgstr "Tuotteen lykkäyksen peruminen epäonnistui"
+
+msgid "Could not check item"
+msgstr "Tuotteen merkitseminen epäonnistui"
+
+msgid "Could not snooze item"
+msgstr "Tuotteen lykkääminen epäonnistui"
+
+msgid "Share with"
+msgstr "Jaa käyttäjälle"
+
+msgid "Search for users …"
+msgstr "Etsi käyttäjiä…"
+
+msgid "Owner (you)"
+msgstr "Omistaja (sinä)"
+
+msgid "Shared with you by {owner}"
+msgstr "Jakanut kanssasi {owner}"
+
+msgid "You"
+msgstr "Sinä"
+
+msgid "Unshare with {name}"
+msgstr "Lopeta jakaminen käyttäjälle {name}"
+
+msgid "Unshare"
+msgstr "Lopeta jakaminen"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Jaa tämä lista muiden käyttäjien kanssa, jotta voitte käydä kaupassa yhdessä. Kaikki, joille lista on jaettu, voivat lisätä, muokata ja merkitä tuotteita."
+
+msgid "Could not fetch sharees"
+msgstr "Jakojen hakeminen epäonnistui"
+
+msgid "Could not search users"
+msgstr "Käyttäjien hakeminen epäonnistui"
+
+msgid "Could not share list with {name}"
+msgstr "Listan jakaminen käyttäjälle {name} epäonnistui"
+
+msgid "Could not unshare list with {name}"
+msgstr "Listan jakamisen lopettaminen käyttäjälle {name} epäonnistui"
+
+msgid "Settings"
+msgstr "Asetukset"
+
+msgid "Rename {list}"
+msgstr "Nimeä {list} uudelleen"
+
+msgid "Grocery list"
+msgstr "Ostoslista"
+
+msgid "Add item"
+msgstr "Lisää tuote"
+
+msgid "Add"
+msgstr "Lisää"
+
+msgid "No items, yet"
+msgstr "Ei vielä tuotteita"
+
+msgid "Add the first item with the Add button."
+msgstr "Lisää ensimmäinen tuote ”Lisää”-painikkeella."
+
+msgid "All done"
+msgstr "Kaikki valmista"
+
+msgid "Every item is checked or snoozed."
+msgstr "Kaikki tuotteet on merkitty tai lykätty."
+
+msgid "Uncategorized"
+msgstr "Luokittelematon"
+
+msgid "Edit item"
+msgstr "Muokkaa tuotetta"
+
+msgid "Item name"
+msgstr "Tuotteen nimi"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "esim. maito, leipä, kananmunat…"
+
+msgid "Quantity"
+msgstr "Määrä"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Lisää määrää"
+
+msgid "Decrease quantity"
+msgstr "Vähennä määrää"
+
+msgid "Select or create a category…"
+msgstr "Valitse tai luo luokka…"
+
+msgid "Save"
+msgstr "Tallenna"
+
+msgid "Could not update the list"
+msgstr "Listan päivittäminen epäonnistui"
+
+msgid "Could not load the list"
+msgstr "Listan lataaminen epäonnistui"
+
+msgid "Could not load the categories"
+msgstr "Luokkien lataaminen epäonnistui"
+
+msgid "Could not load the items"
+msgstr "Tuotteiden lataaminen epäonnistui"
+
+msgid "Please enter a name for the item"
+msgstr "Anna tuotteelle nimi"
+
+msgid "Could not add item"
+msgstr "Tuotteen lisääminen epäonnistui"
+
+msgid "Could not update item category"
+msgstr "Tuotteen luokan päivittäminen epäonnistui"
+
+msgid "Could not delete item"
+msgstr "Tuotteen poistaminen epäonnistui"
+
+msgid "Categories"
+msgstr "Luokat"
+
+msgid "Categories loading…"
+msgstr "Ladataan luokkia…"
+
+msgid "No categories, yet"
+msgstr "Ei vielä luokkia"
+
+msgid "Sharing"
+msgstr "Jakaminen"
+
+msgid "Danger zone"
+msgstr "Vaaravyöhyke"
+
+msgid "Leave list"
+msgstr "Poistu listalta"
+
+msgid "Delete list"
+msgstr "Poista lista"
+
+msgid "Could not save category order"
+msgstr "Luokkien järjestyksen tallentaminen epäonnistui"
+
+msgid "List deleted"
+msgstr "Lista poistettu"
+
+msgid "Could not delete list"
+msgstr "Listan poistaminen epäonnistui"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Haluatko varmasti poistua listalta ”{title}”? Et voi enää käyttää sitä, ellei sitä jaeta sinulle uudelleen."
+
+msgid "Leave"
+msgstr "Poistu"
+
+msgid "You left the list"
+msgstr "Poistuit listalta"
+
+msgid "Could not leave list"
+msgstr "Listalta poistuminen epäonnistui"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Haluatko varmasti poistaa listan ”{title}”? Tämä poistaa myös kaikki sen tuotteet ja luokat."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Haluatko varmasti poistaa tämän listan? Tämä poistaa myös kaikki sen tuotteet ja luokat."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Tämä luokka sisältää %n tuotteen. Luokan poistaminen poistaa myös tämän tuotteen. Jatketaanko?"
+msgstr[1] "Tämä luokka sisältää %n tuotetta. Luokan poistaminen poistaa myös nämä tuotteet. Jatketaanko?"

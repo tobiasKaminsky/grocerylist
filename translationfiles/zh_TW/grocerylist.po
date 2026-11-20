@@ -1,0 +1,293 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Chinese (Taiwan)\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "New list"
+msgstr "新清單"
+
+msgid "Loading lists…"
+msgstr "正在載入清單…"
+
+msgid "No grocery lists, yet"
+msgstr "尚無購物清單"
+
+msgid "No list selected"
+msgstr "未選取清單"
+
+msgid "Create a list to start adding items."
+msgstr "建立清單以開始新增品項。"
+
+msgid "Select a list in the navigation."
+msgstr "在導覽列中選取清單。"
+
+msgid "List name"
+msgstr "清單名稱"
+
+msgid "My grocery list"
+msgstr "我的購物清單"
+
+msgid "Show only unchecked"
+msgstr "僅顯示未勾選的"
+
+msgid "Hide category"
+msgstr "隱藏分類"
+
+msgid "Create list"
+msgstr "建立清單"
+
+msgid "Could not load the lists"
+msgstr "無法載入清單"
+
+msgid "Could not rename the list"
+msgstr "無法重新命名清單"
+
+msgid "Could not create the list"
+msgstr "無法建立清單"
+
+msgid "Jump to letter"
+msgstr "跳至字母"
+
+msgid "Jump to {letter}"
+msgstr "跳至 {letter}"
+
+msgid "Drag to reorder"
+msgstr "拖曳以重新排序"
+
+msgid "Category color"
+msgstr "分類顏色"
+
+msgid "Pick color"
+msgstr "挑選顏色"
+
+msgid "Category name"
+msgstr "分類名稱"
+
+msgid "Save changed category"
+msgstr "儲存變更的分類"
+
+msgid "Edit category"
+msgstr "編輯分類"
+
+msgid "Delete category"
+msgstr "刪除分類"
+
+msgid "Could not update category color"
+msgstr "無法更新分類顏色"
+
+msgid "Could not delete category"
+msgstr "無法刪除分類"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "Category name must not be empty"
+msgstr "分類名稱不得為空"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "名為「{category}」的分類已存在"
+
+msgid "Could not rename category"
+msgstr "無法重新命名分類"
+
+msgid "Add category {category}"
+msgstr "新增分類 {category}"
+
+msgid "Could not add category"
+msgstr "無法新增分類"
+
+msgid "Unsnooze"
+msgstr "取消暫緩"
+
+msgid "Snooze"
+msgstr "暫緩"
+
+msgid "Could not unsnooze item"
+msgstr "無法取消暫緩品項"
+
+msgid "Could not check item"
+msgstr "無法勾選品項"
+
+msgid "Could not snooze item"
+msgstr "無法暫緩品項"
+
+msgid "Share with"
+msgstr "分享給"
+
+msgid "Search for users …"
+msgstr "搜尋使用者…"
+
+msgid "Owner (you)"
+msgstr "擁有者（您）"
+
+msgid "Shared with you by {owner}"
+msgstr "{owner} 與您分享"
+
+msgid "You"
+msgstr "您"
+
+msgid "Unshare with {name}"
+msgstr "取消與 {name} 分享"
+
+msgid "Unshare"
+msgstr "取消分享"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "與其他使用者分享此清單，一起購物。所有被分享的人都可以新增、編輯與勾選品項。"
+
+msgid "Could not fetch sharees"
+msgstr "無法擷取分享對象"
+
+msgid "Could not search users"
+msgstr "無法搜尋使用者"
+
+msgid "Could not share list with {name}"
+msgstr "無法與 {name} 分享清單"
+
+msgid "Could not unshare list with {name}"
+msgstr "無法取消與 {name} 分享清單"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Rename {list}"
+msgstr "重新命名 {list}"
+
+msgid "Grocery list"
+msgstr "購物清單"
+
+msgid "Add item"
+msgstr "新增品項"
+
+msgid "Add"
+msgstr "新增"
+
+msgid "No items, yet"
+msgstr "尚無品項"
+
+msgid "Add the first item with the Add button."
+msgstr "使用「新增」按鈕新增第一個品項。"
+
+msgid "All done"
+msgstr "全部完成"
+
+msgid "Every item is checked or snoozed."
+msgstr "所有品項皆已勾選或暫緩。"
+
+msgid "Uncategorized"
+msgstr "未分類"
+
+msgid "Edit item"
+msgstr "編輯品項"
+
+msgid "Item name"
+msgstr "品項名稱"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "例如：牛奶、麵包、雞蛋…"
+
+msgid "Quantity"
+msgstr "數量"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "增加數量"
+
+msgid "Decrease quantity"
+msgstr "減少數量"
+
+msgid "Select or create a category…"
+msgstr "選取或建立分類…"
+
+msgid "Save"
+msgstr "儲存"
+
+msgid "Could not update the list"
+msgstr "無法更新清單"
+
+msgid "Could not load the list"
+msgstr "無法載入清單"
+
+msgid "Could not load the categories"
+msgstr "無法載入分類"
+
+msgid "Could not load the items"
+msgstr "無法載入品項"
+
+msgid "Please enter a name for the item"
+msgstr "請輸入品項名稱"
+
+msgid "Could not add item"
+msgstr "無法新增品項"
+
+msgid "Could not update item category"
+msgstr "無法更新品項分類"
+
+msgid "Could not delete item"
+msgstr "無法刪除品項"
+
+msgid "Categories"
+msgstr "分類"
+
+msgid "Categories loading…"
+msgstr "正在載入分類…"
+
+msgid "No categories, yet"
+msgstr "尚無分類"
+
+msgid "Sharing"
+msgstr "分享"
+
+msgid "Danger zone"
+msgstr "危險區域"
+
+msgid "Leave list"
+msgstr "離開清單"
+
+msgid "Delete list"
+msgstr "刪除清單"
+
+msgid "Could not save category order"
+msgstr "無法儲存分類順序"
+
+msgid "List deleted"
+msgstr "清單已刪除"
+
+msgid "Could not delete list"
+msgstr "無法刪除清單"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "您確定要離開清單「{title}」嗎？除非再次與您分享，否則您將無法再存取它。"
+
+msgid "Leave"
+msgstr "離開"
+
+msgid "You left the list"
+msgstr "您已離開清單"
+
+msgid "Could not leave list"
+msgstr "無法離開清單"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "您確定要刪除清單「{title}」嗎？這也會移除其中的所有品項與分類。"
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "您確定要刪除此清單嗎？這也會移除其中的所有品項與分類。"
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "此分類包含 %n 個品項。刪除分類也會刪除這些品項。要繼續嗎？"

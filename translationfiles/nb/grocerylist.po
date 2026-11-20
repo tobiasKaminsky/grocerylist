@@ -1,0 +1,294 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "New list"
+msgstr "Ny liste"
+
+msgid "Loading lists…"
+msgstr "Laster inn lister…"
+
+msgid "No grocery lists, yet"
+msgstr "Ingen handlelister ennå"
+
+msgid "No list selected"
+msgstr "Ingen liste valgt"
+
+msgid "Create a list to start adding items."
+msgstr "Opprett en liste for å begynne å legge til varer."
+
+msgid "Select a list in the navigation."
+msgstr "Velg en liste i navigasjonen."
+
+msgid "List name"
+msgstr "Listenavn"
+
+msgid "My grocery list"
+msgstr "Min handleliste"
+
+msgid "Show only unchecked"
+msgstr "Vis bare ikke-avkryssede"
+
+msgid "Hide category"
+msgstr "Skjul kategorier"
+
+msgid "Create list"
+msgstr "Opprett liste"
+
+msgid "Could not load the lists"
+msgstr "Kunne ikke laste inn listene"
+
+msgid "Could not rename the list"
+msgstr "Kunne ikke gi nytt navn til listen"
+
+msgid "Could not create the list"
+msgstr "Kunne ikke opprette listen"
+
+msgid "Jump to letter"
+msgstr "Gå til bokstav"
+
+msgid "Jump to {letter}"
+msgstr "Gå til {letter}"
+
+msgid "Drag to reorder"
+msgstr "Dra for å endre rekkefølge"
+
+msgid "Category color"
+msgstr "Kategorifarge"
+
+msgid "Pick color"
+msgstr "Velg farge"
+
+msgid "Category name"
+msgstr "Kategorinavn"
+
+msgid "Save changed category"
+msgstr "Lagre endret kategori"
+
+msgid "Edit category"
+msgstr "Rediger kategori"
+
+msgid "Delete category"
+msgstr "Slett kategori"
+
+msgid "Could not update category color"
+msgstr "Kunne ikke oppdatere kategorifargen"
+
+msgid "Could not delete category"
+msgstr "Kunne ikke slette kategorien"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Delete"
+msgstr "Slett"
+
+msgid "Category name must not be empty"
+msgstr "Kategorinavnet kan ikke være tomt"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "Det finnes allerede en kategori med navnet «{category}»"
+
+msgid "Could not rename category"
+msgstr "Kunne ikke gi nytt navn til kategorien"
+
+msgid "Add category {category}"
+msgstr "Legg til kategori {category}"
+
+msgid "Could not add category"
+msgstr "Kunne ikke legge til kategorien"
+
+msgid "Unsnooze"
+msgstr "Avbryt utsettelse"
+
+msgid "Snooze"
+msgstr "Utsett"
+
+msgid "Could not unsnooze item"
+msgstr "Kunne ikke avbryte utsettelsen av varen"
+
+msgid "Could not check item"
+msgstr "Kunne ikke krysse av varen"
+
+msgid "Could not snooze item"
+msgstr "Kunne ikke utsette varen"
+
+msgid "Share with"
+msgstr "Del med"
+
+msgid "Search for users …"
+msgstr "Søk etter brukere…"
+
+msgid "Owner (you)"
+msgstr "Eier (deg)"
+
+msgid "Shared with you by {owner}"
+msgstr "Delt med deg av {owner}"
+
+msgid "You"
+msgstr "Deg"
+
+msgid "Unshare with {name}"
+msgstr "Fjern deling med {name}"
+
+msgid "Unshare"
+msgstr "Fjern deling"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Del denne listen med andre brukere, så dere kan handle sammen. Alle listen er delt med, kan legge til, redigere og krysse av varer."
+
+msgid "Could not fetch sharees"
+msgstr "Kunne ikke hente delinger"
+
+msgid "Could not search users"
+msgstr "Kunne ikke søke etter brukere"
+
+msgid "Could not share list with {name}"
+msgstr "Kunne ikke dele listen med {name}"
+
+msgid "Could not unshare list with {name}"
+msgstr "Kunne ikke fjerne delingen av listen med {name}"
+
+msgid "Settings"
+msgstr "Innstillinger"
+
+msgid "Rename {list}"
+msgstr "Gi nytt navn til {list}"
+
+msgid "Grocery list"
+msgstr "Handleliste"
+
+msgid "Add item"
+msgstr "Legg til vare"
+
+msgid "Add"
+msgstr "Legg til"
+
+msgid "No items, yet"
+msgstr "Ingen varer ennå"
+
+msgid "Add the first item with the Add button."
+msgstr "Legg til den første varen med «Legg til»-knappen."
+
+msgid "All done"
+msgstr "Alt ferdig"
+
+msgid "Every item is checked or snoozed."
+msgstr "Alle varer er krysset av eller utsatt."
+
+msgid "Uncategorized"
+msgstr "Uten kategori"
+
+msgid "Edit item"
+msgstr "Rediger vare"
+
+msgid "Item name"
+msgstr "Varenavn"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "f.eks. melk, brød, egg…"
+
+msgid "Quantity"
+msgstr "Antall"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Øk antall"
+
+msgid "Decrease quantity"
+msgstr "Reduser antall"
+
+msgid "Select or create a category…"
+msgstr "Velg eller opprett en kategori…"
+
+msgid "Save"
+msgstr "Lagre"
+
+msgid "Could not update the list"
+msgstr "Kunne ikke oppdatere listen"
+
+msgid "Could not load the list"
+msgstr "Kunne ikke laste inn listen"
+
+msgid "Could not load the categories"
+msgstr "Kunne ikke laste inn kategoriene"
+
+msgid "Could not load the items"
+msgstr "Kunne ikke laste inn varene"
+
+msgid "Please enter a name for the item"
+msgstr "Skriv inn et navn på varen"
+
+msgid "Could not add item"
+msgstr "Kunne ikke legge til varen"
+
+msgid "Could not update item category"
+msgstr "Kunne ikke oppdatere varens kategori"
+
+msgid "Could not delete item"
+msgstr "Kunne ikke slette varen"
+
+msgid "Categories"
+msgstr "Kategorier"
+
+msgid "Categories loading…"
+msgstr "Laster inn kategorier…"
+
+msgid "No categories, yet"
+msgstr "Ingen kategorier ennå"
+
+msgid "Sharing"
+msgstr "Deling"
+
+msgid "Danger zone"
+msgstr "Faresone"
+
+msgid "Leave list"
+msgstr "Forlat liste"
+
+msgid "Delete list"
+msgstr "Slett liste"
+
+msgid "Could not save category order"
+msgstr "Kunne ikke lagre rekkefølgen på kategoriene"
+
+msgid "List deleted"
+msgstr "Liste slettet"
+
+msgid "Could not delete list"
+msgstr "Kunne ikke slette listen"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Er du sikker på at du vil forlate listen «{title}»? Du vil ikke lenger ha tilgang til den med mindre den blir delt med deg igjen."
+
+msgid "Leave"
+msgstr "Forlat"
+
+msgid "You left the list"
+msgstr "Du har forlatt listen"
+
+msgid "Could not leave list"
+msgstr "Kunne ikke forlate listen"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Er du sikker på at du vil slette listen «{title}»? Dette fjerner også alle varene og kategoriene i den."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Er du sikker på at du vil slette denne listen? Dette fjerner også alle varene og kategoriene i den."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Denne kategorien inneholder %n vare. Hvis du sletter kategorien, slettes også denne varen. Fortsette?"
+msgstr[1] "Denne kategorien inneholder %n varer. Hvis du sletter kategorien, slettes også disse varene. Fortsette?"

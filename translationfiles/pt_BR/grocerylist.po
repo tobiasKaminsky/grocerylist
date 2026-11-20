@@ -1,0 +1,295 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Portuguese (Brazil)\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+msgid "New list"
+msgstr "Nova lista"
+
+msgid "Loading lists…"
+msgstr "Carregando listas…"
+
+msgid "No grocery lists, yet"
+msgstr "Nenhuma lista de compras ainda"
+
+msgid "No list selected"
+msgstr "Nenhuma lista selecionada"
+
+msgid "Create a list to start adding items."
+msgstr "Crie uma lista para começar a adicionar itens."
+
+msgid "Select a list in the navigation."
+msgstr "Selecione uma lista na navegação."
+
+msgid "List name"
+msgstr "Nome da lista"
+
+msgid "My grocery list"
+msgstr "Minha lista de compras"
+
+msgid "Show only unchecked"
+msgstr "Mostrar apenas não marcados"
+
+msgid "Hide category"
+msgstr "Ocultar categorias"
+
+msgid "Create list"
+msgstr "Criar lista"
+
+msgid "Could not load the lists"
+msgstr "Não foi possível carregar as listas"
+
+msgid "Could not rename the list"
+msgstr "Não foi possível renomear a lista"
+
+msgid "Could not create the list"
+msgstr "Não foi possível criar a lista"
+
+msgid "Jump to letter"
+msgstr "Ir para a letra"
+
+msgid "Jump to {letter}"
+msgstr "Ir para {letter}"
+
+msgid "Drag to reorder"
+msgstr "Arraste para reordenar"
+
+msgid "Category color"
+msgstr "Cor da categoria"
+
+msgid "Pick color"
+msgstr "Escolher cor"
+
+msgid "Category name"
+msgstr "Nome da categoria"
+
+msgid "Save changed category"
+msgstr "Salvar categoria alterada"
+
+msgid "Edit category"
+msgstr "Editar categoria"
+
+msgid "Delete category"
+msgstr "Excluir categoria"
+
+msgid "Could not update category color"
+msgstr "Não foi possível atualizar a cor da categoria"
+
+msgid "Could not delete category"
+msgstr "Não foi possível excluir a categoria"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Delete"
+msgstr "Excluir"
+
+msgid "Category name must not be empty"
+msgstr "O nome da categoria não pode ficar vazio"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "Já existe uma categoria chamada “{category}”"
+
+msgid "Could not rename category"
+msgstr "Não foi possível renomear a categoria"
+
+msgid "Add category {category}"
+msgstr "Adicionar categoria {category}"
+
+msgid "Could not add category"
+msgstr "Não foi possível adicionar a categoria"
+
+msgid "Unsnooze"
+msgstr "Cancelar adiamento"
+
+msgid "Snooze"
+msgstr "Adiar"
+
+msgid "Could not unsnooze item"
+msgstr "Não foi possível cancelar o adiamento do item"
+
+msgid "Could not check item"
+msgstr "Não foi possível marcar o item"
+
+msgid "Could not snooze item"
+msgstr "Não foi possível adiar o item"
+
+msgid "Share with"
+msgstr "Compartilhar com"
+
+msgid "Search for users …"
+msgstr "Pesquisar usuários…"
+
+msgid "Owner (you)"
+msgstr "Proprietário (você)"
+
+msgid "Shared with you by {owner}"
+msgstr "Compartilhada com você por {owner}"
+
+msgid "You"
+msgstr "Você"
+
+msgid "Unshare with {name}"
+msgstr "Descompartilhar com {name}"
+
+msgid "Unshare"
+msgstr "Descompartilhar"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Compartilhe esta lista com outros usuários para fazer compras juntos. Todos com quem ela for compartilhada podem adicionar, editar e marcar itens."
+
+msgid "Could not fetch sharees"
+msgstr "Não foi possível obter os compartilhamentos"
+
+msgid "Could not search users"
+msgstr "Não foi possível pesquisar usuários"
+
+msgid "Could not share list with {name}"
+msgstr "Não foi possível compartilhar a lista com {name}"
+
+msgid "Could not unshare list with {name}"
+msgstr "Não foi possível descompartilhar a lista com {name}"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Rename {list}"
+msgstr "Renomear {list}"
+
+msgid "Grocery list"
+msgstr "Lista de compras"
+
+msgid "Add item"
+msgstr "Adicionar item"
+
+msgid "Add"
+msgstr "Adicionar"
+
+msgid "No items, yet"
+msgstr "Nenhum item ainda"
+
+msgid "Add the first item with the Add button."
+msgstr "Adicione o primeiro item com o botão “Adicionar”."
+
+msgid "All done"
+msgstr "Tudo pronto"
+
+msgid "Every item is checked or snoozed."
+msgstr "Todos os itens estão marcados ou adiados."
+
+msgid "Uncategorized"
+msgstr "Sem categoria"
+
+msgid "Edit item"
+msgstr "Editar item"
+
+msgid "Item name"
+msgstr "Nome do item"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "p. ex. leite, pão, ovos…"
+
+msgid "Quantity"
+msgstr "Quantidade"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Aumentar quantidade"
+
+msgid "Decrease quantity"
+msgstr "Diminuir quantidade"
+
+msgid "Select or create a category…"
+msgstr "Selecione ou crie uma categoria…"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Could not update the list"
+msgstr "Não foi possível atualizar a lista"
+
+msgid "Could not load the list"
+msgstr "Não foi possível carregar a lista"
+
+msgid "Could not load the categories"
+msgstr "Não foi possível carregar as categorias"
+
+msgid "Could not load the items"
+msgstr "Não foi possível carregar os itens"
+
+msgid "Please enter a name for the item"
+msgstr "Insira um nome para o item"
+
+msgid "Could not add item"
+msgstr "Não foi possível adicionar o item"
+
+msgid "Could not update item category"
+msgstr "Não foi possível atualizar a categoria do item"
+
+msgid "Could not delete item"
+msgstr "Não foi possível excluir o item"
+
+msgid "Categories"
+msgstr "Categorias"
+
+msgid "Categories loading…"
+msgstr "Carregando categorias…"
+
+msgid "No categories, yet"
+msgstr "Nenhuma categoria ainda"
+
+msgid "Sharing"
+msgstr "Compartilhamento"
+
+msgid "Danger zone"
+msgstr "Zona de perigo"
+
+msgid "Leave list"
+msgstr "Sair da lista"
+
+msgid "Delete list"
+msgstr "Excluir lista"
+
+msgid "Could not save category order"
+msgstr "Não foi possível salvar a ordem das categorias"
+
+msgid "List deleted"
+msgstr "Lista excluída"
+
+msgid "Could not delete list"
+msgstr "Não foi possível excluir a lista"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Tem certeza de que deseja sair da lista “{title}”? Você não terá mais acesso a ela, a menos que seja compartilhada com você novamente."
+
+msgid "Leave"
+msgstr "Sair"
+
+msgid "You left the list"
+msgstr "Você saiu da lista"
+
+msgid "Could not leave list"
+msgstr "Não foi possível sair da lista"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Tem certeza de que deseja excluir a lista “{title}”? Isso também removerá todos os seus itens e categorias."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Tem certeza de que deseja excluir esta lista? Isso também removerá todos os seus itens e categorias."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Esta categoria contém %n item. Excluir a categoria também excluirá este item. Continuar?"
+msgstr[1] "Esta categoria contém %n itens. Excluir a categoria também excluirá estes itens. Continuar?"
+msgstr[2] "Esta categoria contém %n itens. Excluir a categoria também excluirá estes itens. Continuar?"
