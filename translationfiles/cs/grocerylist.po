@@ -1,0 +1,296 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Czech\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+msgid "New list"
+msgstr "Nový seznam"
+
+msgid "Loading lists…"
+msgstr "Načítání seznamů…"
+
+msgid "No grocery lists, yet"
+msgstr "Zatím žádné nákupní seznamy"
+
+msgid "No list selected"
+msgstr "Není vybrán žádný seznam"
+
+msgid "Create a list to start adding items."
+msgstr "Vytvořte seznam a začněte přidávat položky."
+
+msgid "Select a list in the navigation."
+msgstr "Vyberte seznam v navigaci."
+
+msgid "List name"
+msgstr "Název seznamu"
+
+msgid "My grocery list"
+msgstr "Můj nákupní seznam"
+
+msgid "Show only unchecked"
+msgstr "Zobrazit pouze neodškrtnuté"
+
+msgid "Hide category"
+msgstr "Skrýt kategorie"
+
+msgid "Create list"
+msgstr "Vytvořit seznam"
+
+msgid "Could not load the lists"
+msgstr "Seznamy se nepodařilo načíst"
+
+msgid "Could not rename the list"
+msgstr "Seznam se nepodařilo přejmenovat"
+
+msgid "Could not create the list"
+msgstr "Seznam se nepodařilo vytvořit"
+
+msgid "Jump to letter"
+msgstr "Přejít na písmeno"
+
+msgid "Jump to {letter}"
+msgstr "Přejít na {letter}"
+
+msgid "Drag to reorder"
+msgstr "Přetažením změníte pořadí"
+
+msgid "Category color"
+msgstr "Barva kategorie"
+
+msgid "Pick color"
+msgstr "Vybrat barvu"
+
+msgid "Category name"
+msgstr "Název kategorie"
+
+msgid "Save changed category"
+msgstr "Uložit změněnou kategorii"
+
+msgid "Edit category"
+msgstr "Upravit kategorii"
+
+msgid "Delete category"
+msgstr "Smazat kategorii"
+
+msgid "Could not update category color"
+msgstr "Barvu kategorie se nepodařilo změnit"
+
+msgid "Could not delete category"
+msgstr "Kategorii se nepodařilo smazat"
+
+msgid "Cancel"
+msgstr "Storno"
+
+msgid "Delete"
+msgstr "Smazat"
+
+msgid "Category name must not be empty"
+msgstr "Název kategorie nemůže být prázdný"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "Kategorie s názvem „{category}“ už existuje"
+
+msgid "Could not rename category"
+msgstr "Kategorii se nepodařilo přejmenovat"
+
+msgid "Add category {category}"
+msgstr "Přidat kategorii {category}"
+
+msgid "Could not add category"
+msgstr "Kategorii se nepodařilo přidat"
+
+msgid "Unsnooze"
+msgstr "Zrušit odložení"
+
+msgid "Snooze"
+msgstr "Odložit"
+
+msgid "Could not unsnooze item"
+msgstr "Odložení položky se nepodařilo zrušit"
+
+msgid "Could not check item"
+msgstr "Položku se nepodařilo odškrtnout"
+
+msgid "Could not snooze item"
+msgstr "Položku se nepodařilo odložit"
+
+msgid "Share with"
+msgstr "Sdílet s"
+
+msgid "Search for users …"
+msgstr "Hledat uživatele…"
+
+msgid "Owner (you)"
+msgstr "Vlastník (vy)"
+
+msgid "Shared with you by {owner}"
+msgstr "S vámi sdílí {owner}"
+
+msgid "You"
+msgstr "Vy"
+
+msgid "Unshare with {name}"
+msgstr "Přestat sdílet s {name}"
+
+msgid "Unshare"
+msgstr "Přestat sdílet"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Nasdílejte tento seznam ostatním uživatelům a nakupujte společně. Každý, s kým je sdílen, může přidávat, upravovat a odškrtávat položky."
+
+msgid "Could not fetch sharees"
+msgstr "Nepodařilo se získat příjemce sdílení"
+
+msgid "Could not search users"
+msgstr "Uživatele se nepodařilo vyhledat"
+
+msgid "Could not share list with {name}"
+msgstr "Seznam se nepodařilo nasdílet s {name}"
+
+msgid "Could not unshare list with {name}"
+msgstr "Sdílení seznamu s {name} se nepodařilo zrušit"
+
+msgid "Settings"
+msgstr "Nastavení"
+
+msgid "Rename {list}"
+msgstr "Přejmenovat {list}"
+
+msgid "Grocery list"
+msgstr "Nákupní seznam"
+
+msgid "Add item"
+msgstr "Přidat položku"
+
+msgid "Add"
+msgstr "Přidat"
+
+msgid "No items, yet"
+msgstr "Zatím žádné položky"
+
+msgid "Add the first item with the Add button."
+msgstr "Přidejte první položku tlačítkem „Přidat“."
+
+msgid "All done"
+msgstr "Vše hotovo"
+
+msgid "Every item is checked or snoozed."
+msgstr "Všechny položky jsou odškrtnuté nebo odložené."
+
+msgid "Uncategorized"
+msgstr "Bez kategorie"
+
+msgid "Edit item"
+msgstr "Upravit položku"
+
+msgid "Item name"
+msgstr "Název položky"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "např. mléko, chléb, vejce…"
+
+msgid "Quantity"
+msgstr "Množství"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Zvýšit množství"
+
+msgid "Decrease quantity"
+msgstr "Snížit množství"
+
+msgid "Select or create a category…"
+msgstr "Vyberte nebo vytvořte kategorii…"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "Could not update the list"
+msgstr "Seznam se nepodařilo aktualizovat"
+
+msgid "Could not load the list"
+msgstr "Seznam se nepodařilo načíst"
+
+msgid "Could not load the categories"
+msgstr "Kategorie se nepodařilo načíst"
+
+msgid "Could not load the items"
+msgstr "Položky se nepodařilo načíst"
+
+msgid "Please enter a name for the item"
+msgstr "Zadejte název položky"
+
+msgid "Could not add item"
+msgstr "Položku se nepodařilo přidat"
+
+msgid "Could not update item category"
+msgstr "Kategorii položky se nepodařilo změnit"
+
+msgid "Could not delete item"
+msgstr "Položku se nepodařilo smazat"
+
+msgid "Categories"
+msgstr "Kategorie"
+
+msgid "Categories loading…"
+msgstr "Načítání kategorií…"
+
+msgid "No categories, yet"
+msgstr "Zatím žádné kategorie"
+
+msgid "Sharing"
+msgstr "Sdílení"
+
+msgid "Danger zone"
+msgstr "Nebezpečná zóna"
+
+msgid "Leave list"
+msgstr "Opustit seznam"
+
+msgid "Delete list"
+msgstr "Smazat seznam"
+
+msgid "Could not save category order"
+msgstr "Pořadí kategorií se nepodařilo uložit"
+
+msgid "List deleted"
+msgstr "Seznam smazán"
+
+msgid "Could not delete list"
+msgstr "Seznam se nepodařilo smazat"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Opravdu chcete opustit seznam „{title}“? Ztratíte k němu přístup, dokud vám nebude znovu nasdílen."
+
+msgid "Leave"
+msgstr "Opustit"
+
+msgid "You left the list"
+msgstr "Opustili jste seznam"
+
+msgid "Could not leave list"
+msgstr "Seznam se nepodařilo opustit"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Opravdu chcete smazat seznam „{title}“? Tím se odeberou také všechny jeho položky a kategorie."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Opravdu chcete smazat tento seznam? Tím se odeberou také všechny jeho položky a kategorie."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Tato kategorie obsahuje %n položku. Smazáním kategorie se smaže i tato položka. Pokračovat?"
+msgstr[1] "Tato kategorie obsahuje %n položky. Smazáním kategorie se smažou i tyto položky. Pokračovat?"
+msgstr[2] "Tato kategorie obsahuje %n položky. Smazáním kategorie se smažou i tyto položky. Pokračovat?"
+msgstr[3] "Tato kategorie obsahuje %n položek. Smazáním kategorie se smažou i tyto položky. Pokračovat?"

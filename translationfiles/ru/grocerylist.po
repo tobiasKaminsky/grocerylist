@@ -1,0 +1,296 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "New list"
+msgstr "Новый список"
+
+msgid "Loading lists…"
+msgstr "Загрузка списков…"
+
+msgid "No grocery lists, yet"
+msgstr "Списков покупок пока нет"
+
+msgid "No list selected"
+msgstr "Список не выбран"
+
+msgid "Create a list to start adding items."
+msgstr "Создайте список, чтобы начать добавлять товары."
+
+msgid "Select a list in the navigation."
+msgstr "Выберите список в навигации."
+
+msgid "List name"
+msgstr "Название списка"
+
+msgid "My grocery list"
+msgstr "Мой список покупок"
+
+msgid "Show only unchecked"
+msgstr "Показывать только неотмеченные"
+
+msgid "Hide category"
+msgstr "Скрыть категории"
+
+msgid "Create list"
+msgstr "Создать список"
+
+msgid "Could not load the lists"
+msgstr "Не удалось загрузить списки"
+
+msgid "Could not rename the list"
+msgstr "Не удалось переименовать список"
+
+msgid "Could not create the list"
+msgstr "Не удалось создать список"
+
+msgid "Jump to letter"
+msgstr "Перейти к букве"
+
+msgid "Jump to {letter}"
+msgstr "Перейти к {letter}"
+
+msgid "Drag to reorder"
+msgstr "Перетащите, чтобы изменить порядок"
+
+msgid "Category color"
+msgstr "Цвет категории"
+
+msgid "Pick color"
+msgstr "Выбрать цвет"
+
+msgid "Category name"
+msgstr "Название категории"
+
+msgid "Save changed category"
+msgstr "Сохранить изменённую категорию"
+
+msgid "Edit category"
+msgstr "Редактировать категорию"
+
+msgid "Delete category"
+msgstr "Удалить категорию"
+
+msgid "Could not update category color"
+msgstr "Не удалось изменить цвет категории"
+
+msgid "Could not delete category"
+msgstr "Не удалось удалить категорию"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Category name must not be empty"
+msgstr "Название категории не может быть пустым"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "Категория с названием «{category}» уже существует"
+
+msgid "Could not rename category"
+msgstr "Не удалось переименовать категорию"
+
+msgid "Add category {category}"
+msgstr "Добавить категорию {category}"
+
+msgid "Could not add category"
+msgstr "Не удалось добавить категорию"
+
+msgid "Unsnooze"
+msgstr "Вернуть"
+
+msgid "Snooze"
+msgstr "Отложить"
+
+msgid "Could not unsnooze item"
+msgstr "Не удалось вернуть отложенный товар"
+
+msgid "Could not check item"
+msgstr "Не удалось отметить товар"
+
+msgid "Could not snooze item"
+msgstr "Не удалось отложить товар"
+
+msgid "Share with"
+msgstr "Поделиться с"
+
+msgid "Search for users …"
+msgstr "Поиск пользователей…"
+
+msgid "Owner (you)"
+msgstr "Владелец (вы)"
+
+msgid "Shared with you by {owner}"
+msgstr "{owner} поделился(-ась) с вами"
+
+msgid "You"
+msgstr "Вы"
+
+msgid "Unshare with {name}"
+msgstr "Закрыть доступ для {name}"
+
+msgid "Unshare"
+msgstr "Закрыть доступ"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Поделитесь этим списком с другими пользователями, чтобы делать покупки вместе. Все, с кем он доступен, могут добавлять, редактировать и отмечать товары."
+
+msgid "Could not fetch sharees"
+msgstr "Не удалось получить список участников общего доступа"
+
+msgid "Could not search users"
+msgstr "Не удалось выполнить поиск пользователей"
+
+msgid "Could not share list with {name}"
+msgstr "Не удалось поделиться списком с {name}"
+
+msgid "Could not unshare list with {name}"
+msgstr "Не удалось закрыть доступ к списку для {name}"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Rename {list}"
+msgstr "Переименовать {list}"
+
+msgid "Grocery list"
+msgstr "Список покупок"
+
+msgid "Add item"
+msgstr "Добавить товар"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "No items, yet"
+msgstr "Товаров пока нет"
+
+msgid "Add the first item with the Add button."
+msgstr "Добавьте первый товар с помощью кнопки «Добавить»."
+
+msgid "All done"
+msgstr "Всё готово"
+
+msgid "Every item is checked or snoozed."
+msgstr "Все товары отмечены или отложены."
+
+msgid "Uncategorized"
+msgstr "Без категории"
+
+msgid "Edit item"
+msgstr "Редактировать товар"
+
+msgid "Item name"
+msgstr "Название товара"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "например, молоко, хлеб, яйца…"
+
+msgid "Quantity"
+msgstr "Количество"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Увеличить количество"
+
+msgid "Decrease quantity"
+msgstr "Уменьшить количество"
+
+msgid "Select or create a category…"
+msgstr "Выберите или создайте категорию…"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Could not update the list"
+msgstr "Не удалось обновить список"
+
+msgid "Could not load the list"
+msgstr "Не удалось загрузить список"
+
+msgid "Could not load the categories"
+msgstr "Не удалось загрузить категории"
+
+msgid "Could not load the items"
+msgstr "Не удалось загрузить товары"
+
+msgid "Please enter a name for the item"
+msgstr "Введите название товара"
+
+msgid "Could not add item"
+msgstr "Не удалось добавить товар"
+
+msgid "Could not update item category"
+msgstr "Не удалось изменить категорию товара"
+
+msgid "Could not delete item"
+msgstr "Не удалось удалить товар"
+
+msgid "Categories"
+msgstr "Категории"
+
+msgid "Categories loading…"
+msgstr "Загрузка категорий…"
+
+msgid "No categories, yet"
+msgstr "Категорий пока нет"
+
+msgid "Sharing"
+msgstr "Общий доступ"
+
+msgid "Danger zone"
+msgstr "Опасная зона"
+
+msgid "Leave list"
+msgstr "Покинуть список"
+
+msgid "Delete list"
+msgstr "Удалить список"
+
+msgid "Could not save category order"
+msgstr "Не удалось сохранить порядок категорий"
+
+msgid "List deleted"
+msgstr "Список удалён"
+
+msgid "Could not delete list"
+msgstr "Не удалось удалить список"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Вы действительно хотите покинуть список «{title}»? Вы потеряете к нему доступ, пока им снова не поделятся с вами."
+
+msgid "Leave"
+msgstr "Покинуть"
+
+msgid "You left the list"
+msgstr "Вы покинули список"
+
+msgid "Could not leave list"
+msgstr "Не удалось покинуть список"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Вы действительно хотите удалить список «{title}»? Также будут удалены все его товары и категории."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Вы действительно хотите удалить этот список? Также будут удалены все его товары и категории."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Эта категория содержит %n товар. При удалении категории этот товар также будет удалён. Продолжить?"
+msgstr[1] "Эта категория содержит %n товара. При удалении категории эти товары также будут удалены. Продолжить?"
+msgstr[2] "Эта категория содержит %n товаров. При удалении категории эти товары также будут удалены. Продолжить?"
+msgstr[3] "Эта категория содержит %n товара. При удалении категории эти товары также будут удалены. Продолжить?"

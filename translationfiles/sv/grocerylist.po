@@ -1,0 +1,294 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Swedish\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "New list"
+msgstr "Ny lista"
+
+msgid "Loading lists…"
+msgstr "Läser in listor…"
+
+msgid "No grocery lists, yet"
+msgstr "Inga inköpslistor ännu"
+
+msgid "No list selected"
+msgstr "Ingen lista vald"
+
+msgid "Create a list to start adding items."
+msgstr "Skapa en lista för att börja lägga till varor."
+
+msgid "Select a list in the navigation."
+msgstr "Välj en lista i navigeringen."
+
+msgid "List name"
+msgstr "Listans namn"
+
+msgid "My grocery list"
+msgstr "Min inköpslista"
+
+msgid "Show only unchecked"
+msgstr "Visa endast ej avbockade"
+
+msgid "Hide category"
+msgstr "Dölj kategorier"
+
+msgid "Create list"
+msgstr "Skapa lista"
+
+msgid "Could not load the lists"
+msgstr "Kunde inte läsa in listorna"
+
+msgid "Could not rename the list"
+msgstr "Kunde inte byta namn på listan"
+
+msgid "Could not create the list"
+msgstr "Kunde inte skapa listan"
+
+msgid "Jump to letter"
+msgstr "Hoppa till bokstav"
+
+msgid "Jump to {letter}"
+msgstr "Hoppa till {letter}"
+
+msgid "Drag to reorder"
+msgstr "Dra för att ändra ordning"
+
+msgid "Category color"
+msgstr "Kategorifärg"
+
+msgid "Pick color"
+msgstr "Välj färg"
+
+msgid "Category name"
+msgstr "Kategorinamn"
+
+msgid "Save changed category"
+msgstr "Spara ändrad kategori"
+
+msgid "Edit category"
+msgstr "Redigera kategori"
+
+msgid "Delete category"
+msgstr "Ta bort kategori"
+
+msgid "Could not update category color"
+msgstr "Kunde inte uppdatera kategorifärgen"
+
+msgid "Could not delete category"
+msgstr "Kunde inte ta bort kategorin"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Delete"
+msgstr "Ta bort"
+
+msgid "Category name must not be empty"
+msgstr "Kategorinamnet får inte vara tomt"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "En kategori med namnet ”{category}” finns redan"
+
+msgid "Could not rename category"
+msgstr "Kunde inte byta namn på kategorin"
+
+msgid "Add category {category}"
+msgstr "Lägg till kategori {category}"
+
+msgid "Could not add category"
+msgstr "Kunde inte lägga till kategorin"
+
+msgid "Unsnooze"
+msgstr "Sluta skjuta upp"
+
+msgid "Snooze"
+msgstr "Skjut upp"
+
+msgid "Could not unsnooze item"
+msgstr "Kunde inte sluta skjuta upp varan"
+
+msgid "Could not check item"
+msgstr "Kunde inte bocka av varan"
+
+msgid "Could not snooze item"
+msgstr "Kunde inte skjuta upp varan"
+
+msgid "Share with"
+msgstr "Dela med"
+
+msgid "Search for users …"
+msgstr "Sök efter användare…"
+
+msgid "Owner (you)"
+msgstr "Ägare (du)"
+
+msgid "Shared with you by {owner}"
+msgstr "Delad med dig av {owner}"
+
+msgid "You"
+msgstr "Du"
+
+msgid "Unshare with {name}"
+msgstr "Sluta dela med {name}"
+
+msgid "Unshare"
+msgstr "Sluta dela"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Dela den här listan med andra användare så att ni kan handla tillsammans. Alla som listan delas med kan lägga till, redigera och bocka av varor."
+
+msgid "Could not fetch sharees"
+msgstr "Kunde inte hämta delningar"
+
+msgid "Could not search users"
+msgstr "Kunde inte söka efter användare"
+
+msgid "Could not share list with {name}"
+msgstr "Kunde inte dela listan med {name}"
+
+msgid "Could not unshare list with {name}"
+msgstr "Kunde inte sluta dela listan med {name}"
+
+msgid "Settings"
+msgstr "Inställningar"
+
+msgid "Rename {list}"
+msgstr "Byt namn på {list}"
+
+msgid "Grocery list"
+msgstr "Inköpslista"
+
+msgid "Add item"
+msgstr "Lägg till vara"
+
+msgid "Add"
+msgstr "Lägg till"
+
+msgid "No items, yet"
+msgstr "Inga varor ännu"
+
+msgid "Add the first item with the Add button."
+msgstr "Lägg till den första varan med knappen ”Lägg till”."
+
+msgid "All done"
+msgstr "Allt klart"
+
+msgid "Every item is checked or snoozed."
+msgstr "Alla varor är avbockade eller uppskjutna."
+
+msgid "Uncategorized"
+msgstr "Utan kategori"
+
+msgid "Edit item"
+msgstr "Redigera vara"
+
+msgid "Item name"
+msgstr "Varans namn"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "t.ex. mjölk, bröd, ägg…"
+
+msgid "Quantity"
+msgstr "Antal"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Öka antal"
+
+msgid "Decrease quantity"
+msgstr "Minska antal"
+
+msgid "Select or create a category…"
+msgstr "Välj eller skapa en kategori…"
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "Could not update the list"
+msgstr "Kunde inte uppdatera listan"
+
+msgid "Could not load the list"
+msgstr "Kunde inte läsa in listan"
+
+msgid "Could not load the categories"
+msgstr "Kunde inte läsa in kategorierna"
+
+msgid "Could not load the items"
+msgstr "Kunde inte läsa in varorna"
+
+msgid "Please enter a name for the item"
+msgstr "Ange ett namn för varan"
+
+msgid "Could not add item"
+msgstr "Kunde inte lägga till varan"
+
+msgid "Could not update item category"
+msgstr "Kunde inte uppdatera varans kategori"
+
+msgid "Could not delete item"
+msgstr "Kunde inte ta bort varan"
+
+msgid "Categories"
+msgstr "Kategorier"
+
+msgid "Categories loading…"
+msgstr "Läser in kategorier…"
+
+msgid "No categories, yet"
+msgstr "Inga kategorier ännu"
+
+msgid "Sharing"
+msgstr "Delning"
+
+msgid "Danger zone"
+msgstr "Farozon"
+
+msgid "Leave list"
+msgstr "Lämna lista"
+
+msgid "Delete list"
+msgstr "Ta bort lista"
+
+msgid "Could not save category order"
+msgstr "Kunde inte spara kategoriernas ordning"
+
+msgid "List deleted"
+msgstr "Listan har tagits bort"
+
+msgid "Could not delete list"
+msgstr "Kunde inte ta bort listan"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "Är du säker på att du vill lämna listan ”{title}”? Du kommer inte längre att ha åtkomst till den om den inte delas med dig igen."
+
+msgid "Leave"
+msgstr "Lämna"
+
+msgid "You left the list"
+msgstr "Du har lämnat listan"
+
+msgid "Could not leave list"
+msgstr "Kunde inte lämna listan"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "Är du säker på att du vill ta bort listan ”{title}”? Detta tar även bort alla dess varor och kategorier."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Är du säker på att du vill ta bort den här listan? Detta tar även bort alla dess varor och kategorier."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Den här kategorin innehåller %n vara. Om du tar bort kategorin tas även den här varan bort. Fortsätta?"
+msgstr[1] "Den här kategorin innehåller %n varor. Om du tar bort kategorin tas även dessa varor bort. Fortsätta?"

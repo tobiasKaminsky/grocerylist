@@ -1,0 +1,293 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Chinese (China)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "New list"
+msgstr "新建列表"
+
+msgid "Loading lists…"
+msgstr "正在加载列表…"
+
+msgid "No grocery lists, yet"
+msgstr "尚无购物清单"
+
+msgid "No list selected"
+msgstr "未选择列表"
+
+msgid "Create a list to start adding items."
+msgstr "创建一个列表以开始添加商品。"
+
+msgid "Select a list in the navigation."
+msgstr "在导航栏中选择一个列表。"
+
+msgid "List name"
+msgstr "列表名称"
+
+msgid "My grocery list"
+msgstr "我的购物清单"
+
+msgid "Show only unchecked"
+msgstr "仅显示未勾选的"
+
+msgid "Hide category"
+msgstr "隐藏分类"
+
+msgid "Create list"
+msgstr "创建列表"
+
+msgid "Could not load the lists"
+msgstr "无法加载列表"
+
+msgid "Could not rename the list"
+msgstr "无法重命名列表"
+
+msgid "Could not create the list"
+msgstr "无法创建列表"
+
+msgid "Jump to letter"
+msgstr "跳转到字母"
+
+msgid "Jump to {letter}"
+msgstr "跳转到 {letter}"
+
+msgid "Drag to reorder"
+msgstr "拖动以重新排序"
+
+msgid "Category color"
+msgstr "分类颜色"
+
+msgid "Pick color"
+msgstr "选择颜色"
+
+msgid "Category name"
+msgstr "分类名称"
+
+msgid "Save changed category"
+msgstr "保存更改的分类"
+
+msgid "Edit category"
+msgstr "编辑分类"
+
+msgid "Delete category"
+msgstr "删除分类"
+
+msgid "Could not update category color"
+msgstr "无法更新分类颜色"
+
+msgid "Could not delete category"
+msgstr "无法删除分类"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Category name must not be empty"
+msgstr "分类名称不能为空"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "名为“{category}”的分类已存在"
+
+msgid "Could not rename category"
+msgstr "无法重命名分类"
+
+msgid "Add category {category}"
+msgstr "添加分类 {category}"
+
+msgid "Could not add category"
+msgstr "无法添加分类"
+
+msgid "Unsnooze"
+msgstr "取消暂缓"
+
+msgid "Snooze"
+msgstr "暂缓"
+
+msgid "Could not unsnooze item"
+msgstr "无法取消暂缓商品"
+
+msgid "Could not check item"
+msgstr "无法勾选商品"
+
+msgid "Could not snooze item"
+msgstr "无法暂缓商品"
+
+msgid "Share with"
+msgstr "共享给"
+
+msgid "Search for users …"
+msgstr "搜索用户…"
+
+msgid "Owner (you)"
+msgstr "所有者（你）"
+
+msgid "Shared with you by {owner}"
+msgstr "{owner} 与你共享"
+
+msgid "You"
+msgstr "你"
+
+msgid "Unshare with {name}"
+msgstr "取消与 {name} 的共享"
+
+msgid "Unshare"
+msgstr "取消共享"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "与其他用户共享此列表，一起购物。所有被共享的人都可以添加、编辑和勾选商品。"
+
+msgid "Could not fetch sharees"
+msgstr "无法获取共享对象"
+
+msgid "Could not search users"
+msgstr "无法搜索用户"
+
+msgid "Could not share list with {name}"
+msgstr "无法与 {name} 共享列表"
+
+msgid "Could not unshare list with {name}"
+msgstr "无法取消与 {name} 共享列表"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Rename {list}"
+msgstr "重命名 {list}"
+
+msgid "Grocery list"
+msgstr "购物清单"
+
+msgid "Add item"
+msgstr "添加商品"
+
+msgid "Add"
+msgstr "添加"
+
+msgid "No items, yet"
+msgstr "尚无商品"
+
+msgid "Add the first item with the Add button."
+msgstr "使用“添加”按钮添加第一个商品。"
+
+msgid "All done"
+msgstr "全部完成"
+
+msgid "Every item is checked or snoozed."
+msgstr "所有商品均已勾选或暂缓。"
+
+msgid "Uncategorized"
+msgstr "未分类"
+
+msgid "Edit item"
+msgstr "编辑商品"
+
+msgid "Item name"
+msgstr "商品名称"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "例如：牛奶、面包、鸡蛋…"
+
+msgid "Quantity"
+msgstr "数量"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "增加数量"
+
+msgid "Decrease quantity"
+msgstr "减少数量"
+
+msgid "Select or create a category…"
+msgstr "选择或创建分类…"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Could not update the list"
+msgstr "无法更新列表"
+
+msgid "Could not load the list"
+msgstr "无法加载列表"
+
+msgid "Could not load the categories"
+msgstr "无法加载分类"
+
+msgid "Could not load the items"
+msgstr "无法加载商品"
+
+msgid "Please enter a name for the item"
+msgstr "请输入商品名称"
+
+msgid "Could not add item"
+msgstr "无法添加商品"
+
+msgid "Could not update item category"
+msgstr "无法更新商品分类"
+
+msgid "Could not delete item"
+msgstr "无法删除商品"
+
+msgid "Categories"
+msgstr "分类"
+
+msgid "Categories loading…"
+msgstr "正在加载分类…"
+
+msgid "No categories, yet"
+msgstr "尚无分类"
+
+msgid "Sharing"
+msgstr "共享"
+
+msgid "Danger zone"
+msgstr "危险区域"
+
+msgid "Leave list"
+msgstr "离开列表"
+
+msgid "Delete list"
+msgstr "删除列表"
+
+msgid "Could not save category order"
+msgstr "无法保存分类顺序"
+
+msgid "List deleted"
+msgstr "列表已删除"
+
+msgid "Could not delete list"
+msgstr "无法删除列表"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "确定要离开列表“{title}”吗？除非再次与你共享，否则你将无法再访问它。"
+
+msgid "Leave"
+msgstr "离开"
+
+msgid "You left the list"
+msgstr "你已离开该列表"
+
+msgid "Could not leave list"
+msgstr "无法离开列表"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "确定要删除列表“{title}”吗？这也将删除其中的所有商品和分类。"
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "确定要删除此列表吗？这也将删除其中的所有商品和分类。"
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "此分类包含 %n 个商品。删除该分类也会删除这些商品。是否继续？"

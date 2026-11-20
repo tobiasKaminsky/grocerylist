@@ -1,0 +1,293 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "New list"
+msgstr "新しいリスト"
+
+msgid "Loading lists…"
+msgstr "リストを読み込み中…"
+
+msgid "No grocery lists, yet"
+msgstr "買い物リストはまだありません"
+
+msgid "No list selected"
+msgstr "リストが選択されていません"
+
+msgid "Create a list to start adding items."
+msgstr "リストを作成してアイテムを追加しましょう。"
+
+msgid "Select a list in the navigation."
+msgstr "ナビゲーションからリストを選択してください。"
+
+msgid "List name"
+msgstr "リスト名"
+
+msgid "My grocery list"
+msgstr "マイ買い物リスト"
+
+msgid "Show only unchecked"
+msgstr "未チェックのみ表示"
+
+msgid "Hide category"
+msgstr "カテゴリーを非表示"
+
+msgid "Create list"
+msgstr "リストを作成"
+
+msgid "Could not load the lists"
+msgstr "リストを読み込めませんでした"
+
+msgid "Could not rename the list"
+msgstr "リストの名前を変更できませんでした"
+
+msgid "Could not create the list"
+msgstr "リストを作成できませんでした"
+
+msgid "Jump to letter"
+msgstr "文字へ移動"
+
+msgid "Jump to {letter}"
+msgstr "{letter} へ移動"
+
+msgid "Drag to reorder"
+msgstr "ドラッグして並べ替え"
+
+msgid "Category color"
+msgstr "カテゴリーの色"
+
+msgid "Pick color"
+msgstr "色を選択"
+
+msgid "Category name"
+msgstr "カテゴリー名"
+
+msgid "Save changed category"
+msgstr "変更したカテゴリーを保存"
+
+msgid "Edit category"
+msgstr "カテゴリーを編集"
+
+msgid "Delete category"
+msgstr "カテゴリーを削除"
+
+msgid "Could not update category color"
+msgstr "カテゴリーの色を更新できませんでした"
+
+msgid "Could not delete category"
+msgstr "カテゴリーを削除できませんでした"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Category name must not be empty"
+msgstr "カテゴリー名を入力してください"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "「{category}」という名前のカテゴリーは既に存在します"
+
+msgid "Could not rename category"
+msgstr "カテゴリーの名前を変更できませんでした"
+
+msgid "Add category {category}"
+msgstr "カテゴリー {category} を追加"
+
+msgid "Could not add category"
+msgstr "カテゴリーを追加できませんでした"
+
+msgid "Unsnooze"
+msgstr "保留を解除"
+
+msgid "Snooze"
+msgstr "保留"
+
+msgid "Could not unsnooze item"
+msgstr "アイテムの保留を解除できませんでした"
+
+msgid "Could not check item"
+msgstr "アイテムをチェックできませんでした"
+
+msgid "Could not snooze item"
+msgstr "アイテムを保留にできませんでした"
+
+msgid "Share with"
+msgstr "共有先"
+
+msgid "Search for users …"
+msgstr "ユーザーを検索…"
+
+msgid "Owner (you)"
+msgstr "所有者 (あなた)"
+
+msgid "Shared with you by {owner}"
+msgstr "{owner} があなたと共有しました"
+
+msgid "You"
+msgstr "あなた"
+
+msgid "Unshare with {name}"
+msgstr "{name} との共有を解除"
+
+msgid "Unshare"
+msgstr "共有を解除"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "このリストを他のユーザーと共有して、一緒に買い物をしましょう。共有された全員がアイテムの追加、編集、チェックを行えます。"
+
+msgid "Could not fetch sharees"
+msgstr "共有先を取得できませんでした"
+
+msgid "Could not search users"
+msgstr "ユーザーを検索できませんでした"
+
+msgid "Could not share list with {name}"
+msgstr "{name} とリストを共有できませんでした"
+
+msgid "Could not unshare list with {name}"
+msgstr "{name} とのリストの共有を解除できませんでした"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Rename {list}"
+msgstr "{list} の名前を変更"
+
+msgid "Grocery list"
+msgstr "買い物リスト"
+
+msgid "Add item"
+msgstr "アイテムを追加"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "No items, yet"
+msgstr "アイテムはまだありません"
+
+msgid "Add the first item with the Add button."
+msgstr "「追加」ボタンで最初のアイテムを追加してください。"
+
+msgid "All done"
+msgstr "すべて完了"
+
+msgid "Every item is checked or snoozed."
+msgstr "すべてのアイテムがチェック済みまたは保留中です。"
+
+msgid "Uncategorized"
+msgstr "未分類"
+
+msgid "Edit item"
+msgstr "アイテムを編集"
+
+msgid "Item name"
+msgstr "アイテム名"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "例: 牛乳、パン、卵…"
+
+msgid "Quantity"
+msgstr "数量"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "数量を増やす"
+
+msgid "Decrease quantity"
+msgstr "数量を減らす"
+
+msgid "Select or create a category…"
+msgstr "カテゴリーを選択または作成…"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Could not update the list"
+msgstr "リストを更新できませんでした"
+
+msgid "Could not load the list"
+msgstr "リストを読み込めませんでした"
+
+msgid "Could not load the categories"
+msgstr "カテゴリーを読み込めませんでした"
+
+msgid "Could not load the items"
+msgstr "アイテムを読み込めませんでした"
+
+msgid "Please enter a name for the item"
+msgstr "アイテム名を入力してください"
+
+msgid "Could not add item"
+msgstr "アイテムを追加できませんでした"
+
+msgid "Could not update item category"
+msgstr "アイテムのカテゴリーを更新できませんでした"
+
+msgid "Could not delete item"
+msgstr "アイテムを削除できませんでした"
+
+msgid "Categories"
+msgstr "カテゴリー"
+
+msgid "Categories loading…"
+msgstr "カテゴリーを読み込み中…"
+
+msgid "No categories, yet"
+msgstr "カテゴリーはまだありません"
+
+msgid "Sharing"
+msgstr "共有"
+
+msgid "Danger zone"
+msgstr "危険な操作"
+
+msgid "Leave list"
+msgstr "リストから退出"
+
+msgid "Delete list"
+msgstr "リストを削除"
+
+msgid "Could not save category order"
+msgstr "カテゴリーの順序を保存できませんでした"
+
+msgid "List deleted"
+msgstr "リストを削除しました"
+
+msgid "Could not delete list"
+msgstr "リストを削除できませんでした"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "リスト「{title}」から退出してもよろしいですか？再び共有されるまで、このリストにはアクセスできなくなります。"
+
+msgid "Leave"
+msgstr "退出"
+
+msgid "You left the list"
+msgstr "リストから退出しました"
+
+msgid "Could not leave list"
+msgstr "リストから退出できませんでした"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "リスト「{title}」を削除してもよろしいですか？リスト内のすべてのアイテムとカテゴリーも削除されます。"
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "このリストを削除してもよろしいですか？リスト内のすべてのアイテムとカテゴリーも削除されます。"
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "このカテゴリーには %n 個のアイテムがあります。カテゴリーを削除すると、これらのアイテムも削除されます。続行しますか？"

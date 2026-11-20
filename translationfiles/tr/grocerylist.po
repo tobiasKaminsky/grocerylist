@@ -1,0 +1,294 @@
+# SPDX-FileCopyrightText: 2026 Tobias Kaminsky <tobias@kaminsky.me>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: grocerylist\n"
+"PO-Revision-Date: 2026-11-20 12:00+0100\n"
+"Last-Translator: Tobias Kaminsky <tobias@kaminsky.me>\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "New list"
+msgstr "Yeni liste"
+
+msgid "Loading lists…"
+msgstr "Listeler yükleniyor…"
+
+msgid "No grocery lists, yet"
+msgstr "Henüz bir alışveriş listesi yok"
+
+msgid "No list selected"
+msgstr "Herhangi bir liste seçilmemiş"
+
+msgid "Create a list to start adding items."
+msgstr "Ürün eklemeye başlamak için bir liste oluşturun."
+
+msgid "Select a list in the navigation."
+msgstr "Gezinme bölümünden bir liste seçin."
+
+msgid "List name"
+msgstr "Liste adı"
+
+msgid "My grocery list"
+msgstr "Alışveriş listem"
+
+msgid "Show only unchecked"
+msgstr "Yalnızca işaretlenmemişleri görüntüle"
+
+msgid "Hide category"
+msgstr "Kategorileri gizle"
+
+msgid "Create list"
+msgstr "Liste oluştur"
+
+msgid "Could not load the lists"
+msgstr "Listeler yüklenemedi"
+
+msgid "Could not rename the list"
+msgstr "Listenin adı değiştirilemedi"
+
+msgid "Could not create the list"
+msgstr "Liste oluşturulamadı"
+
+msgid "Jump to letter"
+msgstr "Harfe git"
+
+msgid "Jump to {letter}"
+msgstr "{letter} harfine git"
+
+msgid "Drag to reorder"
+msgstr "Yeniden sıralamak için sürükleyin"
+
+msgid "Category color"
+msgstr "Kategori rengi"
+
+msgid "Pick color"
+msgstr "Renk seçin"
+
+msgid "Category name"
+msgstr "Kategori adı"
+
+msgid "Save changed category"
+msgstr "Değiştirilen kategoriyi kaydet"
+
+msgid "Edit category"
+msgstr "Kategoriyi düzenle"
+
+msgid "Delete category"
+msgstr "Kategoriyi sil"
+
+msgid "Could not update category color"
+msgstr "Kategori rengi güncellenemedi"
+
+msgid "Could not delete category"
+msgstr "Kategori silinemedi"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Delete"
+msgstr "Sil"
+
+msgid "Category name must not be empty"
+msgstr "Kategori adı boş olamaz"
+
+msgid "A category named \"{category}\" already exists"
+msgstr "“{category}” adında bir kategori zaten var"
+
+msgid "Could not rename category"
+msgstr "Kategorinin adı değiştirilemedi"
+
+msgid "Add category {category}"
+msgstr "{category} kategorisini ekle"
+
+msgid "Could not add category"
+msgstr "Kategori eklenemedi"
+
+msgid "Unsnooze"
+msgstr "Ertelemeyi kaldır"
+
+msgid "Snooze"
+msgstr "Ertele"
+
+msgid "Could not unsnooze item"
+msgstr "Ürünün ertelemesi kaldırılamadı"
+
+msgid "Could not check item"
+msgstr "Ürün işaretlenemedi"
+
+msgid "Could not snooze item"
+msgstr "Ürün ertelenemedi"
+
+msgid "Share with"
+msgstr "Şununla paylaş"
+
+msgid "Search for users …"
+msgstr "Kullanıcı arayın…"
+
+msgid "Owner (you)"
+msgstr "Sahibi (siz)"
+
+msgid "Shared with you by {owner}"
+msgstr "{owner} tarafından sizinle paylaşıldı"
+
+msgid "You"
+msgstr "Siz"
+
+msgid "Unshare with {name}"
+msgstr "{name} ile paylaşımı kaldır"
+
+msgid "Unshare"
+msgstr "Paylaşımı kaldır"
+
+msgid "Share this list with other users so you can shop together. Everyone it is shared with can add, edit and check off items."
+msgstr "Birlikte alışveriş yapmak için bu listeyi diğer kullanıcılarla paylaşın. Listenin paylaşıldığı herkes ürün ekleyebilir, düzenleyebilir ve işaretleyebilir."
+
+msgid "Could not fetch sharees"
+msgstr "Paylaşılanlar alınamadı"
+
+msgid "Could not search users"
+msgstr "Kullanıcılar aranamadı"
+
+msgid "Could not share list with {name}"
+msgstr "Liste {name} ile paylaşılamadı"
+
+msgid "Could not unshare list with {name}"
+msgstr "Listenin {name} ile paylaşımı kaldırılamadı"
+
+msgid "Settings"
+msgstr "Ayarlar"
+
+msgid "Rename {list}"
+msgstr "{list} adını değiştir"
+
+msgid "Grocery list"
+msgstr "Alışveriş listesi"
+
+msgid "Add item"
+msgstr "Ürün ekle"
+
+msgid "Add"
+msgstr "Ekle"
+
+msgid "No items, yet"
+msgstr "Henüz bir ürün yok"
+
+msgid "Add the first item with the Add button."
+msgstr "İlk ürünü Ekle düğmesi ile ekleyin."
+
+msgid "All done"
+msgstr "Tümü tamamlandı"
+
+msgid "Every item is checked or snoozed."
+msgstr "Tüm ürünler işaretlenmiş ya da ertelenmiş."
+
+msgid "Uncategorized"
+msgstr "Kategorilenmemiş"
+
+msgid "Edit item"
+msgstr "Ürünü düzenle"
+
+msgid "Item name"
+msgstr "Ürün adı"
+
+msgid "e.g. Milk, Bread, Eggs…"
+msgstr "Örnek: Süt, ekmek, yumurta…"
+
+msgid "Quantity"
+msgstr "Miktar"
+
+msgid "1"
+msgstr "1"
+
+msgid "Increase quantity"
+msgstr "Miktarı arttır"
+
+msgid "Decrease quantity"
+msgstr "Miktarı azalt"
+
+msgid "Select or create a category…"
+msgstr "Bir kategori seçin ya da oluşturun…"
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Could not update the list"
+msgstr "Liste güncellenemedi"
+
+msgid "Could not load the list"
+msgstr "Liste yüklenemedi"
+
+msgid "Could not load the categories"
+msgstr "Kategoriler yüklenemedi"
+
+msgid "Could not load the items"
+msgstr "Ürünler yüklenemedi"
+
+msgid "Please enter a name for the item"
+msgstr "Lütfen ürün için bir ad yazın"
+
+msgid "Could not add item"
+msgstr "Ürün eklenemedi"
+
+msgid "Could not update item category"
+msgstr "Ürün kategorisi güncellenemedi"
+
+msgid "Could not delete item"
+msgstr "Ürün silinemedi"
+
+msgid "Categories"
+msgstr "Kategoriler"
+
+msgid "Categories loading…"
+msgstr "Kategoriler yükleniyor…"
+
+msgid "No categories, yet"
+msgstr "Henüz bir kategori yok"
+
+msgid "Sharing"
+msgstr "Paylaşım"
+
+msgid "Danger zone"
+msgstr "Tehlikeli bölge"
+
+msgid "Leave list"
+msgstr "Listeden ayrıl"
+
+msgid "Delete list"
+msgstr "Listeyi sil"
+
+msgid "Could not save category order"
+msgstr "Kategori sıralaması kaydedilemedi"
+
+msgid "List deleted"
+msgstr "Liste silindi"
+
+msgid "Could not delete list"
+msgstr "Liste silinemedi"
+
+msgid "Are you sure you want to leave the list \"{title}\"? You will no longer have access to it unless it is shared with you again."
+msgstr "“{title}” listesinden ayrılmak istediğinize emin misiniz? Liste sizinle yeniden paylaşılmadıkça listeye erişemeyeceksiniz."
+
+msgid "Leave"
+msgstr "Ayrıl"
+
+msgid "You left the list"
+msgstr "Listeden ayrıldınız"
+
+msgid "Could not leave list"
+msgstr "Listeden ayrılınamadı"
+
+msgid "Are you sure you want to delete the list \"{title}\"? This will also remove all its items and categories."
+msgstr "“{title}” listesini silmek istediğinize emin misiniz? Bu işlem listedeki tüm ürünleri ve kategorileri de siler."
+
+msgid "Are you sure you want to delete this list? This will also remove all its items and categories."
+msgstr "Bu listeyi silmek istediğinize emin misiniz? Bu işlem listedeki tüm ürünleri ve kategorileri de siler."
+
+msgid "This category contains %n item. Deleting the category will also delete this item. Continue?"
+msgid_plural "This category contains %n items. Deleting the category will also delete these items. Continue?"
+msgstr[0] "Bu kategoride %n ürün var. Kategori silindiğinde bu ürün de silinecek. Devam edilsin mi?"
+msgstr[1] "Bu kategoride %n ürün var. Kategori silindiğinde bu ürünler de silinecek. Devam edilsin mi?"
